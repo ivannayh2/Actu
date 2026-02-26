@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header class="topbar" th:fragment="topbar(active)">
+<link rel="stylesheet" th:href="@{/JS/css/principal.css}">
+  <!-- IZQUIERDA: LOGO -->
+  <div class="brand">
+    <div class="logo">
+      <img th:src="@{/img/logo.png}" alt="Logo">
+    </div>
+  </div>
+
+  <!-- CENTRO: MENU -->
+  <nav class="nav">
+    <div class="nav-inner">
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('HOME')}"
+         th:href="@{/home}"
+         th:classappend="${active}=='home' ? 'active' : ''">
+        Inicio
+      </a>
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('FACTURAS')}"
+         th:href="@{/facturas}"
+         th:classappend="${active}=='facturas' ? 'active' : ''">
+        Facturas
+      </a>
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('NOTAS')}"
+         th:href="@{/notas}"
+         th:classappend="${active}=='notas' ? 'active' : ''">
+        Notas
+      </a>
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('EGRESOS')}"
+         th:href="@{/egresos}"
+         th:classappend="${active}=='egresos' ? 'active' : ''">
+        Comprobante egreso
+      </a>
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('USUARIOS')}"
+         th:href="@{/usuarios}"
+         th:classappend="${active}=='usuarios' ? 'active' : ''">
+        Usuarios
+      </a>
+
+      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('HISTORIAL')}"
+         th:href="@{/historial}"
+         th:classappend="${active}=='historial' ? 'active' : ''">
+        Historial
+      </a>
+
+    </div>
+  </nav>
+
+  <!-- DERECHA: PERFIL -->
+  <div class="profile">
+    <div class="avatar" title="Configuración">⚙️</div>
+    <div class="avatar">👤</div>
+    <div class="small"
+         th:text="${nombreUsuario != null ? nombreUsuario : 'Usuario'}">
+      Usuario
+    </div>
+  </div>
+
+</header>
+</body>
+</html>

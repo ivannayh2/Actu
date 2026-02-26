@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Inicio</title>
+
+  
+  <link rel="stylesheet" th:href="@{JS/css/principal.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/topbar :: topbar('home')}"></div>
+
+<main class="container">
+  <h1>Inicio</h1>
+  <p>Contenido del dashboard / página principal…</p>
+
+
+  <section class="card">
+  <h2>Cargar archivos planos</h2>
+
+  <form th:action="@{/uploads/planos}" method="post" enctype="multipart/form-data">
+    <div>
+      <label>Egresos (TXT):</label>
+      <input type="file" name="egresosFile" accept=".txt,text/plain" required>
+    </div>
+
+    <div>
+      <label>Facturas (TXT):</label>
+      <input type="file" name="facturasFile" accept=".txt,text/plain" required>
+    </div>
+
+    <div>
+      <label>Notas (TXT):</label>
+      <input type="file" name="notasFile" accept=".txt,text/plain" required>
+    </div>
+
+    <button type="submit">Cargar y procesar</button>
+  </form>
+
+  <p th:if="${msg}" th:text="${msg}"></p>
+</section>
+
+</main>
+</body>
+</html>
+

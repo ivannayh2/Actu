@@ -1,0 +1,173 @@
+:root{
+  --bg:#f6f6f6;
+  --card:#fff;
+  --text:#222;
+  --muted:#6b7280;
+  --border:#d9d9d9;
+
+  --shadow: 0 8px 24px rgba(0,0,0,.08);
+  --radius: 14px;
+
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--text); }
+
+/* ===== TOPBAR (para fragments/topbar) ===== */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  height: 92px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+
+  display:flex;
+  align-items:center;
+  gap:16px;
+
+  padding: 0 16px;
+}
+
+/* izquierda (logo) */
+.brand{
+  width: 220px;
+  min-width: 220px;
+
+  display:flex;
+  align-items:center;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+}
+
+.logo img{
+  height: 100px;      /* ✅ más grande */
+  width: auto;
+  max-width: 200px;  /* ✅ evita que se pase si el logo es muy ancho */
+  object-fit: contain;
+  display:block;
+}
+
+/* centro (menú) */
+.nav{
+  flex:1;
+  display:flex;
+  justify-content:center;
+}
+
+.nav .nav-inner{
+  width: min(900px, 100%);
+  height: 44px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+
+  padding: 0 14px;
+  border:1px solid var(--border);
+  border-radius: 12px;
+  background:#fff;
+}
+
+.nav a{
+  text-decoration:none;
+  color:#111;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height:1;
+  white-space: nowrap;
+}
+
+.nav a.active{
+  background:#f0f0f0;
+}
+
+/* derecha (perfil) */
+.profile{
+  width: 220px;
+  min-width: 220px;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.avatar{
+  width:34px;
+  height:34px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+}
+
+.profile .small{
+  max-width:140px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* ===== CONTENIDO HOME ===== */
+.container{
+  max-width: 1100px;
+  margin: 22px auto;
+  padding: 0 16px;
+}
+
+h1{
+  text-align:center;
+  margin: 18px 0 8px;
+  font-size: 34px;
+  letter-spacing: .3px;
+}
+
+p{
+  text-align:center;
+  color: var(--muted);
+}
+
+/* Tarjeta simple */
+.card{
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .topbar{
+    height: 84px;
+  }
+
+  .brand, .profile{
+    width:auto;
+    min-width:auto;
+  }
+
+  .logo img{
+    height: 56px;
+    max-width: 160px;
+  }
+
+  .nav{
+    justify-content:flex-start;
+  }
+
+  .nav .nav-inner{
+    justify-content:flex-start;
+    overflow:auto;
+    scrollbar-width: thin;
+  }
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Usuarios</title>
+
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/topbar :: topbar('usuarios')}"></div>
+
+<main class="container">
+  <h1>Usuarios</h1>
+
+  <div class="actions">
+    <button id="btnNuevo" class="btn primary" type="button">Nuevo usuario</button>
+  </div>
+
+  <section class="roles-grid">
+    <article class="role-card role-admin">
+      <div class="role-title">Administrador</div>
+      <div class="role-body">
+        <ul class="user-list" id="list-admin">
+          <li th:each="u : ${porRol['ADMINISTRADOR']}" class="user-item">
+            <div>
+              <strong th:text="${u.nombreUsuario}">Nombre</strong><br>
+              <small th:text="${u.codigo}">COD</small>
+            </div>
+            <div class="row-actions">
+              <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
+              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="role-card role-pub">
+      <div class="role-title">Publicador</div>
+      <div class="role-body">
+        <ul class="user-list" id="list-pub">
+          <li th:each="u : ${porRol['PUBLICADOR']}" class="user-item">
+            <div>
+              <strong th:text="${u.nombreUsuario}"> </strong><br>
+              <small th:text="${u.codigo}"> </small>
+            </div>
+            <div class="row-actions">
+              <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
+              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="role-card role-prov">
+      <div class="role-title">Proveedor</div>
+      <div class="role-body">
+        <ul class="user-list" id="list-prov">
+          <li th:each="u : ${porRol['PROVEEDORES']}" class="user-item">
+            <div>
+              <strong th:text="${u.nombreUsuario}"> </strong><br>
+              <small th:text="${u.codigo}"> </small>
+            </div>
+            <div class="row-actions">
+              <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
+              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </section>
+</main>
+
+<!-- Modal -->
+<div id="modal" class="modal hidden" aria-hidden="true">
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nuevo usuario</h2>
+      <button class="icon-btn" type="button" data-close="1">✕</button>
+    </div>
+
+    <form id="formUsuario" class="form" autocomplete="off">
+
+      <!-- anti-autofill -->
+      <input type="text" name="fakeusernameremembered" style="display:none">
+      <input type="password" name="fakepasswordremembered" style="display:none">
+
+      <label>
+        Código
+        <input id="codigo" name="codigo" maxlength="30" required autocomplete="off">
+      </label>
+
+      <label>
+        Rol
+        <select id="rol" name="rol" required autocomplete="off">
+          <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+          <option value="PUBLICADOR">PUBLICADOR</option>
+          <option value="PROVEEDORES">PROVEEDORES</option>
+        </select>
+      </label>
+
+      <label>
+        Nombre
+        <input id="nombre_usuario" name="nombre_usuario" maxlength="100" autocomplete="off">
+      </label>
+
+      <label>
+        Email
+        <input id="email" name="email" maxlength="120" autocomplete="off">
+      </label>
+
+      <label>
+        Clave
+        <!-- ✅ EL FIX IMPORTANTE: id y name correctos -->
+        <input id="password_hash" name="password_hash"
+               type="password" maxlength="150" autocomplete="new-password" required>
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="btn" data-close="1">Cancelar</button>
+        <button type="submit" class="btn primary">Guardar</button>
+      </div>
+
+      <p id="formMsg" class="msg"></p>
+    </form>
+  </div>
+</div>
+
+<script th:src="@{/js/usuarios.js}"></script>
+</body>
+</html>
