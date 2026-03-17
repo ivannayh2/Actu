@@ -49,4 +49,14 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("numero") String numero,
         @Param("fecha") LocalDate fecha
     );
+
+    @Query("""
+        SELECT e
+        FROM EgresoPlano e
+        WHERE e.doctoEgreso = :doctoEgreso
+        ORDER BY e.doctoCausacion ASC
+    """)
+    List<EgresoPlano> buscarDetallePorDoctoEgreso(
+        @Param("doctoEgreso") String doctoEgreso
+    );
 }

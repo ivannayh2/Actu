@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoCreateRequest;
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoPlanoResumen;
 import co.dulcesydulces.provedor_backend.domain.entidades.Egreso;
+import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 import co.dulcesydulces.provedor_backend.domain.entidades.FacturaPlano;
 import co.dulcesydulces.provedor_backend.repository.EgresoPlanoRepository;
 import co.dulcesydulces.provedor_backend.repository.EgresoRepository;
@@ -70,8 +71,12 @@ public class EgresoService {
         return List.of();
     }
 
-    public List<FacturaPlano> buscarFacturasPorDoctoEgreso(String doctoEgreso) {
-        return facturaPlanoRepository.buscarPorDoctoEgreso(doctoEgreso);
+    public List<EgresoPlano> buscarDetallePorDoctoEgreso(String doctoEgreso) {
+        return egresoPlanoRepository.buscarDetallePorDoctoEgreso(doctoEgreso);
+    }
+
+    public List<FacturaPlano> buscarFacturasPorDoctoCausacion(String doctoCausacion) {
+        return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion);
     }
 
     public Egreso crear(EgresoCreateRequest req, MultipartFile soporte) {

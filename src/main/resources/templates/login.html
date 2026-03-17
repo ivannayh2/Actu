@@ -3,25 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <title>Login</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/login.css}">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
-<body>
+<body th:classappend="${param.error != null or param.logout != null or param.resetok != null} ? ' intro-skip' : ' intro-active'">
 
-  <div class="card">
+  <div class="logo-intro" id="logoIntro" aria-hidden="false">
+    <button type="button" class="logo-intro-btn" id="startLoginBtn" aria-label="Entrar al inicio de sesión">
+      <img th:src="@{/img/logo.png}" alt="Logo">
+    </button>
+  </div>
+
+  <div class="card" id="loginCard">
 
     <div class="logo-box">
       <img th:src="@{/img/logo.png}" alt="Logo">
     </div>
 
     <h2>Iniciar sesión</h2>
+    <p class="subtitle">Accede para gestionar tus módulos</p>
 
     <form method="post" th:action="@{/login}" autocomplete="on">
 
-      <label>Usuario</label>
+            <label>Usuario (codigo, nombre o email)</label>
       <input name="codigo"
-             placeholder="usuario"
+              placeholder="codigo, nombre o email"
              required
              autocomplete="username" />
 
@@ -35,18 +47,65 @@
       <button type="submit">Ingresar</button>
     </form>
 
-    <div class="msg" th:if="${param.error}">
+    <div class="msg msg-error" th:if="${param.error}">
       Usuario o clave incorrectos
     </div>
 
-    <div class="msg" th:if="${param.logout}">
+    <div class="msg msg-info" th:if="${param.logout}">
       Sesión cerrada correctamente
     </div>
 
-    <div class="msg" th:if="${param.resetok}">
+    <div class="msg msg-ok" th:if="${param.resetok}">
       Contraseña actualizada. Ya puedes iniciar sesión.
     </div>
 
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var body = document.body;
+      var intro = document.getElementById('logoIntro');
+      var trigger = document.getElementById('startLoginBtn');
+
+      if (!intro || !trigger || !body.classList.contains('intro-active')) {
+        return;
+      }
+
+      var autoRevealTimer = null;
+
+      function revealLogin() {
+        if (!body.classList.contains('intro-active')) {
+          return;
+        }
+
+        if (autoRevealTimer) {
+          window.clearTimeout(autoRevealTimer);
+          autoRevealTimer = null;
+        }
+
+        body.classList.add('intro-exit');
+
+        window.setTimeout(function () {
+          body.classList.remove('intro-active', 'intro-exit');
+          intro.setAttribute('aria-hidden', 'true');
+          intro.style.display = 'none';
+          var userInput = document.querySelector('input[name="codigo"]');
+          if (userInput) {
+            userInput.focus();
+          }
+        }, 520);
+      }
+
+      trigger.addEventListener('click', revealLogin);
+      trigger.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          revealLogin();
+        }
+      });
+
+      autoRevealTimer = window.setTimeout(revealLogin, 1500);
+    });
+  </script>
 </body>
 </html>

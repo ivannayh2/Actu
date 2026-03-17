@@ -13,11 +13,8 @@ public interface FacturaPlanoRepository extends JpaRepository<FacturaPlano, Long
     @Query("""
         SELECT f
         FROM FacturaPlano f
-        WHERE f.doctoCausacion IN (
-            SELECT e.doctoCausacion
-            FROM EgresoPlano e
-            WHERE e.doctoEgreso = :doctoEgreso
-        )
+        WHERE f.doctoCausacion = :doctoCausacion
+        ORDER BY f.doctoCausacion ASC
     """)
-    List<FacturaPlano> buscarPorDoctoEgreso(@Param("doctoEgreso") String doctoEgreso);
+    List<FacturaPlano> buscarPorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
 }

@@ -71,8 +71,17 @@ public String verDetalleEgreso(
         Model model
 ) {
     model.addAttribute("doctoEgreso", doctoEgreso);
-    model.addAttribute("detalles", service.buscarFacturasPorDoctoEgreso(doctoEgreso));
+    model.addAttribute("detalles", service.buscarDetallePorDoctoEgreso(doctoEgreso));
     return "egresosDetallado";
+}
+@GetMapping("/detalles")
+public String verDetalleFactura(
+        @RequestParam("doctoCausacion") String doctoCausacion,
+        Model model
+) {
+    model.addAttribute("doctoCausacion", doctoCausacion);
+    model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
+    return "detalleFactura";
 }
 
     @PostMapping

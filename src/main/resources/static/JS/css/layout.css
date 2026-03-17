@@ -1,0 +1,344 @@
+/* ===== LAYOUT — topbar horizontal + sidebar lateral colapsable ===== */
+
+:root {
+  --sidebar-width: 296px;
+  --sidebar-gap: 14px;
+  --sidebar-hidden-offset: 40px;
+  --sidebar-top-gap: 14px;
+  --sidebar-bottom-gap: 14px;
+  --topbar-height: 64px;
+  --sidebar-transition: 0.25s ease;
+}
+
+/* El body NO reserva espacio por defecto (sidebar colapsado) */
+body {
+  position: relative;
+  padding-left: 0;
+  padding-top: var(--topbar-height);
+  transition: padding-left var(--sidebar-transition);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('/img/logo.png') center calc(50% + 10px) / min(88vw, 1240px) no-repeat;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.topbar,
+.sidebar,
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cuando el sidebar está abierto, desplazamos el contenido */
+body.sidebar-open {
+  padding-left: calc(var(--sidebar-width) + (var(--sidebar-gap) * 2));
+}
+
+/* ===== TOPBAR — barra horizontal superior ===== */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-height);
+  z-index: 100;
+  background: var(--bg, #FFFFFF);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  transition: left var(--sidebar-transition);
+}
+
+body.sidebar-open .topbar {
+  left: calc(var(--sidebar-width) + (var(--sidebar-gap) * 2));
+}
+
+/* Botón hamburguesa en el topbar */
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--muted, #64748B);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background: #f5f5f5;
+}
+
+.topbar-spacer {
+  flex: 1;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text, #0F172A);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border, #E2E8F0);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eee;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--muted, #64748B);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color .15s ease;
+}
+
+.logout-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+  transition: filter .15s ease, transform .18s ease;
+}
+
+.logout-btn span {
+  transition: color .15s ease, transform .18s ease;
+}
+
+.logout-btn:hover {
+  background: transparent;
+}
+
+.logout-btn:hover span {
+  color: #e7000b;
+  transform: scale(1.04);
+}
+
+.logout-btn:hover .logout-icon {
+  filter: brightness(0) saturate(100%) invert(14%) sepia(97%) saturate(7447%) hue-rotate(355deg) brightness(103%) contrast(114%);
+  transform: scale(1.08);
+}
+
+.limpiar-historial-btn {
+  gap: 10px;
+}
+
+.limpiar-historial-btn:hover span {
+  color: inherit;
+  transform: scale(1.03);
+}
+
+.limpiar-historial-btn:hover .logout-icon {
+  filter: none;
+  transform: scale(1.06);
+}
+
+/* ===== SIDEBAR — barra lateral izquierda ===== */
+
+.sidebar {
+  position: fixed;
+  top: var(--sidebar-top-gap);
+  bottom: var(--sidebar-bottom-gap);
+  left: var(--sidebar-gap);
+  z-index: 120;
+  width: var(--sidebar-width);
+  background: #ffffff;
+  backdrop-filter: blur(10px) saturate(125%);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  border: none;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.16), 0 4px 12px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  padding: 18px 14px;
+  overflow-y: auto;
+  /* Colapsado por defecto */
+  transform: translateX(calc(-100% - var(--sidebar-gap) - var(--sidebar-hidden-offset)));
+  transition: transform var(--sidebar-transition);
+}
+
+body.sidebar-open .sidebar {
+  transform: translateX(0);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 4px 14px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.45);
+}
+
+.sidebar .logo img {
+  height: 102px;
+  width: auto;
+  max-width: 215px;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-nav a {
+  text-decoration: none;
+  color: var(--text, #0F172A);
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  transition: background .15s, border-color .15s;
+}
+
+.sidebar-nav a:hover {
+  background: #f7f7f7;
+  border-color: var(--border, #E2E8F0);
+}
+
+.sidebar-nav a.active {
+  background: #ffffff;
+  border-color: #cfcfcf;
+  font-weight: 600;
+}
+
+.sidebar-nav a i,
+.nav-group-toggle i {
+  width: 17px;
+  height: 17px;
+  display: inline-block;
+  flex: 0 0 17px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.icon-home {
+  background-image: url('/icons/inicio.svg');
+}
+
+.icon-egresos {
+  background-image: url('/icons/comprobante.svg');
+}
+
+.icon-history {
+  background-image: url('/icons/Historial.svg');
+}
+
+.icon-user {
+  background-image: url('/icons/Configuraci%C3%B3n.svg');
+}
+
+.nav-group {
+  margin: 2px 0;
+}
+
+.nav-group > summary {
+  list-style: none;
+}
+
+.nav-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-group-toggle {
+  color: var(--text, #0F172A);
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s, border-color .15s;
+}
+
+.nav-group-toggle:hover {
+  background: #f7f7f7;
+  border-color: var(--border, #E2E8F0);
+}
+
+.nav-group-toggle.active,
+.nav-group[open] > .nav-group-toggle {
+  background: #ffffff;
+  border-color: #cfcfcf;
+  font-weight: 600;
+}
+
+.nav-group-caret {
+  margin-left: auto;
+  font-size: 12px;
+  transition: transform .15s ease;
+}
+
+.nav-group[open] .nav-group-caret {
+  transform: rotate(180deg);
+}
+
+.nav-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.nav-submenu a {
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+
+/* ===== OVERLAY — fondo oscuro al abrir el sidebar ===== */
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0,0,0,.35);
+  transition: opacity var(--sidebar-transition);
+}
+
+body.sidebar-open .sidebar-overlay {
+  display: block;
+}

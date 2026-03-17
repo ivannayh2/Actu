@@ -2,155 +2,133 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>Egresos</title>
-
-  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
-  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comprobante egreso</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
 </head>
-
 <body>
-  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+<div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
 
-  <div th:if="${ok}" style="padding:12px;color:green" th:text="${ok}"></div>
-  <div th:if="${error}" style="padding:12px;color:red" th:text="${error}"></div>
-
-  <form class="filters" method="get" th:action="@{/egresos}">
-    <div class="field" th:if="${puedeFiltrarProveedor}">
-      <label for="proveedor">Proveedor</label>
-      <div class="control">
-        <input id="proveedor"
-               type="search"
-               name="proveedor"
-               th:value="${proveedor}">
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="fechaDocumento">Fecha</label>
-      <div class="control">
-        <input id="fechaDocumento"
-               type="date"
-               name="fechaDocumento"
-               th:value="${fechaDocumento}">
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="numeroEgreso">Egreso</label>
-      <div class="control">
-        <input id="numeroEgreso"
-               type="search"
-               name="numeroEgreso"
-               th:value="${numeroEgreso}">
-      </div>
-    </div>
-
-    <div class="filters-actions">
-      <button class="btn btn-primary" type="submit">
-        <i data-lucide="filter"></i>
-        Filtrar
-      </button>
-
-      <a class="btn" th:href="@{/egresos}">
-        <i data-lucide="rotate-ccw"></i>
-        Limpiar
-      </a>
-    </div>
-  </form>
-
-  <div style="padding:12px;" th:if="${puedeCrearEgreso}">
-    <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
+<main class="container egresos-page">
+<div class="page-head">
+  <div class="page-head-left">
+    <h1>Comprobante egreso</h1>
+    <p class="subtitle-main">Consulta de egresos cargados desde archivos planos.</p>
   </div>
+</div>
 
-  <table border="1">
-  <thead>
-    <tr>
-      <th>Docto egreso</th>
-      <th>Fecha egreso</th>
-      <th>NIT PROVEEDOR</th>
-      <th>Valor</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr th:each="d : ${detalle}">
-      <td>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span th:text="${d.doctoEgreso}"></span>
-          <a class="btn btn-primary"
-             th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">
-            Ver detalle
-          </a>
-        </div>
-      </td>
-      <td th:text="${d.fechaEgreso}"></td>
-      <td th:text="${d.tercero}"></td>
-      <td th:text="${d.vlrEgreso}"></td>
-    </tr>
+<div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
+<div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-    <tr th:if="${#lists.isEmpty(detalle)}">
-      <td colspan="4">No se encontraron registros en egresos_plano.</td>
-    </tr>
-  </tbody>
-</table>
+<form class="filters" method="get" th:action="@{/egresos}">
+  <label>Proveedor
+    <input type="text" name="proveedor" th:value="${proveedor}">
+  </label>
 
-  <div id="modal" class="modal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h3>Nuevo egreso</h3>
-        <button class="btn" type="button" onclick="closeModal()">X</button>
+  <label>Fecha
+    <input type="date" name="fechaDocumento" th:value="${fechaDocumento}">
+  </label>
+
+  <label>Egreso:
+    <input type="text" name="numeroEgreso" th:value="${numeroEgreso}">
+  </label>
+
+  <div class="filters-actions">
+  <button class="btn btn-primary" type="submit">Filtrar</button>
+  <a class="btn" th:href="@{/egresos}">Limpiar</a>
+</div>
+
+</form>
+
+<div class="page-actions">
+  <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>UPLOAD</th>
+        <th>DOCUMENTO DE EGRESO</th>
+        <th>FECHA DE DOCUMENTO</th>
+        <th>TERCERO</th>
+        <th>RAZON SOCIAL</th>
+        <th>VALOR DE EGRESO</th>
+        <th>NOTAS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="e : ${egresos}">
+        <td th:text="${e.uploadId != null ? e.uploadId : '-'}"></td>
+        <td th:text="${e.doctoEgreso}"></td>
+        <td th:text="${e.fechaEgreso != null ? e.fechaEgreso : '-'}"></td>
+        <td th:text="${e.tercero}"></td>
+        <td th:text="${e.razonSocial}"></td>
+        <td th:text="${e.valorEgreso != null ? #numbers.formatDecimal(e.valorEgreso, 1, 'COMMA', 2, 'POINT') : '-'}"></td>
+        <td th:text="${e.notas != null && !#strings.isEmpty(e.notas) ? e.notas : '-'}"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(egresos)}">
+        <td colspan="7">No hay egresos para los filtros seleccionados.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+
+
+<div id="modal" class="modal hidden" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>Nuevo egreso</h3>
+      <button class="btn" type="button" onclick="closeModal()">X</button>
+    </div>
+
+    <form class="modal-form" method="post" action="/egresos" enctype="multipart/form-data">
+      <div class="field-row">
+        <label>Numero egreso:</label>
+        <input type="text" name="numeroEgreso" required maxlength="30">
       </div>
 
-      <form method="post" th:action="@{/egresos}" enctype="multipart/form-data">
-        <div>
-          <label>Número egreso:</label>
-          <input type="text" name="numeroEgreso" required maxlength="30">
-        </div>
+      <div class="field-row">
+        <label>Proveedor:</label>
+        <input type="text" name="proveedor" required maxlength="120">
+      </div>
 
-        <div>
-          <label>Proveedor:</label>
-          <select name="proveedor" required>
-            <option value="">Seleccione un proveedor</option>
-            <option th:each="p : ${proveedoresOptions}"
-                    th:value="${p.usuarioCodigo}"
-                    th:text="${p.usuario.nombreUsuario}">
-            </option>
-          </select>
-        </div>
+      <div class="field-row">
+        <label>Valor egreso:</label>
+        <input type="number" step="0.01" name="valorEgreso" required>
+      </div>
 
-        <div>
-          <label>Valor egreso:</label>
-          <input type="number" step="0.01" name="valorEgreso" required>
-        </div>
+      <div class="field-row">
+        <label>Fecha documento:</label>
+        <input type="date" name="fechaDocumento" required>
+      </div>
 
-        <div>
-          <label>Fecha documento:</label>
-          <input type="date" name="fechaDocumento" required>
-        </div>
+      <div class="field-row">
+        <label>Cargar soporte pago:</label>
+        <input type="file" name="soporte" accept="application/pdf,image/*">
+      </div>
 
-        <div>
-          <label>Cargar soporte pago:</label>
-          <input type="file" name="soporte" accept="application/pdf,image/*">
-        </div>
-
-        <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;">
-          <button class="btn btn-primary" type="submit">Guardar</button>
-          <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
-        </div>
-      </form>
-    </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" type="submit">guardar</button>
+        <button class="btn" type="button" onclick="closeModal()">cancelar</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <script>
-    function openModal() {
-      document.getElementById('modal').style.display = 'block';
-    }
+<script>
+  function openModal(){ document.getElementById('modal').classList.remove('hidden'); }
+  function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+</script>
 
-    function closeModal() {
-      document.getElementById('modal').style.display = 'none';
-    }
-
-    lucide.createIcons();
-  </script>
 </body>
 </html>

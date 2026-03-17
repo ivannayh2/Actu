@@ -4,45 +4,152 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Inicio</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" th:href="@{JS/css/principal.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/principal.css}">
 </head>
+
 <body>
 
 <div th:replace="~{fragments/topbar :: topbar('home')}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar('home')}"></div>
 
-<main class="container">
-  <h1>Inicio</h1>
-  <p>Contenido del dashboard / página principal…</p>
-
-
-  <section class="card">
-  <h2>Cargar archivos planos</h2>
-
-  <form th:action="@{/uploads/planos}" method="post" enctype="multipart/form-data">
-    <div>
-      <label>Egresos (TXT):</label>
-      <input type="file" name="egresosFile" accept=".txt,text/plain" required>
+  <main class="container home-main">
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Inicio</h1>
+        <p class="subtitle-main">Carga de archivos planos del sistema</p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="submit" form="uploadPlanosForm">Cargar y procesar</button>
+      </div>
     </div>
 
-    <div>
-      <label>Facturas (TXT):</label>
-      <input type="file" name="facturasFile" accept=".txt,text/plain" required>
-    </div>
+    <section class="home-grid">
+      <article class="home-card">
+        <h2>Archivos planos</h2>
+        <p class="card-subtitle">Selecciona los tres archivos TXT requeridos para procesar la informacion.</p>
 
-    <div>
-      <label>Notas (TXT):</label>
-      <input type="file" name="notasFile" accept=".txt,text/plain" required>
-    </div>
+        <form id="uploadPlanosForm" class="upload-form" th:action="@{/uploads/planos}" method="post" enctype="multipart/form-data">
+  <div class="upload-grid">
+    <label class="field">
+      <span class="label-text">Egresos (TXT) *</span>
+      <div class="drop-zone">
+        <input type="file" name="egresosFile" accept=".txt,text/plain" required>
+        <div class="drop-content">
+          <img th:src="@{/icons/archivo.png}" class="icon" alt="archivo">
+          <p>Selecciona o arrastra aquí</p>
+        </div>
+      </div>
+    </label>
+    
+    <label class="field">
+      <span class="label-text">Facturas (TXT) *</span>
+      <div class="drop-zone">
+        <input type="file" name="facturasFile" accept=".txt,text/plain" required>
+        <div class="drop-content">
+          <img th:src="@{/icons/archivo.png}" class="icon" alt="archivo">
+          <p>Selecciona o arrastra aquí</p>
+        </div>
+      </div>
+    </label>
 
-    <button type="submit">Cargar y procesar</button>
-  </form>
+    <label class="field">
+      <span class="label-text">Notas (TXT) *</span>
+      <div class="drop-zone">
+        <input type="file" name="notasFile" accept=".txt,text/plain" required>
+        <div class="drop-content">
+          <img th:src="@{/icons/archivo.png}" class="icon" alt="archivo">
+          <p>Selecciona o arrastra aquí</p>
+        </div>
+      </div>
+    </label>
+  </div>
+</form>
 
-  <p th:if="${msg}" th:text="${msg}"></p>
-</section>
+        <p class="status-msg" th:if="${msg}" th:text="${msg}"></p>
+      </article>
 
-</main>
+    </section>
+  </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Inicio siempre arranca colapsado
+    document.body.classList.remove('sidebar-open');
+
+    // Limpia botón legacy si quedó en una versión previa del template
+    document.querySelectorAll('.toggle-sidebar-trigger').forEach(function (el) {
+      el.remove();
+    });
+
+    // Si por cache/render hay duplicados, conserva solo el primero
+    document.querySelectorAll('.topbar').forEach(function (el, idx) {
+      if (idx > 0) el.remove();
+    });
+    document.querySelectorAll('#sidebar').forEach(function (el, idx) {
+      if (idx > 0) el.remove();
+    });
+
+    var toggle = document.getElementById('sidebarToggle');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !overlay) return;
+
+    // Reemplaza nodos para evitar listeners duplicados en esta vista
+    var cleanToggle = toggle.cloneNode(true);
+    toggle.parentNode.replaceChild(cleanToggle, toggle);
+
+    var cleanOverlay = overlay.cloneNode(true);
+    overlay.parentNode.replaceChild(cleanOverlay, overlay);
+
+    function closeSidebar() {
+      document.body.classList.remove('sidebar-open');
+      document.querySelectorAll('#sidebar details[open]').forEach(function (item) {
+        item.open = false;
+      });
+    }
+
+    cleanToggle.addEventListener('click', function () {
+      if (document.body.classList.contains('sidebar-open')) {
+        closeSidebar();
+        return;
+      }
+      document.body.classList.add('sidebar-open');
+    });
+
+    cleanOverlay.addEventListener('click', closeSidebar);
+
+    document.querySelectorAll('input[type="file"]').forEach(function (input) {
+      input.addEventListener('change', function () {
+        if (!this.files || !this.files[0]) {
+          return;
+        }
+
+        var dropZone = this.closest('.drop-zone');
+        var content = dropZone ? dropZone.querySelector('.drop-content') : null;
+        var fileName = this.files[0].name;
+        var fileSize = (this.files[0].size / 1024).toFixed(2);
+
+        if (dropZone) {
+          dropZone.classList.add('has-file');
+        }
+
+        if (content) {
+          content.innerHTML =
+            '<span class="icon">TXT</span>' +
+            '<p>' + fileName + '</p>' +
+            '<small>' + fileSize + ' KB</small>';
+        }
+      });
+    });
+  });
+</script>
+
+
 </body>
 </html>
-

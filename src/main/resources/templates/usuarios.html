@@ -4,33 +4,100 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Usuarios</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
 
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
 </head>
 <body>
 
 <div th:replace="~{fragments/topbar :: topbar('usuarios')}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar('usuarios')}"></div>
+
+
 
 <main class="container">
-  <h1>Usuarios</h1>
+  <div class="page-head">
+    <div class="page-head-left">
+      <h1>Usuarios</h1>
+      <p class="subtitle-main">Gestión de Accesos de Usuario</p>
+    </div>
+    <div class="actions">
+      <button id="btnNuevo" class="btn primary" type="button">
+        <span class="btn-icon-wrap" aria-hidden="true">
+          <img class="btn-icon-img" th:src="@{/icons/newUserIcon.png}" alt="">
+        </span>
+        <span>Nuevo usuario</span>
+      </button>
+    </div>
+  </div>
 
-  <div class="actions">
-    <button id="btnNuevo" class="btn primary" type="button">Nuevo usuario</button>
+  <div class="users-toolbar" role="tablist" aria-label="Filtros de usuarios">
+    <button class="users-tab is-active" type="button" data-user-filter="all" role="tab" aria-selected="true">
+      <span>Todos</span>
+      <span id="filterAllCount" class="tab-count">0</span>
+    </button>
+    <button class="users-tab" type="button" data-user-filter="inactive" role="tab" aria-selected="false">
+      <span>Inactivos</span>
+      <span id="filterInactiveCount" class="tab-count">0</span>
+    </button>
   </div>
 
   <section class="roles-grid">
     <article class="role-card role-admin">
-      <div class="role-title">Administrador</div>
+      <div class="role-title">Administrador <span class="user-count" th:text="|${porRol['ADMINISTRADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-admin">
-          <li th:each="u : ${porRol['ADMINISTRADOR']}" class="user-item">
-            <div>
-              <strong th:text="${u.nombreUsuario}">Nombre</strong><br>
-              <small th:text="${u.codigo}">COD</small>
+            <li th:each="u,iterStat : ${porRol['ADMINISTRADOR']}" class="user-item"
+              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <div class="user-main">
+              <div class="user-avatar-wrap">
+                <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/adminIcon.png}" alt="">
+                <span class="status-dot"
+                      th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
+              </div>
+              <div class="user-meta">
+                <strong th:text="${u.nombreUsuario}">Nombre</strong><br>
+                <small th:text="${u.codigo}">COD</small>
+              </div>
             </div>
             <div class="row-actions">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
-              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
+
+              <div class="user-menu">
+                <button class="kebab-btn" type="button">⋮</button>
+                <ul class="kebab-dropdown">
+                  <li>
+                    <button type="button" class="menu-item"
+                            th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
+                            th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                      <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <svg class="menu-icon-svg menu-icon-enable" viewBox="0 0 24 24" role="img" focusable="false">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <path d="M8.5 12.5l2.5 2.5 4.5-5"></path>
+                        </svg>
+                      </span>
+                      <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
+                      </span>
+                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="menu-item" th:attr="data-del=${u.codigo}">
+                      <span class="menu-icon" aria-hidden="true">
+                        <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
+                      </span>
+                      <span class="menu-label">Eliminar</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
             </div>
           </li>
         </ul>
@@ -38,35 +105,127 @@
     </article>
 
     <article class="role-card role-pub">
-      <div class="role-title">Publicador</div>
+      <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-pub">
-          <li th:each="u : ${porRol['PUBLICADOR']}" class="user-item">
-            <div>
-              <strong th:text="${u.nombreUsuario}"> </strong><br>
-              <small th:text="${u.codigo}"> </small>
+            <li th:each="u,iterStat : ${porRol['PUBLICADOR']}" class="user-item"
+              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <div class="user-main">
+              <div class="user-avatar-wrap">
+                <img class="user-avatar-icon user-avatar-img user-avatar-publicador" th:src="@{/icons/PublicadorIcon.png}" alt="">
+                <span class="status-dot"
+                      th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
+              </div>
+              <div class="user-meta">
+                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <small th:text="${u.codigo}">COD</small>
+              </div>
             </div>
             <div class="row-actions">
-              <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
-              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
-            </div>
+
+  <button class="icon-btn"
+          type="button"
+          th:attr="data-edit=${u.codigo}">
+    Editar
+  </button>
+
+  <div class="user-menu">
+
+    <button class="kebab-btn" type="button">⋮</button>
+
+    <ul class="kebab-dropdown">
+
+      <li>
+        <button type="button"
+                class="menu-item"
+                th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
+                th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+          <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+            <svg class="menu-icon-svg menu-icon-enable" viewBox="0 0 24 24" role="img" focusable="false">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M8.5 12.5l2.5 2.5 4.5-5"></path>
+            </svg>
+          </span>
+          <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+            <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
+          </span>
+          <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+            Inactivar
+          </span>
+        </button>
+      </li>
+
+      <li>
+        <button type="button"
+                class="menu-item"
+                th:attr="data-del=${u.codigo}">
+          <span class="menu-icon" aria-hidden="true">
+            <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
+          </span>
+          <span class="menu-label">Eliminar</span>
+        </button>
+      </li>
+
+    </ul>
+
+  </div>
+
+</div>
           </li>
         </ul>
       </div>
     </article>
 
     <article class="role-card role-prov">
-      <div class="role-title">Proveedor</div>
+      <div class="role-title">Proveedor <span class="user-count" th:text="|${porRol['PROVEEDORES'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-prov">
-          <li th:each="u : ${porRol['PROVEEDOR']}" class="user-item">
-            <div>
-              <strong th:text="${u.nombreUsuario}"> </strong><br>
-              <small th:text="${u.codigo}"> </small>
+            <li th:each="u,iterStat : ${porRol['PROVEEDORES']}" class="user-item"
+              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <div class="user-main">
+              <div class="user-avatar-wrap">
+                <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/proveedorIcon.png}" alt="">
+                <span class="status-dot"
+                      th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
+              </div>
+              <div class="user-meta">
+                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <small th:text="${u.codigo}">COD</small>
+              </div>
             </div>
             <div class="row-actions">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
-              <button class="icon-btn" type="button" th:attr="data-del=${u.codigo}">Eliminar</button>
+
+              <div class="user-menu">
+                <button class="kebab-btn" type="button">⋮</button>
+                <ul class="kebab-dropdown">
+                  <li>
+                    <button type="button" class="menu-item"
+                            th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
+                            th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                      <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <svg class="menu-icon-svg menu-icon-enable" viewBox="0 0 24 24" role="img" focusable="false">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <path d="M8.5 12.5l2.5 2.5 4.5-5"></path>
+                        </svg>
+                      </span>
+                      <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
+                      </span>
+                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="menu-item" th:attr="data-del=${u.codigo}">
+                      <span class="menu-icon" aria-hidden="true">
+                        <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
+                      </span>
+                      <span class="menu-label">Eliminar</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
             </div>
           </li>
         </ul>
@@ -100,7 +259,7 @@
         <select id="rol" name="rol" required autocomplete="off">
           <option value="ADMINISTRADOR">ADMINISTRADOR</option>
           <option value="PUBLICADOR">PUBLICADOR</option>
-          <option value="PROVEEDOR">PROVEEDOR</option>
+          <option value="PROVEEDORES">PROVEEDORES</option>
         </select>
       </label>
 
@@ -131,6 +290,6 @@
   </div>
 </div>
 
-<script th:src="@{/js/usuarios.js}"></script>
+<script th:src="@{/JS/usuarios.js}"></script>
 </body>
 </html>
