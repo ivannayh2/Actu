@@ -3,11 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Detalle facturas</title>
+<<<<<<< HEAD
   <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
   <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+=======
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
 
   <div class="detalle-container">
     <h2>Facturas relacionadas</h2>
