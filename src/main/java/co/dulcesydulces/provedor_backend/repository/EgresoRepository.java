@@ -23,7 +23,10 @@ public interface EgresoRepository extends JpaRepository<Egreso, String> {
         @Param("proveedor") String proveedor,
         @Param("numero") String numero,
         @Param("fecha") LocalDate fecha
+ 
     );
+
+    
 }
 
 

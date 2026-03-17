@@ -1,276 +1,278 @@
-:root{
-  --bg: #f6f8fb;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-
-  --primary: #2f6bff;
-  --primary-2: #1f55e6;
-  --shadow: 0 14px 30px rgba(16, 24, 40, .10);
-  --shadow-soft: 0 10px 22px rgba(16, 24, 40, .08);
-
-  --radius: 14px;
-  --focus: 0 0 0 4px rgba(47, 107, 255, .18);
+.egresos-page {
+max-width: 1320px;
+font-family: "Public Sans", "Segoe UI", sans-serif;
 }
 
-/* =========================
-   BASE
-========================= */
-
-*{ box-sizing:border-box; }
-
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1200px 500px at 50% 0%, #ffffff 0%, var(--bg) 55%, #f2f4f8 100%);
-  color: var(--text);
+.egresos-page .btn {
+border: 1px solid #dbe4f3;
+background: #ffffff;
+padding: 10px 16px;
+border-radius: 12px;
+cursor: pointer;
+font-size: 13px;
+font-weight: 700;
+color: #1f2937;
+transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
-/* =========================
-   BOTONES
-========================= */
-
-.btn{
-  appearance:none;
-  border: 1px solid var(--border);
-  background: #fff;
-  color: var(--text);
-  padding: 10px 16px;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all .18s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap: 8px;
-  box-shadow: 0 6px 14px rgba(16,24,40,.06);
+.egresos-page .btn:hover {
+background: #f3f7ff;
+border-color: #cad7ed;
 }
 
-.btn:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(16,24,40,.10);
+.egresos-page .btn.btn-primary {
+background: linear-gradient(90deg, #602ff5, #5b2af7 52%, #4e1fe8 100%);
+border: 0;
+color: #ffffff;
+box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
 }
 
-.btn-primary{
-  background: linear-gradient(180deg, #3a74ff 0%, var(--primary) 100%);
-  border-color: rgba(47, 107, 255, .45);
-  color: #fff;
-  box-shadow: 0 12px 26px rgba(47,107,255,.25);
+.egresos-page .btn.btn-primary:hover {
+background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
+transform: translateY(-1px);
 }
 
-.btn-primary:hover{
-  background: linear-gradient(180deg, #2f6bff 0%, var(--primary-2) 100%);
+.egresos-page .alert {
+margin: 0 0 10px;
+padding: 10px 12px;
+border-radius: 10px;
+font-size: 13px;
+font-weight: 600;
+border: 1px solid transparent;
 }
 
-/* =========================
-   MODAL
-========================= */
-
-.modal{
-  display:none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, .45);
-  backdrop-filter: blur(6px);
-  padding: 24px;
-  z-index: 9999;
+.egresos-page .alert-ok {
+background: #ecfdf3;
+border-color: #86efac;
+color: #166534;
 }
 
-.modal-content{
-  max-width: 520px;
-  margin: 6vh auto;
-  background: var(--card);
-  border-radius: 18px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.22);
-  padding: 20px;
+.egresos-page .alert-error {
+background: #fef2f2;
+border-color: #fca5a5;
+color: #b91c1c;
 }
 
-/* =========================
-   CONTENEDOR GENERAL
-========================= */
-
-.filters,
-div[style*="color:green"],
-div[style*="color:red"]{
-  max-width: 1120px;
-  margin: 0 auto;
+.egresos-page .filters {
+margin: 0;
+padding: 14px;
+background: #ffffff;
+border: 1px solid #e5eaf3;
+border-radius: 14px;
+box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 10px 12px;
+align-items: end;
 }
 
-/* =========================
-   FILTROS
-========================= */
-
-.filters{
-  margin-top: 20px;
-  padding: 22px;
-  background: var(--card);
-  border: 5px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px 20px;
+.egresos-page .filters label {
+display: grid;
+gap: 6px;
+font-size: 12px;
+font-weight: 700;
+color: #374151;
 }
 
-.filters .field{
-  display: grid;
-  gap: 8px;
+.egresos-page .filters input[type="text"],
+.egresos-page .filters input[type="date"] {
+width: 100%;
+height: 40px;
+padding: 8px 12px;
+border-radius: 10px;
+border: 1px solid #dbe3f1;
+background: #ffffff;
+font-size: 13px;
+color: #111827;
+transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.filters label{
-  font-size: 12px;
-  font-weight: 700;
-  color: #374151;
+.egresos-page .filters input:focus {
+outline: none;
+border-color: #9eb8e4;
+box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
 }
 
-.filters input{
-  height: 44px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 2px solid var(--border);
-  background: #fff;
-  box-shadow: 0 6px 14px rgba(16,24,40,.05);
-  transition: all .18s ease;
+.egresos-page .filters-actions {
+grid-column: 1 / -1;
+display: flex;
+justify-content: flex-end;
+gap: 10px;
 }
 
-.filters input:focus{
-  outline: none;
-  border-color: rgba(47,107,255,.55);
-  box-shadow: var(--focus);
+.egresos-page .page-actions {
+padding: 12px 0;
+display: flex;
+justify-content: flex-start;
 }
 
-.filters-actions{
-  grid-column: 1 / -1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+.egresos-page .table-wrap {
+background: #ffffff;
+border: 1px solid #e5eaf3;
+border-radius: 14px;
+box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+overflow: hidden;
 }
 
-/* =========================
-   TABLA
-========================= */
-
-table{
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: var(--card);
-  border: 1px solid #e7ebf2;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow-soft);
+.egresos-page table {
+width: 100%;
+border-collapse: separate;
+border-spacing: 0;
 }
 
-thead th{
-  text-align: left;
-  font-size: 12px;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  padding: 14px 16px;
-  background: linear-gradient(180deg, #f4f6fb 0%, #eef2f8 100%);
-  border-bottom: 1px solid #e7ebf2;
-  white-space: nowrap;
+.egresos-page thead th {
+text-align: left;
+font-size: 11px;
+letter-spacing: 0.02em;
+padding: 11px 12px;
+background: #f8faff;
+color: #1f2937;
+border-bottom: 1px solid #e5eaf3;
+white-space: nowrap;
 }
 
-tbody td{
-  padding: 14px 16px;
-  font-size: 14px;
-  border-bottom: 1px solid #e9edf5;
-  vertical-align: middle;
+.egresos-page tbody td {
+padding: 11px 12px;
+border-bottom: 1px solid #eef2f8;
+color: #0f172a;
+font-size: 13px;
+vertical-align: middle;
 }
 
-/* ZEBRA MÁS MARCADA */
-
-tbody tr:nth-child(odd) td{
-  background: #ffffff;
+.egresos-page tbody tr:nth-child(even) td {
+background: #fbfdff;
 }
 
-tbody tr:nth-child(even) td{
-  background: #f1f4fb;
+.egresos-page tbody tr:hover td {
+background: #f1f6ff;
 }
 
-tbody tr:hover td{
-  background: #e4ecff;
-  transition: background .15s ease;
+.egresos-page tbody tr:last-child td {
+border-bottom: none;
 }
 
-tbody tr:last-child td{
-  border-bottom: none;
+.egresos-page .modal {
+position: fixed;
+inset: 0;
+z-index: 60;
+display: grid;
+place-items: center;
+background: rgba(15, 23, 42, 0.35);
+backdrop-filter: blur(2px);
 }
 
-/* Primera columna más fuerte */
-tbody td:first-child{
-  font-weight: 700;
+.egresos-page .modal.hidden {
+display: none;
 }
 
-/* Columna valor alineada derecha */
-thead th:nth-child(4),
-tbody td:nth-child(4){
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+.egresos-page .modal-content {
+width: min(94vw, 520px);
+background: #ffffff;
+border: 1px solid #e5eaf3;
+border-radius: 16px;
+padding: 18px;
+box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
 }
 
-/* Columna acciones derecha */
-thead th:nth-child(5),
-tbody td:nth-child(5){
-  text-align: right;
+.egresos-page .modal-head {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
 }
 
-/* Links tabla */
-table a{
-  color: var(--primary-2);
-  font-weight: 700;
-  text-decoration: none;
+.egresos-page .modal-head h3 {
+margin: 0;
+font-size: 18px;
+font-weight: 700;
 }
 
-table a:hover{
-  text-decoration: underline;
+.egresos-page .modal-form {
+display: grid;
+gap: 10px;
 }
 
-/* =========================
-   ACCIONES
-========================= */
-
-.actions{
-  display: inline-flex;
-  gap: 10px;
-  justify-content: flex-end;
+.egresos-page .field-row {
+display: grid;
+gap: 6px;
 }
 
-.action-link{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.egresos-page .field-row label {
+font-size: 12px;
+font-weight: 700;
+color: #374151;
 }
 
-.action-link svg{
-  width: 16px;
-  height: 16px;
+.egresos-page .field-row input {
+height: 40px;
+border: 1px solid #dbe3f1;
+border-radius: 10px;
+padding: 8px 12px;
+font-size: 13px;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 900px){
-  .filters{
-    grid-template-columns: 1fr;
-  }
-  .filters-actions{
-    justify-content: flex-start;
-  }
+.egresos-page .field-row input[type="file"] {
+height: 40px;
+padding: 4px 6px;
+background: #ffffff;
+color: #374151;
 }
 
-@media (max-width: 820px){
-  table{
-    min-width: 760px;
-  }
-  div[style*="padding:12px;"]{
-    overflow-x: auto;
-  }
+.egresos-page .field-row input[type="file"]::file-selector-button {
+height: 30px;
+margin-right: 10px;
+border: 1px solid #dbe3f1;
+border-radius: 8px;
+background: #f8faff;
+color: #334155;
+font-size: 12px;
+font-weight: 600;
+padding: 0 10px;
+cursor: pointer;
+}
+
+.egresos-page .field-row input[type="file"]:hover::file-selector-button {
+background: #eef4ff;
+border-color: #c8d7ee;
+}
+
+.egresos-page .field-row input:focus {
+outline: none;
+border-color: #9eb8e4;
+box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+.egresos-page .modal-actions {
+margin-top: 6px;
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+}
+
+@media (max-width: 980px) {
+.egresos-page .filters {
+grid-template-columns: 1fr;
+}
+
+.egresos-page .filters-actions {
+justify-content: flex-start;
+}
+}
+
+@media (max-width: 860px) {
+.egresos-page .table-wrap {
+overflow-x: auto;
+}
+
+.egresos-page table {
+min-width: 900px;
+}
+
+.egresos-page .modal-actions {
+flex-direction: column;
+}
+
+.egresos-page .modal-actions .btn {
+width: 100%;
+}
 }

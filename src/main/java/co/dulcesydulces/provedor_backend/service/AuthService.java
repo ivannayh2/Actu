@@ -23,6 +23,11 @@ public class AuthService {
         Usuarios user = usuarioRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new RuntimeException("Usuario no existe"));
 
+        // Verifica que el usuario esté activo
+        if (!"activo".equals(user.getEstado_u())) {
+            throw new RuntimeException("Usuario desactivado");
+        }
+
         if (!encoder.matches(password_hash, user.getPassword_hash())) {
             throw new RuntimeException("Clave incorrecta");
         }

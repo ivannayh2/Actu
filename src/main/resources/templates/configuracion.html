@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Configuración</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/principal.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/topbar :: topbar('configuracion')}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar('configuracion')}"></div>
+
+<main class="container home-main">
+  <div class="page-head">
+    <div class="page-head-left">
+      <h1>Configuración</h1>
+      <p class="subtitle-main">Selecciona el módulo de configuración que deseas administrar.</p>
+    </div>
+  </div>
+
+  <section class="home-card">
+    <h2>Submenú de configuración</h2>
+    <p class="card-subtitle">Aquí se concentran los módulos de administración y perfil.</p>
+
+    <div class="config-grid">
+      <a class="config-link" th:href="@{/usuarios}">
+        <strong>Usuarios</strong>
+        <span>Gestiona accesos, estados y roles del sistema.</span>
+      </a>
+
+      <a class="config-link" th:href="@{/configuracion/perfil}">
+        <strong>Perfil</strong>
+        <span>Cambia tu clave de acceso y revisa tu información.</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<style>
+  .config-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .config-link {
+    display: grid;
+    gap: 6px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #dbe2ea;
+    border-radius: 12px;
+    padding: 18px;
+    background: #ffffff;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+
+  .config-link strong {
+    font-size: 16px;
+    color: #0f172a;
+  }
+
+  .config-link span {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.35;
+  }
+
+  .config-link:hover {
+    transform: translateY(-1px);
+    border-color: #2563eb;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+  }
+
+  @media (max-width: 760px) {
+    .config-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+</body>
+</html>

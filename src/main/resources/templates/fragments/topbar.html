@@ -1,69 +1,48 @@
-<!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<body>
+<th:block th:fragment="topbar(active)">
+<header class="topbar">
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menú">☰</button>
 
-<header class="topbar" th:fragment="topbar(active)">
-<link rel="stylesheet" th:href="@{/JS/css/principal.css}">
-  <!-- IZQUIERDA: LOGO -->
-  <div class="brand">
-    <div class="logo">
-      <img th:src="@{/img/logo.png}" alt="Logo">
+  <div class="topbar-spacer"></div>
+
+  <div class="profile-section">
+    <div class="user-info">
+      <div class="avatar">👤</div>
+      <span sec:authentication="name">Usuario</span>
     </div>
+
+    <form class="logout-form" th:action="@{/logout}" method="post">
+      <button type="submit" class="logout-btn">
+        <img class="logout-icon" th:src="@{/icons/salida.svg}" src="/icons/salida.svg" alt="" aria-hidden="true">
+        <span>Salir</span>
+      </button>
+    </form>
   </div>
-
-  <!-- CENTRO: MENU -->
-  <nav class="nav">
-    <div class="nav-inner">
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('HOME')}"
-         th:href="@{/home}"
-         th:classappend="${active}=='home' ? 'active' : ''">
-        Inicio
-      </a>
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('FACTURAS')}"
-         th:href="@{/facturas}"
-         th:classappend="${active}=='facturas' ? 'active' : ''">
-        Facturas
-      </a>
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('NOTAS')}"
-         th:href="@{/notas}"
-         th:classappend="${active}=='notas' ? 'active' : ''">
-        Notas
-      </a>
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('EGRESOS')}"
-         th:href="@{/egresos}"
-         th:classappend="${active}=='egresos' ? 'active' : ''">
-        Comprobante egreso
-      </a>
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('USUARIOS')}"
-         th:href="@{/usuarios}"
-         th:classappend="${active}=='usuarios' ? 'active' : ''">
-        Usuarios
-      </a>
-
-      <a th:if="${modulosPermitidos != null and modulosPermitidos.contains('HISTORIAL')}"
-         th:href="@{/historial}"
-         th:classappend="${active}=='historial' ? 'active' : ''">
-        Historial
-      </a>
-
-    </div>
-  </nav>
-
-  <!-- DERECHA: PERFIL -->
-  <div class="profile">
-    <div class="avatar" title="Configuración">⚙️</div>
-    <div class="avatar">👤</div>
-    <div class="small"
-         th:text="${nombreUsuario != null ? nombreUsuario : 'Usuario'}">
-      Usuario
-    </div>
-  </div>
-
 </header>
-</body>
-</html>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('sidebarToggle');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !overlay) return;
+
+    function closeSidebar() {
+      document.body.classList.remove('sidebar-open');
+      document.querySelectorAll('#sidebar details[open]').forEach(function (item) {
+        item.open = false;
+      });
+    }
+
+    toggle.addEventListener('click', function () {
+      if (document.body.classList.contains('sidebar-open')) {
+        closeSidebar();
+        return;
+      }
+      document.body.classList.add('sidebar-open');
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+  });
+</script>
+</th:block>

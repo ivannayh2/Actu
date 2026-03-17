@@ -2,42 +2,52 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <title>Detalle de egreso</title>
+  <title>Detalle egreso</title>
+
+  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
 </head>
 <body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
 
-  <h2>Detalle del egreso</h2>
-  <p>
-    <strong>Docto egreso:</strong>
-    <span th:text="${doctoEgreso}"></span>
-  </p>
+  <div class="detalle-container">
+    <h2>
+      Detalle del egreso:
+      <span th:text="${doctoEgreso}"></span>
+    </h2>
 
-  <a th:href="@{/egresos}">Volver</a>
+    <a class="btn" th:href="@{/egresos}">Volver</a>
+  </div>
 
-  <table border="1">
+  <table class="tabla-egresos">
     <thead>
       <tr>
         <th>Docto causación</th>
-        <th>Docto egreso</th>
-        <th>Fecha</th>
+        <th>Fecha egreso</th>
         <th>Tercero</th>
-        <th>Valor</th>
+        <th>Valor egreso</th>
       </tr>
     </thead>
     <tbody>
-      <tr th:each="item : ${detalles}">
-        <td th:text="${item.doctoCausacion}"></td>
-        <td th:text="${item.doctoEgreso}"></td>
-        <td th:text="${item.fecha}"></td>
-        <td th:text="${item.tercero}"></td>
-        <td th:text="${item.valor}"></td>
+      <tr th:each="d : ${detalles}">
+        <td>
+          <div class="acciones-causacion">
+            <span th:text="${d.doctoCausacion}"></span>
+            <a class="btn btn-primary"
+               th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+              Ver detalle
+            </a>
+          </div>
+        </td>
+        <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
+        <td th:text="${d.tercero}"></td>
+        <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
       </tr>
 
       <tr th:if="${#lists.isEmpty(detalles)}">
-        <td colspan="5">No se encontraron doctos de causación relacionados.</td>
+        <td colspan="4">No se encontraron doctos de causación relacionados.</td>
       </tr>
     </tbody>
   </table>
-
 </body>
 </html>

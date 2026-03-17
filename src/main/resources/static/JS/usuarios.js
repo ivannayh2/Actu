@@ -46,6 +46,7 @@ btnNuevo.addEventListener("click", () => {
   editMode = false;
   editingCodigo = null;
   inputCodigo.disabled = false;
+  inputPasswordHash.required = true; // requerido en creación
   openModal("Nuevo usuario");
 });
 
@@ -90,27 +91,66 @@ async function apiDelete(codigo) {
   return text ? JSON.parse(text) : {};
 }
 
+async function apiToggleStatus(codigo) {
+  const r = await fetch(`/api/usuarios/${encodeURIComponent(codigo)}/desactivar`, {
+    method: "PUT",
+    headers: csrfHeaders()
+  });
+
+  const text = await r.text();
+  if (!r.ok) throw new Error(text || "Error cambiando estado");
+  return text ? JSON.parse(text) : {};
+}
+
 /* Edit/Delete desde botones */
 document.addEventListener("click", async (e) => {
-  const edit = e.target.getAttribute("data-edit");
-  const del = e.target.getAttribute("data-del");
+  const editBtn = e.target.closest("[data-edit]");
+  const delBtn = e.target.closest("[data-del]");
+  const disableBtn = e.target.closest("[data-disable]");
+
+  const edit = editBtn?.getAttribute("data-edit");
+  const del = delBtn?.getAttribute("data-del");
+  const disable = disableBtn?.getAttribute("data-disable");
+
+  if (disable) {
+    const estadoActual = (disableBtn.getAttribute("data-estado") || "activo").toLowerCase();
+    const accion = estadoActual === "inactivo" ? "activar" : "inactivar";
+
+    if (!confirm(`¿${accion.charAt(0).toUpperCase() + accion.slice(1)} usuario ${disable}?`)) return;
+
+    try {
+      await apiToggleStatus(disable);
+      location.reload();
+    } catch (err) {
+      alert(err.message);
+    }
+  }
 
   if (edit) {
-    const data = await apiList();
-    const u = (data.users || []).find(x => x.codigo === edit);
-    if (!u) return;
+    try {
+      const data = await apiList();
+      const u = (data.users || []).find(x => x.codigo === edit);
+      if (!u) {
+        alert("Usuario no encontrado");
+        return;
+      }
 
-    editMode = true;
-    editingCodigo = u.codigo;
-    openModal("Editar usuario");
+      editMode = true;
+      editingCodigo = u.codigo;
+      openModal("Editar usuario");
 
-    inputCodigo.value = u.codigo;
-    inputCodigo.disabled = true;
+      inputCodigo.value = u.codigo;
+      inputCodigo.disabled = true;
 
-    inputRol.value = (u.rol || "ADMINISTRADOR").trim();
-    inputNombre.value = u.nombre_usuario || u.nombreUsuario || "";
-    inputEmail.value = u.email || "";
-    inputPasswordHash.value = ""; // ✅ no mostramos hash, solo se cambia si escriben nueva clave
+      inputRol.value = (u.rol || "ADMINISTRADOR").trim();
+      inputNombre.value = u.nombre_usuario || u.nombreUsuario || "";
+      inputEmail.value = u.email || "";
+      inputPasswordHash.value = ""; // no mostramos hash, solo se cambia si escriben nueva clave
+      inputPasswordHash.required = false; // no requerido en edición
+    } catch (error) {
+      console.error("Error in edit handler:", error);
+      alert("Error al cargar usuario: " + error.message);
+    }
   }
 
   if (del) {
@@ -141,6 +181,7 @@ form.addEventListener("submit", async (e) => {
   try {
     if (!payload.codigo) throw new Error("Código obligatorio");
     if (!payload.rol) throw new Error("Rol obligatorio");
+    if (!payload.nombre_usuario) throw new Error("Nombre obligatorio");
 
     if (editMode) {
       // ✅ si NO escribió clave nueva, no la mandamos (para no romper update)
@@ -161,3 +202,89 @@ form.addEventListener("submit", async (e) => {
     msg.textContent = err.message;
   }
 });
+
+/* ===== USER KEBAB MENUS ===== */
+
+document.addEventListener("click", function(e){
+
+  const kebabBtn = e.target.closest(".kebab-btn");
+
+  if(kebabBtn){
+
+    const menu = kebabBtn.nextElementSibling;
+
+    document
+      .querySelectorAll(".kebab-dropdown")
+      .forEach(m => {
+        if(m !== menu) m.classList.remove("active");
+      });
+
+    menu.classList.toggle("active");
+
+    return;
+  }
+
+  /* cerrar menus si clic afuera */
+
+  if(!e.target.closest(".user-menu")){
+    document
+      .querySelectorAll(".kebab-dropdown")
+      .forEach(m => m.classList.remove("active"));
+  }
+
+  function toggleSidebar(){
+
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+sidebar.classList.toggle("open");
+overlay.classList.toggle("active");
+
+}
+
+});
+
+/* ===== USERS FILTER TABS ===== */
+
+function initUserFilters() {
+  const tabs = Array.from(document.querySelectorAll(".users-tab"));
+  if (!tabs.length) return;
+
+  const items = Array.from(document.querySelectorAll(".user-item"));
+  const allCountEl = document.getElementById("filterAllCount");
+  const inactiveCountEl = document.getElementById("filterInactiveCount");
+
+  const isInactive = (item) => item.classList.contains("is-disabled");
+
+  const updateCounts = () => {
+    const allCount = items.length;
+    const inactiveCount = items.filter(isInactive).length;
+
+    if (allCountEl) allCountEl.textContent = String(allCount);
+    if (inactiveCountEl) inactiveCountEl.textContent = String(inactiveCount);
+  };
+
+  const applyFilter = (filter) => {
+    items.forEach((item) => {
+      const shouldShow = filter === "all" ? true : isInactive(item);
+      item.classList.toggle("hidden-by-filter", !shouldShow);
+    });
+
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.userFilter === filter;
+      tab.classList.toggle("is-active", isActive);
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      applyFilter(tab.dataset.userFilter || "all");
+    });
+  });
+
+  updateCounts();
+  applyFilter("all");
+}
+
+initUserFilters();

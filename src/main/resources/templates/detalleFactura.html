@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detalle facturas</title>
+  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+
+  <div class="detalle-container">
+    <h2>Facturas relacionadas</h2>
+    <p>
+      <strong>Docto causación:</strong>
+      <span th:text="${doctoCausacion}"></span>
+    </p>
+
+    <a class="btn" th:href="@{/egresos}">Volver</a>
+  </div>
+
+  <table class="tabla-egresos">
+    <thead>
+      <tr>
+        <th>Docto causación</th>
+        <th>Documento</th>
+        <th>Fecha</th>
+        <th>Proveedor</th>
+        <th>Descripción</th>
+        <th>Valor neto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="f : ${facturas}">
+        <td th:text="${f.doctoCausacion}"></td>
+        <td th:text="${f.documento}"></td>
+        <td th:text="${#temporals.format(f.fecha, 'dd/MM/yyyy')}"></td>
+        <td th:text="${f.proveedor}"></td>
+        <td th:text="${f.descItem}"></td>
+        <td th:text="'$ ' + ${#numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA')}"></td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(facturas)}">
+        <td colspan="6">No se encontraron facturas relacionadas.</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
