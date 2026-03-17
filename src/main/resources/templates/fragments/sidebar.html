@@ -6,15 +6,15 @@
   </div>
 
   <nav class="sidebar-nav">
-     <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
+     <a sec:authorize="isAuthenticated()"
        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
        <i class="icon-home"></i> <span>Inicio</span>
     </a>
-     <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
+     <a sec:authorize="isAuthenticated()"
        th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
        <i class="icon-egresos"></i> <span>Comprobante egreso</span>
     </a>
-     <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
+     <a sec:authorize="isAuthenticated()"
        th:href="@{/historial}" th:classappend="${active}=='historial' ? 'active' : ''">
        <i class="icon-history"></i> <span>Historial</span>
     </a>
