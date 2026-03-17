@@ -6,7 +6,6 @@
   </div>
 
   <nav class="sidebar-nav">
-<<<<<<< HEAD
     <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'HOME')"
        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
        <i class="icon-home"></i> <span>Inicio</span>
@@ -16,17 +15,6 @@
        <i class="icon-egresos"></i> <span>Comprobante egreso</span>
     </a>
     <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'HISTORIAL')"
-=======
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_HOME')"
-       th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
-       <i class="icon-home"></i> <span>Inicio</span>
-    </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_EGRESOS')"
-       th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
-       <i class="icon-egresos"></i> <span>Comprobante egreso</span>
-    </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_HISTORIAL')"
->>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
        th:href="@{/historial}" th:classappend="${active}=='historial' ? 'active' : ''">
        <i class="icon-history"></i> <span>Historial</span>
     </a>
@@ -40,11 +28,7 @@
         <span class="nav-group-caret" aria-hidden="true">▾</span>
       </summary>
       <nav class="nav-submenu">
-<<<<<<< HEAD
         <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'USUARIOS')"
-=======
-        <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_USUARIOS')"
->>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
           th:href="@{/usuarios}" th:classappend="${active}=='usuarios' ? 'active' : ''">
           <span>Usuarios</span>
         </a>
