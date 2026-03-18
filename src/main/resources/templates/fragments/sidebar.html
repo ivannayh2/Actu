@@ -7,52 +7,48 @@
 
   <nav class="sidebar-nav">
 <<<<<<< HEAD
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'HOME')"
+     <a sec:authorize="isAuthenticated()"
        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
        <i class="icon-home"></i> <span>Inicio</span>
     </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'EGRESOS')"
+     <a sec:authorize="isAuthenticated()"
        th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
        <i class="icon-egresos"></i> <span>Comprobante egreso</span>
     </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'HISTORIAL')"
+     <a sec:authorize="isAuthenticated()"
 =======
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_HOME')"
+    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
        <i class="icon-home"></i> <span>Inicio</span>
     </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_EGRESOS')"
+    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
        th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
        <i class="icon-egresos"></i> <span>Comprobante egreso</span>
     </a>
-    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_HISTORIAL')"
->>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
+    <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
+>>>>>>> e1ec1be (style-interfaz comprobante egreso)
        th:href="@{/historial}" th:classappend="${active}=='historial' ? 'active' : ''">
        <i class="icon-history"></i> <span>Historial</span>
     </a>
 
-         <details class="nav-group"
-           sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')">
+    <details class="nav-group"
+             sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')">
       <summary class="nav-group-toggle"
-            th:classappend="${active == 'configuracion' or active == 'usuarios' or active == 'perfil'} ? 'active' : ''">
+               th:classappend="${active == 'configuracion' or active == 'usuarios' or active == 'perfil'} ? 'active' : ''">
         <i class="icon-user"></i>
         <span>Configuración</span>
         <span class="nav-group-caret" aria-hidden="true">▾</span>
       </summary>
       <nav class="nav-submenu">
-<<<<<<< HEAD
-        <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'USUARIOS')"
-=======
-        <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'MODULO_USUARIOS')"
->>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
-          th:href="@{/usuarios}" th:classappend="${active}=='usuarios' ? 'active' : ''">
+        <a sec:authorize="hasAuthority('ADMINISTRADOR')"
+           th:href="@{/usuarios}" th:classappend="${active}=='usuarios' ? 'active' : ''">
           <span>Usuarios</span>
         </a>
         <a sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR', 'PROVEEDORES')"
-          th:href="@{/configuracion/perfil}" th:classappend="${active}=='perfil' ? 'active' : ''">
+           th:href="@{/configuracion/perfil}" th:classappend="${active}=='perfil' ? 'active' : ''">
           <span>Perfil</span>
         </a>
       </nav>
-     </details>
+    </details>
   </nav>
 </aside>
