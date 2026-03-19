@@ -4,13 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Detalle egreso</title>
-<<<<<<< HEAD
-=======
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
->>>>>>> e1ec1be (style-interfaz comprobante egreso)
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
   <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
@@ -46,9 +43,9 @@
         <tbody>
           <tr th:each="d : ${detalles}">
             <td th:text="${d.doctoCausacion}"></td>
-            <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
+            <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
-            <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
+            <td th:text="${d.vlrEgreso != null ? '$ ' + #numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
             <td class="cell-actions">
               <a class="link-detalle"
                  th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">

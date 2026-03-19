@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Detalle facturas</title>
-  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
-  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
@@ -40,10 +40,10 @@
           <tr th:each="f : ${facturas}">
             <td th:text="${f.doctoCausacion}"></td>
             <td th:text="${f.documento}"></td>
-            <td th:text="${#temporals.format(f.fecha, 'dd/MM/yyyy')}"></td>
+            <td th:text="${f.fecha != null ? #temporals.format(f.fecha, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${f.proveedor}"></td>
             <td th:text="${f.descItem}"></td>
-            <td th:text="'$ ' + ${#numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA')}"></td>
+            <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
           </tr>
 
           <tr th:if="${#lists.isEmpty(facturas)}">
