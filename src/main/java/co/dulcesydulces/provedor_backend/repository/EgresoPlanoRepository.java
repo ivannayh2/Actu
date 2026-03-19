@@ -17,6 +17,7 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
             e.doctoEgreso AS doctoEgreso,
             MAX(e.fechaEgreso) AS fechaEgreso,
             MAX(e.tercero) AS tercero,
+            MAX(e.razonSocial) AS razonSocial,
             SUM(e.vlrEgreso) AS vlrEgreso
         FROM EgresoPlano e
         WHERE (:tercero IS NULL OR :tercero = '' OR LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')))
@@ -36,6 +37,7 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
             e.doctoEgreso AS doctoEgreso,
             MAX(e.fechaEgreso) AS fechaEgreso,
             MAX(e.tercero) AS tercero,
+            MAX(e.razonSocial) AS razonSocial,
             SUM(e.vlrEgreso) AS vlrEgreso
         FROM EgresoPlano e
         WHERE LOWER(e.tercero) = LOWER(:tercero)
