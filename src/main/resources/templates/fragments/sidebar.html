@@ -8,7 +8,7 @@
   <nav class="sidebar-nav">
      <a sec:authorize="isAuthenticated()"
        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
-       <i class="icon-home"></i> <span>Inicio</span>
+       <i class="icon-home"></i> <span>Importar Archivos</span>
     </a>
      <a sec:authorize="isAuthenticated()"
        th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
