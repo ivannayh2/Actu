@@ -104,19 +104,15 @@ display: grid;
 grid-template-columns: 1fr;
 gap: 16px;
 padding: 16px;
-background: rgba(247, 249, 252, 0.55);
-backdrop-filter: blur(6px);
--webkit-backdrop-filter: blur(6px);
-border: 1px solid rgba(226, 232, 240, 0.5);
+background: var(--panel-bg);
+border: 1px solid var(--border-color);
 border-radius: 18px;
 box-shadow: var(--shadow);
 }
 
 .home-card {
-background: rgba(255, 255, 255, 0.60);
-backdrop-filter: blur(4px);
--webkit-backdrop-filter: blur(4px);
-border: 1px solid rgba(226, 232, 240, 0.5);
+background: var(--card);
+border: 1px solid var(--border-color);
 border-radius: 14px;
 padding: 16px;
 box-shadow: var(--shadow-sm);

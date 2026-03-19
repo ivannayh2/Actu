@@ -240,10 +240,17 @@ body.sidebar-open .sidebar {
 
 .sidebar-nav a i,
 .nav-group-toggle i {
+<<<<<<< HEAD
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  flex: 0 0 14px;
+=======
   width: 17px;
   height: 17px;
   display: inline-block;
   flex: 0 0 17px;
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;

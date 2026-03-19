@@ -112,7 +112,11 @@
               th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
             <div class="user-main">
               <div class="user-avatar-wrap">
+<<<<<<< HEAD
+                <img class="user-avatar-icon user-avatar-img user-avatar-publicador" th:src="@{/icons/publicador.svg}" alt="">
+=======
                 <img class="user-avatar-icon user-avatar-img user-avatar-publicador" th:src="@{/icons/PublicadorIcon.png}" alt="">
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>

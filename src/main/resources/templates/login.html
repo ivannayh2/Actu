@@ -4,12 +4,19 @@
   <meta charset="UTF-8" />
   <title>Login</title>
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+<<<<<<< HEAD
+=======
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" th:href="@{/JS/css/login.css}">
+  <link rel="stylesheet" th:href="@{JS/css/login.css}">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body th:classappend="${param.error != null or param.logout != null or param.resetok != null} ? ' intro-skip' : ' intro-active'">
@@ -26,7 +33,11 @@
       <img th:src="@{/img/logo.png}" alt="Logo">
     </div>
 
+<<<<<<< HEAD
+    <h2>Bienvenido!</h2>
+=======
     <h2>Iniciar sesión</h2>
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
     <p class="subtitle">Accede para gestionar tus módulos</p>
 
     <form method="post" th:action="@{/login}" autocomplete="on">

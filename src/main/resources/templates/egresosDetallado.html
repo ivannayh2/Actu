@@ -2,15 +2,15 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Detalle egreso</title>
+
 <<<<<<< HEAD
+  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
 =======
-  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
->>>>>>> e1ec1be (style-interfaz comprobante egreso)
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
   <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
@@ -18,51 +18,46 @@
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
   <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
 
-  <main class="container egresos-page">
-    <div class="page-head">
-      <div class="page-head-left">
-        <h1>Detalle del egreso</h1>
-        <p class="subtitle-main">
-          Documento: <strong th:text="${doctoEgreso}"></strong>
-        </p>
-      </div>
-      <div class="actions">
-        <a class="btn" th:href="@{/egresos}">Volver</a>
-      </div>
-    </div>
+  <div class="detalle-container">
+    <h2>
+      Detalle del egreso:
+      <span th:text="${doctoEgreso}"></span>
+    </h2>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Docto causación</th>
-            <th>Fecha egreso</th>
-            <th>Tercero</th>
-            <th>Valor egreso</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="d : ${detalles}">
-            <td th:text="${d.doctoCausacion}"></td>
-            <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
-            <td th:text="${d.tercero}"></td>
-            <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
-            <td class="cell-actions">
-              <a class="link-detalle"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                Ver detalle
-              </a>
-            </td>
-          </tr>
+    <a class="btn" th:href="@{/egresos}">Volver</a>
+  </div>
 
-          <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="5">No se encontraron doctos de causación relacionados.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+  <table class="tabla-egresos">
+    <thead>
+      <tr>
+        <th>Docto causación</th>
+        <th>Fecha egreso</th>
+        <th>Tercero</th>
+        <th>Valor egreso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="d : ${detalles}">
+        <td>
+          <div class="acciones-causacion">
+            <span th:text="${d.doctoCausacion}"></span>
+            <a class="btn btn-primary"
+               th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+              Ver detalle
+            </a>
+          </div>
+        </td>
+        <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
+        <td th:text="${d.tercero}"></td>
+        <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
+      </tr>
+
+      <tr th:if="${#lists.isEmpty(detalles)}">
+        <td colspan="4">No se encontraron doctos de causación relacionados.</td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 </html>

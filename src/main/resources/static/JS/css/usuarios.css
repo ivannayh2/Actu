@@ -303,7 +303,12 @@ object-fit: contain;
 }
 
 .user-avatar-publicador {
+<<<<<<< HEAD
+box-sizing: border-box;
+padding: 10px;
+=======
 padding: 8px;
+>>>>>>> 4a9c88067eb43c61e78930486ad75daacb960014
 }
 
 .status-dot {
