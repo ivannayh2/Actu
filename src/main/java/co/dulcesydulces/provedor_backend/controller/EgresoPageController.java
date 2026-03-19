@@ -59,6 +59,7 @@ public class EgresoPageController {
         boolean puedeFiltrarProveedor = esAdmin || esPublicador;
         boolean puedeCrearEgreso = esAdmin || esPublicador;
 
+        model.addAttribute("egresos", detalle);
         model.addAttribute("detalle", detalle);
         model.addAttribute("totalVlrEgreso", totalVlrEgreso);
         model.addAttribute("proveedor", proveedor);
