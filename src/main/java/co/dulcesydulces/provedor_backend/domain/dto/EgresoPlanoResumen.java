@@ -7,5 +7,6 @@ public interface EgresoPlanoResumen {
     String getDoctoEgreso();
     LocalDate getFechaEgreso();
     String getTercero();
+    String getRazonSocial();
     BigDecimal getVlrEgreso();
 }

@@ -69,40 +69,42 @@
     </div>
 
     <table border="1">
-    <thead>
-      <tr>
-        <th>Docto egreso</th>
-        <th>Fecha egreso</th>
-        <th>NIT PROVEEDOR</th>
-        <th>Valor</th>
-      </tr>
-    </thead>
-    <tbody>
-  <tr th:if="${!#lists.isEmpty(detalle)}">
-    <td colspan="3"><strong>Total</strong></td>
-    <td><strong th:text="${totalVlrEgreso}"></strong></td>
-  </tr>
+  <thead>
+    <tr>
+      <th>Docto egreso</th>
+      <th>Fecha egreso</th>
+      <th>Nit proveedor</th>
+      <th>Razon social</th>
+      <th>Valor</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:if="${!#lists.isEmpty(detalle)}">
+      <td colspan="4"><strong>Total</strong></td>
+      <td><strong th:text="${totalVlrEgreso}"></strong></td>
+    </tr>
 
-  <tr th:each="d : ${detalle}">
-    <td>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span th:text="${d.doctoEgreso}"></span>
-        <a class="btn btn-primary"
-           th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">
-          Ver detalle
-        </a>
-      </div>
-    </td>
-    <td th:text="${d.fechaEgreso}"></td>
-    <td th:text="${d.tercero}"></td>
-    <td th:text="${d.vlrEgreso}"></td>
-  </tr>
+    <tr th:each="d : ${detalle}">
+      <td>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span th:text="${d.doctoEgreso}"></span>
+          <a class="btn btn-primary"
+             th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">
+            Ver detalle
+          </a>
+        </div>
+      </td>
+      <td th:text="${d.fechaEgreso}"></td>
+      <td th:text="${d.tercero}"></td>
+      <td th:text="${d.razonSocial}"></td>
+      <td th:text="${d.vlrEgreso}"></td>
+    </tr>
 
-  <tr th:if="${#lists.isEmpty(detalle)}">
-    <td colspan="4">No se encontraron registros en egresos_plano.</td>
-  </tr>
-</tbody>
-  </table>
+    <tr th:if="${#lists.isEmpty(detalle)}">
+      <td colspan="5">No se encontraron registros en egresos_plano.</td>
+    </tr>
+  </tbody>
+</table>
 
     <div id="modal" class="modal" onclick="closeModal()">
       <div class="modal-content" onclick="event.stopPropagation()">
