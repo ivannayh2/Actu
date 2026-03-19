@@ -88,8 +88,8 @@ public class PlanosUploadService {
                             "Egresos: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 12. Línea: " + line
                     );
                 }
-
-                String doctoEgreso = c[0].trim();
+                String doctoEgreso = c[0].trim().replaceFirst("^[^-]+-", "");
+                //String doctoEgreso = c[0].trim();
                 LocalDate fecha = parseFecha(c[1]);
                 String tercero = c[2].trim();
                 String suc = c[3].trim();
