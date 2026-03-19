@@ -3,6 +3,44 @@ max-width: 1320px;
 font-family: "Public Sans", "Segoe UI", sans-serif;
 }
 
+.egresos-page .page-head {
+margin: 0 0 14px;
+padding: 16px 18px;
+background: #ffffff;
+border: 1px solid #e5eaf3;
+border-radius: 16px;
+box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 14px;
+}
+
+.egresos-page .page-head-left {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.egresos-page .page-head h1 {
+margin: 0;
+font-size: 22px;
+font-weight: 700;
+letter-spacing: -0.01em;
+color: #0f172a;
+}
+
+.egresos-page .subtitle-main {
+margin: 0;
+font-size: 13px;
+color: #6b7280;
+}
+
+.egresos-page .actions {
+display: flex;
+justify-content: flex-end;
+}
+
 .egresos-page .btn {
 border: 1px solid #dbe4f3;
 background: #ffffff;
