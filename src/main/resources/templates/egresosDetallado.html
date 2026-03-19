@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Detalle egreso</title>
-
-  <link rel="stylesheet" th:href="@{/JS/CSS/usuarios.css}">
-  <link rel="stylesheet" th:href="@{/JS/CSS/egresos.css}">
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/historial.css}">
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
@@ -29,25 +34,36 @@
       </tr>
     </thead>
     <tbody>
-      <tr th:each="d : ${detalles}">
-        <td>
-          <div class="acciones-causacion">
-            <span th:text="${d.doctoCausacion}"></span>
-            <a class="btn btn-primary"
-               th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-              Ver detalle
-            </a>
-          </div>
-        </td>
-        <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
-        <td th:text="${d.tercero}"></td>
-        <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
-      </tr>
 
-      <tr th:if="${#lists.isEmpty(detalles)}">
-        <td colspan="4">No se encontraron doctos de causación relacionados.</td>
-      </tr>
-    </tbody>
+  <!-- TOTAL -->
+  <tr th:if="${!#lists.isEmpty(detalles)}">
+  <td colspan="3"><strong>Total</strong></td>
+  <td>
+    <strong th:text="'$ ' + ${#numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong>
+  </td>
+</tr>
+
+  <!-- REGISTROS -->
+  <tr th:each="d : ${detalles}">
+    <td>
+      <div class="acciones-causacion">
+        <span th:text="${d.doctoCausacion}"></span>
+        <a class="btn btn-primary"
+           th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+          Ver detalle
+        </a>
+      </div>
+    </td>
+    <td th:text="${#temporals.format(d.fechaEgreso, 'dd/MM/yyyy')}"></td>
+    <td th:text="${d.tercero}"></td>
+    <td th:text="'$ ' + ${#numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA')}"></td>
+  </tr>
+
+  <tr th:if="${#lists.isEmpty(detalles)}">
+    <td colspan="4">No se encontraron doctos de causación relacionados.</td>
+  </tr>
+
+</tbody>
   </table>
 </body>
 </html>

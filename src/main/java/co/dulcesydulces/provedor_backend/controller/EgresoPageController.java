@@ -1,5 +1,6 @@
 package co.dulcesydulces.provedor_backend.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -44,6 +45,11 @@ public class EgresoPageController {
     ) {
         List<EgresoPlanoResumen> detalle = service.buscarPlanoSegunUsuario(auth, proveedor, numeroEgreso, fechaDocumento);
 
+        BigDecimal totalVlrEgreso = detalle.stream()
+                .map(EgresoPlanoResumen::getVlrEgreso)
+                .filter(v -> v != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         boolean esAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
 
@@ -54,35 +60,46 @@ public class EgresoPageController {
         boolean puedeCrearEgreso = esAdmin || esPublicador;
 
         model.addAttribute("detalle", detalle);
+        model.addAttribute("totalVlrEgreso", totalVlrEgreso);
         model.addAttribute("proveedor", proveedor);
         model.addAttribute("numeroEgreso", numeroEgreso);
         model.addAttribute("fechaDocumento", fechaDocumento);
         model.addAttribute("puedeFiltrarProveedor", puedeFiltrarProveedor);
         model.addAttribute("puedeCrearEgreso", puedeCrearEgreso);
-
         model.addAttribute("proveedoresOptions", proveedoresService.getListaEnOptions());
         model.addAttribute("nuevoEgreso", new EgresoCreateRequest());
 
         return "egresos";
     }
+
     @GetMapping("/detallado")
-public String verDetalleEgreso(
-        @RequestParam("doctoEgreso") String doctoEgreso,
-        Model model
-) {
-    model.addAttribute("doctoEgreso", doctoEgreso);
-    model.addAttribute("detalles", service.buscarDetallePorDoctoEgreso(doctoEgreso));
-    return "egresosDetallado";
-}
-@GetMapping("/detalles")
-public String verDetalleFactura(
-        @RequestParam("doctoCausacion") String doctoCausacion,
-        Model model
-) {
-    model.addAttribute("doctoCausacion", doctoCausacion);
-    model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
-    return "detalleFactura";
-}
+    public String verDetalleEgreso(
+            @RequestParam("doctoEgreso") String doctoEgreso,
+            Model model
+    ) {
+        var detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+
+        BigDecimal totalDetalleEgreso = detalles.stream()
+                .map(d -> d.getVlrEgreso())
+                .filter(v -> v != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("doctoEgreso", doctoEgreso);
+        model.addAttribute("detalles", detalles);
+        model.addAttribute("totalDetalleEgreso", totalDetalleEgreso);
+
+        return "egresosDetallado";
+    }
+
+    @GetMapping("/detalles")
+    public String verDetalleFactura(
+            @RequestParam("doctoCausacion") String doctoCausacion,
+            Model model
+    ) {
+        model.addAttribute("doctoCausacion", doctoCausacion);
+        model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
+        return "detalleFactura";
+    }
 
     @PostMapping
     public String crear(
