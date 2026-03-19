@@ -16,43 +16,16 @@
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
   <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
 
-  <div class="detalle-container">
-    <h2>
-      Detalle del egreso:
-      <span th:text="${doctoEgreso}"></span>
-    </h2>
-
-    <a class="btn" th:href="@{/egresos}">Volver</a>
-  </div>
-
-  <table class="tabla-egresos">
-    <thead>
-      <tr>
-        <th>Numero factura</th>
-        <th>Fecha egreso</th>
-        <th>Tercero</th>
-        <th>Valor egreso</th>
-      </tr>
-    </thead>
-    <tbody>
-
-  <!-- TOTAL -->
-  <tr th:if="${!#lists.isEmpty(detalles)}">
-  <td colspan="3"><strong>Total</strong></td>
-  <td>
-    <strong th:text="'$ ' + ${#numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong>
-  </td>
-</tr>
-
-  <!-- REGISTROS -->
-  <tr th:each="d : ${detalles}">
-    <td>
-      <div class="acciones-causacion">
-        <span th:text="${d.doctoCausacion}"></span>
-        <a class="btn btn-primary"
-           th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-          Ver detalle
-        </a>
+  <main class="container egresos-page">
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Detalle del egreso</h1>
+        <p class="subtitle-main">
+          Documento: <strong th:text="${doctoEgreso}"></strong>
+        </p>
+      </div>
+      <div class="actions">
+        <a class="btn" th:href="@{/egresos}">Volver</a>
       </div>
     </div>
 
@@ -61,24 +34,26 @@
         <thead>
           <tr>
             <th>Docto causación</th>
+            <th></th>
             <th>Fecha egreso</th>
             <th>Tercero</th>
             <th>Valor egreso</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
+          <tr th:if="${!#lists.isEmpty(detalles)}">
+            <td colspan="5"><strong>Total</strong></td>
+            <td><strong th:text="'$ ' + ${#numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong></td>
+          </tr>
+
           <tr th:each="d : ${detalles}">
             <td th:text="${d.doctoCausacion}"></td>
+            <td class="cell-actions">
+              <a class="link-detalle" th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">Ver detalle</a>
+            </td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
             <td th:text="${d.vlrEgreso != null ? '$ ' + #numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-            <td class="cell-actions">
-              <a class="link-detalle"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                Ver detalle
-              </a>
-            </td>
           </tr>
 
           <tr th:if="${#lists.isEmpty(detalles)}">
