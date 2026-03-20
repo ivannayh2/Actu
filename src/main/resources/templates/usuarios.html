@@ -52,8 +52,8 @@
       <div class="role-title">Administrador <span class="user-count" th:text="|${porRol['ADMINISTRADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-admin">
-            <li th:each="u,iterStat : ${porRol['ADMINISTRADOR']}" class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <li th:each="u : ${porRol['ADMINISTRADOR']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
                 <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/adminIcon.png}" alt="">
@@ -108,8 +108,8 @@
       <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-pub">
-            <li th:each="u,iterStat : ${porRol['PUBLICADOR']}" class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <li th:each="u : ${porRol['PUBLICADOR']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
                 <img class="user-avatar-icon user-avatar-img user-avatar-publicador" th:src="@{/icons/publicador.svg}" alt="">
@@ -180,8 +180,8 @@
       <div class="role-title">Proveedor <span class="user-count" th:text="|${porRol['PROVEEDORES'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-prov">
-            <li th:each="u,iterStat : ${porRol['PROVEEDORES']}" class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <li th:each="u : ${porRol['PROVEEDORES']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
                 <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/proveedorIcon.png}" alt="">
@@ -239,7 +239,9 @@
   <div class="modal-backdrop" data-close="1"></div>
   <div class="modal-card" role="dialog" aria-modal="true">
     <div class="modal-head">
-      <h2 id="modalTitle">Nuevo usuario</h2>
+      <h2 class="permisos-title modal-title">
+        <span id="modalTitle">Nuevo usuario</span>
+      </h2>
       <button class="icon-btn" type="button" data-close="1">✕</button>
     </div>
 
@@ -249,36 +251,123 @@
       <input type="text" name="fakeusernameremembered" style="display:none">
       <input type="password" name="fakepasswordremembered" style="display:none">
 
-      <label>
-        Código
-        <input id="codigo" name="codigo" maxlength="30" required autocomplete="off">
-      </label>
+      <section class="user-data-shell" aria-label="Datos del usuario">
+        <label>
+          Código
+          <input id="codigo" name="codigo" maxlength="30" required autocomplete="off">
+        </label>
 
-      <label>
-        Rol
-        <select id="rol" name="rol" required autocomplete="off">
-          <option value="ADMINISTRADOR">ADMINISTRADOR</option>
-          <option value="PUBLICADOR">PUBLICADOR</option>
-          <option value="PROVEEDORES">PROVEEDORES</option>
-        </select>
-      </label>
+        <label>
+          Rol
+          <select id="rol" name="rol" required autocomplete="off">
+            <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+            <option value="PUBLICADOR">PUBLICADOR</option>
+            <option value="PROVEEDORES">PROVEEDORES</option>
+          </select>
+        </label>
 
-      <label>
-        Nombre
-        <input id="nombre_usuario" name="nombre_usuario" maxlength="100" autocomplete="off" required>
-      </label>
+        <label>
+          Nombre
+          <input id="nombre_usuario" name="nombre_usuario" maxlength="100" autocomplete="off" required>
+        </label>
 
-      <label>
-        Email
-        <input id="email" name="email" maxlength="120" autocomplete="off">
-      </label>
+        <label>
+          Email
+          <input id="email" name="email" maxlength="120" autocomplete="off">
+        </label>
 
-      <label>
-        Clave
-        <!-- ✅ EL FIX IMPORTANTE: id y name correctos -->
-        <input id="password_hash" name="password_hash"
-               type="password" maxlength="150" autocomplete="new-password" required>
-      </label>
+        <label>
+          Clave
+          <!-- ✅ EL FIX IMPORTANTE: id y name correctos -->
+          <input id="password_hash" name="password_hash"
+                 type="password" maxlength="150" autocomplete="new-password" required>
+        </label>
+      </section>
+
+      <section class="permisos-section" aria-label="Permisos y accesos">
+        <div class="permisos-shell">
+          <h3 class="permisos-title">Permisos</h3>
+          <p class="permisos-subtitle">Selecciona las areas que este rol puede ver o editar.</p>
+
+          <div class="permisos-head" aria-hidden="true">
+            <span class="perm-area">Area</span>
+            <span class="perm-col"></span>
+            <span class="perm-col">Ver</span>
+          </div>
+
+          <div class="permiso-group-row">
+            <span>Acceso a modulos</span>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Dashboard</strong>
+              <small>Vista principal del sistema</small>
+            </div>
+            <label class="permiso-check"><input type="checkbox" name="permDashboardView"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Usuarios</strong>
+              <small>Gestion de usuarios y roles</small>
+            </div>
+            <label class="permiso-check"><input type="checkbox" name="permUsuariosView"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Reportes</strong>
+              <small>Consulta de reportes operativos</small>
+            </div>
+            <label class="permiso-check"><input type="checkbox" name="permReportesView"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Configuracion</strong>
+              <small>Ajustes generales del sistema</small>
+            </div>
+            <label class="permiso-check"><input type="checkbox" name="permConfiguracionView"></label>
+          </div>
+
+          <div class="permiso-group-row">
+            <span>Editar</span>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Crear usuarios</strong>
+              <small>Alta de nuevos usuarios</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permCrearUsuariosEdit"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Editar usuarios</strong>
+              <small>Modificacion de datos y accesos</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permEditarUsuariosEdit"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Eliminar usuarios</strong>
+              <small>Desvincular o eliminar cuentas</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permEliminarUsuariosEdit"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Gestionar permisos</strong>
+              <small>Control total de accesos por rol</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permGestionarPermisosEdit"></label>
+          </div>
+        </div>
+      </section>
 
       <div class="form-actions">
         <button type="button" class="btn" data-close="1">Cancelar</button>

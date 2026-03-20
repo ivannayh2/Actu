@@ -38,7 +38,15 @@ function closeModal() {
 }
 
 modal.addEventListener("click", (e) => {
-  if (e.target.dataset.close) closeModal();
+  if (e.target.closest("[data-close]")) {
+    closeModal();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
 });
 
 btnNuevo.addEventListener("click", () => {
