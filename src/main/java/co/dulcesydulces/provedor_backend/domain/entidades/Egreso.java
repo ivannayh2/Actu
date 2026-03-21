@@ -17,7 +17,7 @@ public class Egreso {
     @Column(name = "numero_egreso", length = 30)
     private String numeroEgreso;
 
-    @Column(name = "proveedor", nullable = false, length = 120)
+    @Column(name = "proveedor", nullable = false, length = 100)
     private String proveedor;
 
     @Column(name = "valor_egreso", nullable = false, precision = 12, scale = 2)
