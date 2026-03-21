@@ -53,7 +53,7 @@ public class EgresoService {
                 .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
 
         boolean esProveedor = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("PROVEEDOR"));
+                .anyMatch(a -> a.getAuthority().equals("PROVEEDORES"));
 
         if (esAdmin || esPublicador) {
             return egresoPlanoRepository.buscarConFiltros(proveedor, numeroEgreso, fechaDocumento);

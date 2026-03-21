@@ -6,9 +6,9 @@
   <title>Usuarios</title>
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
 
- <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -17,8 +17,6 @@
 
 <div th:replace="~{fragments/topbar :: topbar('usuarios')}"></div>
 <div th:replace="~{fragments/sidebar :: sidebar('usuarios')}"></div>
-
-
 
 <main class="container">
   <div class="page-head">
@@ -49,10 +47,17 @@
 
   <section class="roles-grid">
     <article class="role-card role-admin">
-      <div class="role-title">Administrador <span class="user-count" th:text="|${porRol['ADMINISTRADOR'].size()} usuarios|">0 usuarios</span></div>
+      <div class="role-title">
+        Administrador
+        <span class="user-count"
+              th:text="|${porRol['ADMINISTRADOR'] != null ? porRol['ADMINISTRADOR'].size() : 0} usuarios|">
+          0 usuarios
+        </span>
+      </div>
       <div class="role-body">
         <ul class="user-list" id="list-admin">
-            <li th:each="u,iterStat : ${porRol['ADMINISTRADOR']}" class="user-item"
+          <li th:each="u,iterStat : ${porRol['ADMINISTRADOR'] != null ? porRol['ADMINISTRADOR'] : {}}"
+              class="user-item"
               th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
             <div class="user-main">
               <div class="user-avatar-wrap">
@@ -84,7 +89,10 @@
                       <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
                         <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
                       </span>
-                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                      <span class="menu-label"
+                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                        Inactivar
+                      </span>
                     </button>
                   </li>
                   <li>
@@ -97,7 +105,6 @@
                   </li>
                 </ul>
               </div>
-
             </div>
           </li>
         </ul>
@@ -105,10 +112,17 @@
     </article>
 
     <article class="role-card role-pub">
-      <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
+      <div class="role-title">
+        Publicador
+        <span class="user-count"
+              th:text="|${porRol['PUBLICADOR'] != null ? porRol['PUBLICADOR'].size() : 0} usuarios|">
+          0 usuarios
+        </span>
+      </div>
       <div class="role-body">
         <ul class="user-list" id="list-pub">
-            <li th:each="u,iterStat : ${porRol['PUBLICADOR']}" class="user-item"
+          <li th:each="u,iterStat : ${porRol['PUBLICADOR'] != null ? porRol['PUBLICADOR'] : {}}"
+              class="user-item"
               th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
             <div class="user-main">
               <div class="user-avatar-wrap">
@@ -117,70 +131,72 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <strong th:text="${u.nombreUsuario}"></strong><br>
                 <small th:text="${u.codigo}">COD</small>
               </div>
             </div>
             <div class="row-actions">
+              <button class="icon-btn"
+                      type="button"
+                      th:attr="data-edit=${u.codigo}">
+                Editar
+              </button>
 
-  <button class="icon-btn"
-          type="button"
-          th:attr="data-edit=${u.codigo}">
-    Editar
-  </button>
+              <div class="user-menu">
+                <button class="kebab-btn" type="button">⋮</button>
 
-  <div class="user-menu">
+                <ul class="kebab-dropdown">
+                  <li>
+                    <button type="button"
+                            class="menu-item"
+                            th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
+                            th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                      <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <svg class="menu-icon-svg menu-icon-enable" viewBox="0 0 24 24" role="img" focusable="false">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <path d="M8.5 12.5l2.5 2.5 4.5-5"></path>
+                        </svg>
+                      </span>
+                      <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
+                        <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
+                      </span>
+                      <span class="menu-label"
+                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                        Inactivar
+                      </span>
+                    </button>
+                  </li>
 
-    <button class="kebab-btn" type="button">⋮</button>
-
-    <ul class="kebab-dropdown">
-
-      <li>
-        <button type="button"
-                class="menu-item"
-                th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
-                th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
-          <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
-            <svg class="menu-icon-svg menu-icon-enable" viewBox="0 0 24 24" role="img" focusable="false">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path d="M8.5 12.5l2.5 2.5 4.5-5"></path>
-            </svg>
-          </span>
-          <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
-            <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
-          </span>
-          <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
-            Inactivar
-          </span>
-        </button>
-      </li>
-
-      <li>
-        <button type="button"
-                class="menu-item"
-                th:attr="data-del=${u.codigo}">
-          <span class="menu-icon" aria-hidden="true">
-            <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
-          </span>
-          <span class="menu-label">Eliminar</span>
-        </button>
-      </li>
-
-    </ul>
-
-  </div>
-
-</div>
+                  <li>
+                    <button type="button"
+                            class="menu-item"
+                            th:attr="data-del=${u.codigo}">
+                      <span class="menu-icon" aria-hidden="true">
+                        <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
+                      </span>
+                      <span class="menu-label">Eliminar</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </article>
 
     <article class="role-card role-prov">
-      <div class="role-title">Proveedor <span class="user-count" th:text="|${porRol['PROVEEDORES'].size()} usuarios|">0 usuarios</span></div>
+      <div class="role-title">
+        Proveedor
+        <span class="user-count"
+              th:text="|${porRol['PROVEEDORES'] != null ? porRol['PROVEEDORES'].size() : 0} usuarios|">
+          0 usuarios
+        </span>
+      </div>
       <div class="role-body">
         <ul class="user-list" id="list-prov">
-            <li th:each="u,iterStat : ${porRol['PROVEEDORES']}" class="user-item"
+          <li th:each="u,iterStat : ${porRol['PROVEEDORES'] != null ? porRol['PROVEEDORES'] : {}}"
+              class="user-item"
               th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
             <div class="user-main">
               <div class="user-avatar-wrap">
@@ -189,7 +205,7 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <strong th:text="${u.nombreUsuario}"></strong><br>
                 <small th:text="${u.codigo}">COD</small>
               </div>
             </div>
@@ -212,7 +228,10 @@
                       <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
                         <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
                       </span>
-                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                      <span class="menu-label"
+                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                        Inactivar
+                      </span>
                     </button>
                   </li>
                   <li>
@@ -225,7 +244,6 @@
                   </li>
                 </ul>
               </div>
-
             </div>
           </li>
         </ul>
@@ -234,7 +252,6 @@
   </section>
 </main>
 
-<!-- Modal -->
 <div id="modal" class="modal hidden" aria-hidden="true">
   <div class="modal-backdrop" data-close="1"></div>
   <div class="modal-card" role="dialog" aria-modal="true">
@@ -244,8 +261,6 @@
     </div>
 
     <form id="formUsuario" class="form" autocomplete="off">
-
-      <!-- anti-autofill -->
       <input type="text" name="fakeusernameremembered" style="display:none">
       <input type="password" name="fakepasswordremembered" style="display:none">
 
@@ -275,7 +290,6 @@
 
       <label>
         Clave
-        <!-- ✅ EL FIX IMPORTANTE: id y name correctos -->
         <input id="password_hash" name="password_hash"
                type="password" maxlength="150" autocomplete="new-password" required>
       </label>

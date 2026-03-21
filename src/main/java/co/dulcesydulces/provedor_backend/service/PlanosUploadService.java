@@ -94,7 +94,8 @@ public class PlanosUploadService {
                 String tercero = c[2].trim();
                 String suc = c[3].trim();
                 String razon = c[4].trim();
-                String doctoSa = c[5].trim();
+                //String doctoSa = c[5].trim();
+                String doctoSa = c[5].trim().replaceFirst("^[^-]+-", "");
                 String doctoCausacion = c[6].trim().replaceFirst("^[^-]+-", "");
                 BigDecimal vlrEgreso = parseMoney(c[7]);
                 String notas = c[8].trim();
