@@ -299,37 +299,45 @@
             <span>Acceso a modulos</span>
           </div>
 
-          <div class="permiso-row">
-            <div class="permiso-area">
-              <strong>Dashboard</strong>
-              <small>Vista principal del sistema</small>
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Importar archivos</strong>
+                <small>Subida y procesamiento de archivos</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permImportarArchivosView"></label>
             </div>
-            <label class="permiso-check"><input type="checkbox" name="permDashboardView"></label>
-          </div>
 
-          <div class="permiso-row">
-            <div class="permiso-area">
-              <strong>Usuarios</strong>
-              <small>Gestion de usuarios y roles</small>
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Comprobante egreso</strong>
+                <small>Gestión de comprobantes de egreso</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permComprobanteEgresosView"></label>
             </div>
-            <label class="permiso-check"><input type="checkbox" name="permUsuariosView"></label>
-          </div>
 
-          <div class="permiso-row">
-            <div class="permiso-area">
-              <strong>Reportes</strong>
-              <small>Consulta de reportes operativos</small>
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Historial</strong>
+                <small>Consulta de historial de movimientos</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permHistorialView"></label>
             </div>
-            <label class="permiso-check"><input type="checkbox" name="permReportesView"></label>
-          </div>
 
-          <div class="permiso-row">
-            <div class="permiso-area">
-              <strong>Configuracion</strong>
-              <small>Ajustes generales del sistema</small>
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Perfil</strong>
+                <small>Configuración de perfil de usuario</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permPerfilView"></label>
             </div>
-            <label class="permiso-check"><input type="checkbox" name="permConfiguracionView"></label>
-          </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Usuarios</strong>
+                <small>Gestión de usuarios</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permUsuariosView"></label>
+            </div>
 
           <div class="permiso-group-row">
             <span>Editar</span>
@@ -341,6 +349,10 @@
               <small>Alta de nuevos usuarios</small>
             </div>
             <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permCrearUsuariosEdit"></label>
+          </div>
+
+          <div id="publicador-user-warning" style="display:none; margin: -8px 0 10px 0; color: #b45309; font-size: 12px; font-weight: 600;">
+            * Como publicador, solo puedes crear, editar o eliminar usuarios con rol de proveedor.
           </div>
 
           <div class="permiso-row">
@@ -380,5 +392,6 @@
 </div>
 
 <script th:src="@{/JS/usuarios.js}"></script>
+</body>
 </body>
 </html>
