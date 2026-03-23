@@ -65,6 +65,11 @@ function autoCheckPermisosPorRol() {
   checks.forEach(chk => { chk.checked = false; });
 
   const rol = inputRol.value.trim().toUpperCase();
+  if (rol === 'ADMINISTRADOR') {
+    // Marcar todos los permisos si es ADMINISTRADOR
+    checks.forEach(chk => { chk.checked = true; });
+    return;
+  }
   // Mapear los nombres de los checkboxes a los permisos de cada rol
   const permisosPorRol = {
     'PROVEEDORES': [

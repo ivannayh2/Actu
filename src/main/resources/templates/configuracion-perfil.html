@@ -1,6 +1,28 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <style>
+      /* Estilo para input file personalizado */
+      .custom-file-input {
+        display: none;
+      }
+      .custom-file-label {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #f3f3f3;
+        color: #333;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        font-size: 15px;
+        margin-bottom: 8px;
+      }
+      .custom-file-label:hover {
+        background-color: #e0e0e0;
+        color: #222;
+      }
+    </style>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Mi Perfil</title>
@@ -26,9 +48,316 @@
 
   <section class="profile-grid">
     <article class="profile-shell user-shell">
-      <div class="avatar-circle">
-        <span th:text="${(nombreUsuario != null and !#strings.isEmpty(nombreUsuario)) ? #strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1)) : 'U'}">U</span>
+      <div class="avatar-circle" style="overflow:hidden;">
+        <img th:if="${fotoPerfil != null}" th:src="${'/uploads/perfiles/' + codigo + '/' + fotoPerfil}" alt="Foto de perfil" style="width:100px;height:100px;object-fit:cover;border-radius:50%;border:2px solid #ccc;" />
+        <span th:if="${fotoPerfil == null}" th:text="${(nombreUsuario != null and !#strings.isEmpty(nombreUsuario)) ? #strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1)) : 'U'}">U</span>
       </div>
+
+
+
+      <a href="#" id="openFotoModal" class="cambiar-foto-link" style="display:inline-block;margin-top:10px;">Cambiar foto de perfil</a>
+<style>
+  .cambiar-foto-link {
+    color: #5b2af7;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .cambiar-foto-link:hover {
+    color: #4c23ce;
+    text-decoration: underline;
+  }
+</style>
+
+      <h2 class="user-name" th:text="${nombreUsuario != null ? nombreUsuario : 'Usuario'}">anonymousUser</h2>
+      <p class="user-role" th:text="${rol == 'PROVEEDORES' ? 'PROVEEDOR' : rol}">Rol</p>
+
+      <div class="user-divider"></div>
+
+      <div class="meta-list">
+        <div class="meta-item">
+          <span class="meta-icon">👤</span>
+          <div>
+            <small>Usuario</small>
+            <strong th:text="${nombreUsuario != null ? nombreUsuario : '-'}">anonymousUser</strong>
+          </div>
+        </div>
+
+        <div class="meta-item">
+          <span class="meta-icon">✉</span>
+          <div>
+            <small>Email</small>
+            <strong th:text="${email != null ? email : '-'}">admin@ejemplo.com</strong>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="profile-shell password-shell">
+      <div class="password-head">
+        <span class="lock-badge">
+          <img class="lock-icon-img" th:src="@{/icons/contraseña.png}" src="/icons/contraseña.png" alt="Icono de contraseña">
+        </span>
+        <div>
+          <h2>Cambiar Contraseña</h2>
+          <p>Actualiza tu contraseña para mantener tu cuenta segura</p>
+        </div>
+      </div>
+
+      <div class="alert alert-ok" th:if="${ok}" th:text="${ok}"></div>
+      <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+      <form class="password-form" method="post" th:action="@{/configuracion/perfil}">
+        <label for="claveActual">Contraseña actual <span>*</span></label>
+        <div class="input-row">
+          <input id="claveActual" type="password" name="claveActual" required autocomplete="current-password" placeholder="Ingresa tu contraseña actual">
+          <button type="button" class="toggle-pass" data-target="claveActual" aria-label="Mostrar contraseña">👁</button>
+        </div>
+
+        <label for="claveNueva">Nueva contraseña <span>*</span></label>
+        <div class="input-row">
+          <input id="claveNueva" type="password" name="claveNueva" minlength="6" required autocomplete="new-password" placeholder="Ingresa tu nueva contraseña">
+          <button type="button" class="toggle-pass" data-target="claveNueva" aria-label="Mostrar contraseña">👁</button>
+        </div>
+        <p class="helper">La contraseña debe tener al menos 6 caracteres</p>
+
+        <label for="claveNueva2">Confirmar nueva contraseña <span>*</span></label>
+        <div class="input-row">
+          <input id="claveNueva2" type="password" name="claveNueva2" minlength="6" required autocomplete="new-password" placeholder="Confirma tu nueva contraseña">
+          <button type="button" class="toggle-pass" data-target="claveNueva2" aria-label="Mostrar contraseña">👁</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="reset" class="btn btn-light">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
+        </div>
+      </form>
+    </article>
+  </section>
+
+</main>
+
+<!-- Modal para cambiar foto de perfil (fuera del main) -->
+<div id="fotoPerfilModal" class="modal-foto" style="display:none;">
+  <div class="modal-foto-content">
+    <span class="close-foto-modal" id="closeFotoModal">&times;</span>
+    <h3>Cambiar foto de perfil</h3>
+    <form id="form-foto-perfil-modal" th:action="@{'/api/usuarios/' + ${codigo} + '/foto'}" method="post" enctype="multipart/form-data">
+      <input type="file" id="fotoPerfilInput" name="file" accept="image/*" required class="custom-file-input" />
+      <label for="fotoPerfilInput" class="custom-file-label" id="fotoPerfilLabel">Seleccionar archivo</label>
+      <span id="nombreArchivo" style="margin-left:8px;font-size:14px;color:#666;"></span>
+      <div class="modal-foto-actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-light" id="cancelFotoModal">Cancelar</button>
+      </div>
+    <script>
+      // Mostrar nombre del archivo seleccionado y resaltar el label
+      document.addEventListener('DOMContentLoaded', function() {
+        var input = document.getElementById('fotoPerfilInput');
+        var label = document.getElementById('fotoPerfilLabel');
+        var nombreArchivo = document.getElementById('nombreArchivo');
+        if (input) {
+          input.addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : '';
+            nombreArchivo.textContent = fileName;
+            if (fileName) {
+              label.style.background = '#d1e7dd';
+              label.style.color = '#155724';
+              label.style.borderColor = '#bcd0c7';
+            } else {
+              label.style.background = '';
+              label.style.color = '';
+              label.style.borderColor = '';
+            }
+          });
+        }
+      });
+    </script>
+    <style>
+      .modal-foto-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 8px;
+      }
+    </style>
+    </form>
+  </div>
+</div>
+
+<style>
+  .modal-foto {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background: rgba(0,0,0,0.25);
+  }
+  .modal-foto-content {
+    background: #fff;
+    margin: 8% auto;
+    padding: 24px 20px 18px 20px;
+    border-radius: 10px;
+    width: 95%;
+    max-width: 340px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    position: relative;
+    text-align: center;
+  }
+  .close-foto-modal {
+    position: absolute;
+    right: 16px;
+    top: 10px;
+    font-size: 1.7rem;
+    color: #888;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+  .close-foto-modal:hover {
+    color: #d00;
+  }
+</style>
+
+<script>
+// Modal lógica y feedback
+document.addEventListener('DOMContentLoaded', function() {
+  const openBtn = document.getElementById('openFotoModal');
+  const modal = document.getElementById('fotoPerfilModal');
+  const closeBtn = document.getElementById('closeFotoModal');
+  const cancelBtn = document.getElementById('cancelFotoModal');
+  const formFoto = document.getElementById('form-foto-perfil-modal');
+  const formBorrar = document.getElementById('form-borrar-foto-modal');
+  let feedback = document.getElementById('foto-feedback');
+  if (!feedback) {
+    feedback = document.createElement('div');
+    feedback.id = 'foto-feedback';
+    feedback.style.margin = '10px 0 0 0';
+    feedback.style.fontWeight = '600';
+    feedback.style.color = '#22a06b';
+    feedback.style.display = 'none';
+    if (modal && modal.querySelector('form')) {
+      modal.querySelector('form').parentNode.insertBefore(feedback, modal.querySelector('form').nextSibling);
+    }
+  }
+
+  if (openBtn && modal && closeBtn) {
+    openBtn.onclick = (e) => { e.preventDefault(); modal.style.display = 'block'; feedback.style.display = 'none'; };
+    closeBtn.onclick = () => { modal.style.display = 'none'; };
+    if (cancelBtn) cancelBtn.onclick = () => { modal.style.display = 'none'; };
+    window.onclick = function(event) {
+      if (event.target === modal) modal.style.display = 'none';
+    };
+  }
+
+  // Guardar foto AJAX
+  if (formFoto) {
+    formFoto.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(formFoto);
+      fetch(formFoto.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(r => r.json())
+      .then(data => {
+        feedback.textContent = 'Foto actualizada correctamente';
+        feedback.style.display = 'block';
+        setTimeout(() => { location.reload(); }, 1200);
+      })
+      .catch(() => {
+        feedback.textContent = 'Error al subir la foto.';
+        feedback.style.color = '#d00';
+        feedback.style.display = 'block';
+      });
+    });
+  }
+  // Eliminar foto AJAX
+  if (formBorrar) {
+    formBorrar.addEventListener('submit', function(e) {
+      e.preventDefault();
+      fetch(formBorrar.action, {
+        method: 'DELETE'
+      })
+      .then(() => {
+        feedback.textContent = 'Foto eliminada correctamente';
+        feedback.style.display = 'block';
+        setTimeout(() => { location.reload(); }, 1200);
+      })
+      .catch(() => {
+        feedback.textContent = 'Error al eliminar la foto.';
+        feedback.style.color = '#d00';
+        feedback.style.display = 'block';
+      });
+    });
+  }
+});
+</script>
+
+<style>
+  .modal-foto {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background: rgba(0,0,0,0.25);
+  }
+  .modal-foto-content {
+    background: #fff;
+    margin: 8% auto;
+    padding: 24px 20px 18px 20px;
+    border-radius: 10px;
+    width: 95%;
+    max-width: 340px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    position: relative;
+    text-align: center;
+  }
+  .close-foto-modal {
+    position: absolute;
+    right: 16px;
+    top: 10px;
+    font-size: 1.7rem;
+    color: #888;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.2s;
+  }
+  .close-foto-modal:hover {
+    color: #d00;
+  }
+</style>
+
+<script>
+// Modal lógica
+document.addEventListener('DOMContentLoaded', function() {
+  const openBtn = document.getElementById('openFotoModal');
+  const modal = document.getElementById('fotoPerfilModal');
+  const closeBtn = document.getElementById('closeFotoModal');
+  const cancelBtn = document.getElementById('cancelFotoModal');
+  if (openBtn && modal && closeBtn) {
+    openBtn.onclick = () => { modal.style.display = 'block'; };
+    closeBtn.onclick = () => { modal.style.display = 'none'; };
+    if (cancelBtn) cancelBtn.onclick = () => { modal.style.display = 'none'; };
+    window.onclick = function(event) {
+      if (event.target === modal) modal.style.display = 'none';
+    };
+  }
+});
+</script>
 
       <h2 class="user-name" th:text="${nombreUsuario != null ? nombreUsuario : 'Usuario'}">anonymousUser</h2>
       <p class="user-role">Super Admin</p>
@@ -98,7 +427,165 @@
 
 </main>
 
-<style>
+<script>
+// Subida de foto de perfil vía AJAX
+document.addEventListener('DOMContentLoaded', function() {
+  const formFoto = document.getElementById('form-foto-perfil');
+  if (formFoto) {
+    formFoto.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(formFoto);
+      fetch(formFoto.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.url) {
+          const img = document.querySelector('.avatar-circle img');
+          if (img) {
+            img.src = data.url + '?t=' + Date.now();
+            img.style.display = '';
+          }
+          const span = document.querySelector('.avatar-circle span');
+          if (span) span.style.display = 'none';
+          // location.reload(); // Ya no recargamos, solo cambiamos el src
+        }
+      })
+      .catch(() => alert('Error al subir la foto.'));
+    });
+  }
+
+  const formBorrar = document.getElementById('form-borrar-foto');
+  if (formBorrar) {
+    formBorrar.addEventListener('submit', function(e) {
+      e.preventDefault();
+      fetch(formBorrar.action, {
+        method: 'DELETE'
+      })
+      .then(() => {
+        const img = document.querySelector('.avatar-circle img');
+        if (img) img.style.display = 'none';
+        const span = document.querySelector('.avatar-circle span');
+        if (span) span.style.display = '';
+        // location.reload(); // Ya no recargamos, solo ocultamos la imagen y mostramos la inicial
+      })
+      .catch(() => alert('Error al eliminar la foto.'));
+    });
+  }
+});
+</script>
+
+  <style>
+    .profile-form-inline {
+      display: flex;
+      flex-direction: row;
+      gap: 7px;
+      margin: 6px 0 0 0;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .profile-form-inline .profile-label {
+      margin-bottom: 0;
+      margin-right: 2px;
+    }
+    .profile-form-inline .profile-input[type="file"] {
+      margin-bottom: 0;
+    }
+    .profile-form-inline .profile-btn {
+      margin-top: 0;
+    }
+    .profile-label {
+      font-size: 0.89rem;
+      color: var(--muted);
+      margin-bottom: 1px;
+      font-weight: 500;
+    }
+    .profile-input[type="file"] {
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 3px 6px;
+      background: #fff;
+      font-size: 0.89rem;
+      color: var(--text);
+      width: 120px;
+      margin-bottom: 1px;
+      cursor: pointer;
+      transition: border 0.2s;
+    }
+    .profile-input[type="file"]:focus {
+      outline: none;
+      border: 1.5px solid var(--primary);
+    }
+    .profile-btn {
+      min-width: 80px;
+      margin-top: 1px;
+      font-size: 0.89rem;
+      border-radius: 5px;
+      padding: 4px 0;
+      box-shadow: 0 1px 4px rgba(15,23,42,0.04);
+    }
+    .btn-primary.profile-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-primary.profile-btn:hover {
+      background: var(--primary-hover);
+    }
+    .btn-light.profile-btn {
+      background: #f7f9fc;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-light.profile-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .avatar-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 10px auto;
+      background: #f3f3f3;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      overflow: hidden;
+      position: relative;
+    }
+    .avatar-circle img, .avatar-circle span {
+      display: block;
+      margin: auto;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+    .avatar-circle img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .avatar-circle span {
+      font-size: 2.7rem;
+      color: #888;
+      line-height: 90px;
+      text-align: center;
+      width: 90px;
+      height: 90px;
+      user-select: none;
+      background: transparent;
+    }
   :root {
     --primary: #5b2af7;
     --primary-hover: #4c23ce;

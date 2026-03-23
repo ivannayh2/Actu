@@ -43,36 +43,32 @@ public class UsuarioService {
         if (u.getCodigo() == null || u.getCodigo().isBlank()) {
             throw new IllegalArgumentException("El código es obligatorio");
         }
-
         if (repo.existsById(u.getCodigo())) {
             throw new IllegalArgumentException("Ya existe un usuario con ese código");
         }
-
         if (u.getNombreUsuario() == null || u.getNombreUsuario().isBlank()) {
             throw new IllegalArgumentException("El nombre de usuario es obligatorio");
         }
-
         u.setRol(normalizarRol(u.getRol()));
-
         if (u.getPassword_hash() == null || u.getPassword_hash().isBlank()) {
             throw new IllegalArgumentException("La clave es obligatoria");
         }
-
         u.setPassword_hash(encoder.encode(u.getPassword_hash()));
+        // Permisos: ya vienen en el objeto u (si el frontend los envía)
         return repo.save(u);
     }
 
     public Usuarios actualizar(String codigo, Usuarios changes) {
         Usuarios u = repo.findById(codigo)
                 .orElseThrow(() -> new NoSuchElementException("No existe"));
-
         u.setRol(normalizarRol(changes.getRol()));
         u.setNombreUsuario(changes.getNombreUsuario());
-
+        if (changes.getPermisos() != null) {
+            u.setPermisos(changes.getPermisos());
+        }
         if (changes.getPassword_hash() != null && !changes.getPassword_hash().isBlank()) {
             u.setPassword_hash(encoder.encode(changes.getPassword_hash()));
         }
-
         return repo.save(u);
     }
 

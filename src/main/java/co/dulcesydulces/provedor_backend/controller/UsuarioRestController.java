@@ -1,4 +1,6 @@
+
 package co.dulcesydulces.provedor_backend.controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Map;
 
@@ -25,22 +27,30 @@ public class UsuarioRestController {
         this.service = service;
     }
 
+
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMINISTRADOR', 'PUBLICADOR')")
     public Map<String, Object> list() {
         return Map.of("users", service.listar());
     }
 
+
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<?> create(@RequestBody Usuarios u) {
         return ResponseEntity.ok(service.crear(u));
     }
 
+
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<?> update(@PathVariable String codigo, @RequestBody Usuarios u) {
         return ResponseEntity.ok(service.actualizar(codigo, u));
     }
 
+
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<?> delete(@PathVariable String codigo) {
         service.eliminar(codigo);
         return ResponseEntity.ok(Map.of("ok", true));
