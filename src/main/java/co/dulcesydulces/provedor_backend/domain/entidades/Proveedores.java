@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class Proveedores {
 
     @Id
-    @Column(name = "usuario_codigo", nullable = false, length = 30)
+    @Column(name = "usuario_codigo", nullable = false, length = 100)
     private String usuarioCodigo;
 
     @OneToOne(fetch = FetchType.LAZY)

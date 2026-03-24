@@ -1,44 +1,45 @@
 package co.dulcesydulces.provedor_backend.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import co.dulcesydulces.provedor_backend.domain.entidades.Proveedores;
 import co.dulcesydulces.provedor_backend.domain.entidades.Usuarios;
+import co.dulcesydulces.provedor_backend.repository.ProveedoresRepository;
 import co.dulcesydulces.provedor_backend.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository repo;
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final UsuarioRepository usuarioRepository;
+    private final ProveedoresRepository proveedoresRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repo) {
-        this.repo = repo;
+    public UsuarioService(
+            UsuarioRepository usuarioRepository,
+            ProveedoresRepository proveedoresRepository,
+            PasswordEncoder passwordEncoder
+    ) {
+        this.usuarioRepository = usuarioRepository;
+        this.proveedoresRepository = proveedoresRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Usuarios> listar() {
-        return repo.findAllByOrderByRolAscNombreUsuarioAsc();
+        return usuarioRepository.findAllByOrderByRolAscNombreUsuarioAsc();
     }
 
     public Map<String, List<Usuarios>> listarPorRol() {
-        Map<String, List<Usuarios>> map = new LinkedHashMap<>();
-        map.put("ADMINISTRADOR", new ArrayList<>());
-        map.put("PUBLICADOR", new ArrayList<>());
-        map.put("PROVEEDORES", new ArrayList<>());
-
-        for (Usuarios u : listar()) {
-            String r = normalizarRol(u.getRol());
-            map.computeIfAbsent(r, k -> new ArrayList<>()).add(u);
-        }
-        return map;
+        return listar().stream()
+                .collect(Collectors.groupingBy(Usuarios::getRol));
     }
 
+    @Transactional
     public Usuarios crear(Usuarios u) {
         if (u.getCodigo() == null || u.getCodigo().isBlank()) {
             throw new IllegalArgumentException("El código es obligatorio");
@@ -72,17 +73,25 @@ public class UsuarioService {
         return repo.save(u);
     }
 
+    @Transactional
     public void eliminar(String codigo) {
-        repo.deleteById(codigo);
+        usuarioRepository.deleteById(codigo);
     }
 
-    private String normalizarRol(String rol) {
-        String r = (rol == null ? "" : rol.trim().toUpperCase());
+    private void sincronizarProveedor(Usuarios usuario) {
+        boolean esProveedor = "PROVEEDORES".equalsIgnoreCase(usuario.getRol())
+                || "PROVEEDOR".equalsIgnoreCase(usuario.getRol());
 
-        if (r.equals("ADMINISTRADOR")) return "ADMINISTRADOR";
-        if (r.equals("PUBLICADOR")) return "PUBLICADOR";
-        if (r.equals("PROVEEDOR") || r.equals("PROVEEDORES")) return "PROVEEDORES";
+        boolean existeEnProveedores = proveedoresRepository.existsById(usuario.getCodigo());
 
-        return "PUBLICADOR";
+        if (esProveedor && !existeEnProveedores) {
+            Proveedores proveedor = new Proveedores();
+            proveedor.setUsuarioCodigo(usuario.getCodigo());
+            proveedoresRepository.save(proveedor);
+        }
+
+        if (!esProveedor && existeEnProveedores) {
+            proveedoresRepository.deleteById(usuario.getCodigo());
+        }
     }
 }
