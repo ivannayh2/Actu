@@ -57,7 +57,7 @@
 
           <tr th:each="d : ${detalles}">
             <td class="cell-actions">
-              <span th:text="${d.doctoCausacion}"></span>
+              <span th:text="${d.doctoSa}"></span>
               <a class="link-detalle"
                  th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
                 Ver detalle

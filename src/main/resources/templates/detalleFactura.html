@@ -33,18 +33,18 @@
       <table>
         <thead>
           <tr>
-            <th>Docto causación</th>
-            <th>Documento</th>
-            <th>Fecha</th>
-            <th>Proveedor</th>
-            <th>Descripción</th>
+            <th>Documento referencia</th>
+            <th>Descripcion item</th>
+            <th>Codigo de barras</th>
+            <th>Cantidad</th>
+            <th>Valor subtotal</th>
+            <th>Valor impuestos locales</th>
             <th>Valor neto</th>
           </tr>
         </thead>
         <tbody>
           <tr th:each="f : ${facturas}">
-            <td th:text="${f.doctoCausacion}"></td>
-            <td th:text="${f.documento}"></td>
+            <td th:text="${f.doctoReferencia}"></td>
             <td th:text="${f.fecha != null ? #temporals.format(f.fecha, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${f.proveedor}"></td>
             <td th:text="${f.descItem}"></td>

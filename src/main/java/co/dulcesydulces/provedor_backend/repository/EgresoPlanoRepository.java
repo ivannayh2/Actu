@@ -15,6 +15,7 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
     @Query("""
         SELECT 
             e.doctoEgreso AS doctoEgreso,
+            MAX(e.doctoSa) AS doctoSa,
             MAX(e.fechaEgreso) AS fechaEgreso,
             MAX(e.tercero) AS tercero,
             MAX(e.razonSocial) AS razonSocial,
@@ -35,9 +36,18 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
     @Query("""
         SELECT 
             e.doctoEgreso AS doctoEgreso,
+            MAX(e.doctoReferencia) AS doctoReferencia,
+            MAX(e.descItem) AS descItem,
+            MAX(e.codigoBarraPrincipal) AS codigoBarraPrincipal,
+            MAX(e.cantidad) AS cantidad,
+            MAX(e.valorSubtotal) AS valorSubtotal,
+            MAX(e.valorImptos) AS valorImptos,
+            MAX(e.doctoCausacion) AS doctoCausacion,
+            MAX(e.doctoSa) AS doctoSa,
             MAX(e.fechaEgreso) AS fechaEgreso,
             MAX(e.tercero) AS tercero,
             MAX(e.razonSocial) AS razonSocial,
+            MAX(e.valorNeto) AS valorNeto,
             SUM(e.vlrEgreso) AS vlrEgreso
         FROM EgresoPlano e
         WHERE LOWER(e.tercero) = LOWER(:tercero)
