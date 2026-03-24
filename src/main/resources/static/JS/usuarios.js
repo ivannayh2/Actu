@@ -38,7 +38,15 @@ function closeModal() {
 }
 
 modal.addEventListener("click", (e) => {
-  if (e.target.dataset.close) closeModal();
+  if (e.target.closest("[data-close]")) {
+    closeModal();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
 });
 
 btnNuevo.addEventListener("click", () => {
@@ -48,7 +56,54 @@ btnNuevo.addEventListener("click", () => {
   inputCodigo.disabled = false;
   inputPasswordHash.required = true; // requerido en creación
   openModal("Nuevo usuario");
+  autoCheckPermisosPorRol();
 });
+// Autochequeo de permisos según el rol seleccionado
+function autoCheckPermisosPorRol() {
+  // Limpiar todos los permisos
+  const checks = form.querySelectorAll('input[type="checkbox"]');
+  checks.forEach(chk => { chk.checked = false; });
+
+  const rol = inputRol.value.trim().toUpperCase();
+  if (rol === 'ADMINISTRADOR') {
+    // Marcar todos los permisos si es ADMINISTRADOR
+    checks.forEach(chk => { chk.checked = true; });
+    return;
+  }
+  // Mapear los nombres de los checkboxes a los permisos de cada rol
+  const permisosPorRol = {
+    'PROVEEDORES': [
+      'permComprobanteEgresosView',
+      'permPerfilView'
+    ],
+    'PUBLICADOR': [
+      'permImportarArchivosView',
+      'permComprobanteEgresosView',
+      'permHistorialView',
+      'permPerfilView',
+      'permUsuariosView',
+      'permCrearUsuariosEdit',
+      'permEditarUsuariosEdit',
+      'permEliminarUsuariosEdit'
+    ]
+    // Puedes agregar más roles aquí si lo necesitas
+  };
+
+  const permisos = permisosPorRol[rol] || [];
+  permisos.forEach(nombre => {
+    const chk = form.querySelector(`[name="${nombre}"]`);
+    if (chk) chk.checked = true;
+  });
+
+  // Mostrar/ocultar advertencia para publicador
+  const warning = document.getElementById('publicador-user-warning');
+  if (warning) {
+    warning.style.display = rol === 'PUBLICADOR' ? '' : 'none';
+  }
+}
+
+// Listener para cambio de rol
+inputRol.addEventListener('change', autoCheckPermisosPorRol);
 
 async function apiList() {
   const r = await fetch("/api/usuarios");

@@ -24,7 +24,7 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
     .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/favicon.ico").permitAll()
     .requestMatchers("/login", "/error").permitAll()
-    .requestMatchers("/usuarios/**").hasAuthority("ADMINISTRADOR")
+    .requestMatchers("/usuarios/**").hasAnyAuthority("ADMINISTRADOR", "PUBLICADOR")
     .anyRequest().authenticated()
 )
 

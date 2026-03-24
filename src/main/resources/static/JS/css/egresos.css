@@ -139,6 +139,33 @@ justify-content: flex-end;
 gap: 10px;
 }
 
+.egresos-page .filters-actions .btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+}
+
+.egresos-page .filters-actions .btn-compact {
+padding: 8px 12px;
+border-radius: 10px;
+font-size: 12px;
+font-weight: 700;
+}
+
+.egresos-page .filters-actions .btn-icon {
+width: 13px;
+height: 13px;
+display: block;
+object-fit: contain;
+}
+
+.egresos-page .filters-actions .btn i {
+width: 13px;
+height: 13px;
+stroke-width: 2.2;
+}
+
 .egresos-page .page-actions {
 padding: 12px 0;
 display: flex;
