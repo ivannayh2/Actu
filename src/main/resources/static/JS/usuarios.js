@@ -56,7 +56,8 @@ btnNuevo.addEventListener("click", () => {
   inputCodigo.disabled = false;
   inputPasswordHash.required = true; // requerido en creación
   openModal("Nuevo usuario");
-  autoCheckPermisosPorRol();
+  // Marcar permisos por defecto del rol actual
+  setTimeout(autoCheckPermisosPorRol, 0);
 });
 // Autochequeo de permisos según el rol seleccionado
 function autoCheckPermisosPorRol() {
@@ -202,6 +203,18 @@ document.addEventListener("click", async (e) => {
       inputEmail.value = u.email || "";
       inputPasswordHash.value = ""; // no mostramos hash, solo se cambia si escriben nueva clave
       inputPasswordHash.required = false; // no requerido en edición
+
+      // Marcar permisos: si el usuario tiene permisos personalizados, usarlos; si no, usar los del rol
+      setTimeout(() => {
+        const checks = form.querySelectorAll('input[type="checkbox"]');
+        if (Array.isArray(u.permisos) && u.permisos.length > 0) {
+          checks.forEach(chk => {
+            chk.checked = u.permisos.includes(chk.name);
+          });
+        } else {
+          autoCheckPermisosPorRol();
+        }
+      }, 0);
     } catch (error) {
       console.error("Error in edit handler:", error);
       alert("Error al cargar usuario: " + error.message);
