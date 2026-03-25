@@ -97,4 +97,19 @@ public class UsuarioService {
             proveedoresRepository.deleteById(usuario.getCodigo());
         }
     }
+
+    @Transactional
+    public Usuarios toggleEstado(String codigo) {
+        Usuarios usuario = usuarioRepository.findById(codigo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        String estado = usuario.getEstado_u();
+        if ("inactivo".equalsIgnoreCase(estado)) {
+            usuario.setEstado_u("activo");
+        } else {
+            usuario.setEstado_u("inactivo");
+        }
+        Usuarios actualizado = usuarioRepository.save(usuario);
+        sincronizarProveedor(actualizado);
+        return actualizado;
+    }
 }
