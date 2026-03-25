@@ -34,33 +34,26 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
     );
 
     @Query("""
-        SELECT 
-            e.doctoEgreso AS doctoEgreso,
-            MAX(e.doctoReferencia) AS doctoReferencia,
-            MAX(e.descItem) AS descItem,
-            MAX(e.codigoBarraPrincipal) AS codigoBarraPrincipal,
-            MAX(e.cantidad) AS cantidad,
-            MAX(e.valorSubtotal) AS valorSubtotal,
-            MAX(e.valorImptos) AS valorImptos,
-            MAX(e.doctoCausacion) AS doctoCausacion,
-            MAX(e.doctoSa) AS doctoSa,
-            MAX(e.fechaEgreso) AS fechaEgreso,
-            MAX(e.tercero) AS tercero,
-            MAX(e.razonSocial) AS razonSocial,
-            MAX(e.valorNeto) AS valorNeto,
-            SUM(e.vlrEgreso) AS vlrEgreso
-        FROM EgresoPlano e
-        WHERE LOWER(e.tercero) = LOWER(:tercero)
-          AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
-          AND (:fecha IS NULL OR e.fechaEgreso = :fecha)
-        GROUP BY e.doctoEgreso
-        ORDER BY MAX(e.fechaEgreso) DESC, e.doctoEgreso DESC
-    """)
-    List<EgresoPlanoResumen> buscarPorTerceroYFiltros(
-        @Param("tercero") String tercero,
-        @Param("numero") String numero,
-        @Param("fecha") LocalDate fecha
-    );
+    SELECT 
+        e.doctoEgreso AS doctoEgreso,
+        MAX(e.doctoSa) AS doctoSa,
+        MAX(e.fechaEgreso) AS fechaEgreso,
+        MAX(e.tercero) AS tercero,
+        MAX(e.razonSocial) AS razonSocial,
+        MAX(e.doctoCausacion) AS doctoCausacion,
+        SUM(e.vlrEgreso) AS vlrEgreso
+    FROM EgresoPlano e
+    WHERE LOWER(e.tercero) = LOWER(:tercero)
+      AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
+      AND (:fecha IS NULL OR e.fechaEgreso = :fecha)
+    GROUP BY e.doctoEgreso
+    ORDER BY MAX(e.fechaEgreso) DESC, e.doctoEgreso DESC
+""")
+List<EgresoPlanoResumen> buscarPorTerceroYFiltros(
+    @Param("tercero") String tercero,
+    @Param("numero") String numero,
+    @Param("fecha") LocalDate fecha
+);
 
     @Query("""
         SELECT e
