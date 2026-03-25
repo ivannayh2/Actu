@@ -49,7 +49,7 @@ body.sidebar-open {
   right: 0;
   height: var(--topbar-height);
   z-index: 100;
-  background: var(--bg, #FFFFFF);
+  background: transparent;
   box-shadow: none;
   display: flex;
   align-items: center;
@@ -154,11 +154,6 @@ body.sidebar-open .topbar {
 .limpiar-historial-btn:hover span {
   color: inherit;
   transform: scale(1.03);
-}
-
-.limpiar-historial-btn:hover .logout-icon {
-  filter: none;
-  transform: scale(1.06);
 }
 
 /* ===== SIDEBAR — barra lateral izquierda ===== */

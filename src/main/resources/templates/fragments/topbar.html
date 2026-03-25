@@ -6,7 +6,10 @@
 
   <div class="profile-section">
     <div class="user-info">
-      <div class="avatar">👤</div>
+      <div class="avatar" style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
+        <img th:if="${fotoPerfil != null}" th:src="${'/uploads/perfiles/' + codigo + '/' + fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+        <span th:if="${fotoPerfil == null}" th:text="${(nombreUsuario != null and !#strings.isEmpty(nombreUsuario)) ? #strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+      </div>
       <span sec:authentication="name">Usuario</span>
     </div>
 

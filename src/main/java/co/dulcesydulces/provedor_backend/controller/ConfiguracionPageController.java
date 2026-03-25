@@ -37,6 +37,8 @@ public class ConfiguracionPageController {
                 model.addAttribute("codigo", usuario.getCodigo());
                 model.addAttribute("nombreUsuario", usuario.getNombreUsuario());
                 model.addAttribute("email", usuario.getEmail());
+                model.addAttribute("rol", usuario.getRol());
+                model.addAttribute("fotoPerfil", usuario.getFotoPerfil());
             });
         }
         return "configuracion-perfil";

@@ -25,7 +25,7 @@
       <p class="subtitle-main">Gestión de Accesos de Usuario</p>
     </div>
     <div class="actions">
-      <button id="btnNuevo" class="btn primary" type="button">
+      <button id="btnNuevo" class="btn primary" type="button" sec:authorize="hasAuthority('ADMINISTRADOR')">
         <span class="btn-icon-wrap" aria-hidden="true">
           <img class="btn-icon-img" th:src="@{/icons/newUserIcon.png}" alt="">
         </span>
@@ -46,33 +46,29 @@
   </div>
 
   <section class="roles-grid">
-    <article class="role-card role-admin">
-      <div class="role-title">
-        Administrador
-        <span class="user-count"
-              th:text="|${porRol['ADMINISTRADOR'] != null ? porRol['ADMINISTRADOR'].size() : 0} usuarios|">
-          0 usuarios
-        </span>
-      </div>
+
+    <article class="role-card role-admin" sec:authorize="hasAuthority('ADMINISTRADOR')">
+      <div class="role-title">Administrador <span class="user-count" th:text="|${porRol['ADMINISTRADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-admin">
-          <li th:each="u,iterStat : ${porRol['ADMINISTRADOR'] != null ? porRol['ADMINISTRADOR'] : {}}"
-              class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+          <li th:each="u : ${porRol['ADMINISTRADOR']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/adminIcon.png}" alt="">
+                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
+                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}">Nombre</strong><br>
+                <strong th:text="${u.nombreUsuario}"> </strong><br>
                 <small th:text="${u.codigo}">COD</small>
               </div>
             </div>
             <div class="row-actions">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
-
               <div class="user-menu">
                 <button class="kebab-btn" type="button">⋮</button>
                 <ul class="kebab-dropdown">
@@ -111,22 +107,19 @@
       </div>
     </article>
 
-    <article class="role-card role-pub">
-      <div class="role-title">
-        Publicador
-        <span class="user-count"
-              th:text="|${porRol['PUBLICADOR'] != null ? porRol['PUBLICADOR'].size() : 0} usuarios|">
-          0 usuarios
-        </span>
-      </div>
+  
+    <article class="role-card role-pub" sec:authorize="hasAuthority('ADMINISTRADOR')">
+      <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
         <ul class="user-list" id="list-pub">
-          <li th:each="u,iterStat : ${porRol['PUBLICADOR'] != null ? porRol['PUBLICADOR'] : {}}"
-              class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+          <li th:each="u : ${porRol['PUBLICADOR']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <img class="user-avatar-icon user-avatar-img user-avatar-publicador" th:src="@{/icons/publicador.svg}" alt="">
+                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
+                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
@@ -136,19 +129,12 @@
               </div>
             </div>
             <div class="row-actions">
-              <button class="icon-btn"
-                      type="button"
-                      th:attr="data-edit=${u.codigo}">
-                Editar
-              </button>
-
+              <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
               <div class="user-menu">
                 <button class="kebab-btn" type="button">⋮</button>
-
                 <ul class="kebab-dropdown">
                   <li>
-                    <button type="button"
-                            class="menu-item"
+                    <button type="button" class="menu-item"
                             th:attr="data-disable=${u.codigo},data-estado=${u.estado_u}"
                             th:title="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
                       <span class="menu-icon" aria-hidden="true" th:if="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
@@ -160,17 +146,11 @@
                       <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
                         <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
                       </span>
-                      <span class="menu-label"
-                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
-                        Inactivar
-                      </span>
+                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
                     </button>
                   </li>
-
                   <li>
-                    <button type="button"
-                            class="menu-item"
-                            th:attr="data-del=${u.codigo}">
+                    <button type="button" class="menu-item" th:attr="data-del=${u.codigo}">
                       <span class="menu-icon" aria-hidden="true">
                         <img class="menu-icon-img" th:src="@{/icons/delete.svg}" alt="">
                       </span>
@@ -185,6 +165,7 @@
       </div>
     </article>
 
+    <!-- Mostrar sección PROVEEDORES a todos, pero para PUBLICADOR será la única visible -->
     <article class="role-card role-prov">
       <div class="role-title">
         Proveedor
@@ -195,12 +176,14 @@
       </div>
       <div class="role-body">
         <ul class="user-list" id="list-prov">
-          <li th:each="u,iterStat : ${porRol['PROVEEDORES'] != null ? porRol['PROVEEDORES'] : {}}"
-              class="user-item"
-              th:classappend="(${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : '') + (${iterStat.index % 3 == 0} ? ' is-featured' : '')">
+            <li th:each="u : ${porRol['PROVEEDORES']}" class="user-item"
+              th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <img class="user-avatar-icon user-avatar-img" th:src="@{/icons/proveedorIcon.png}" alt="">
+                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
+                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
@@ -256,7 +239,9 @@
   <div class="modal-backdrop" data-close="1"></div>
   <div class="modal-card" role="dialog" aria-modal="true">
     <div class="modal-head">
-      <h2 id="modalTitle">Nuevo usuario</h2>
+      <h2 class="permisos-title modal-title">
+        <span id="modalTitle">Nuevo usuario</span>
+      </h2>
       <button class="icon-btn" type="button" data-close="1">✕</button>
     </div>
 
@@ -264,35 +249,132 @@
       <input type="text" name="fakeusernameremembered" style="display:none">
       <input type="password" name="fakepasswordremembered" style="display:none">
 
-      <label>
-        Código
-        <input id="codigo" name="codigo" maxlength="30" required autocomplete="off">
-      </label>
+      <section class="user-data-shell" aria-label="Datos del usuario">
+        <label>
+          Código
+          <input id="codigo" name="codigo" maxlength="30" required autocomplete="off">
+        </label>
 
-      <label>
-        Rol
-        <select id="rol" name="rol" required autocomplete="off">
-          <option value="ADMINISTRADOR">ADMINISTRADOR</option>
-          <option value="PUBLICADOR">PUBLICADOR</option>
-          <option value="PROVEEDORES">PROVEEDORES</option>
-        </select>
-      </label>
+        <label>
+          Rol
+          <select id="rol" name="rol" required autocomplete="off">
+            <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+            <option value="PUBLICADOR">PUBLICADOR</option>
+            <option value="PROVEEDORES">PROVEEDOR</option>
+          </select>
+        </label>
 
-      <label>
-        Nombre
-        <input id="nombre_usuario" name="nombre_usuario" maxlength="100" autocomplete="off" required>
-      </label>
+        <label>
+          Nombre
+          <input id="nombre_usuario" name="nombre_usuario" maxlength="100" autocomplete="off" required>
+        </label>
 
-      <label>
-        Email
-        <input id="email" name="email" maxlength="120" autocomplete="off">
-      </label>
+        <label>
+          Email
+          <input id="email" name="email" maxlength="120" autocomplete="off">
+        </label>
 
-      <label>
-        Clave
-        <input id="password_hash" name="password_hash"
-               type="password" maxlength="150" autocomplete="new-password" required>
-      </label>
+        <label>
+          Clave
+        
+          <input id="password_hash" name="password_hash"
+                 type="password" maxlength="150" autocomplete="new-password" required>
+        </label>
+      </section>
+
+      <section class="permisos-section" aria-label="Permisos y accesos">
+        <div class="permisos-shell">
+          <h3 class="permisos-title">Permisos</h3>
+          <p class="permisos-subtitle">Selecciona las areas que este rol puede ver o editar.</p>
+
+          <div class="permisos-head" aria-hidden="true">
+            <span class="perm-area">Area</span>
+            <span class="perm-col"></span>
+            <span class="perm-col">Ver</span>
+          </div>
+
+          <div class="permiso-group-row">
+            <span>Acceso a modulos</span>
+          </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Importar archivos</strong>
+                <small>Subida y procesamiento de archivos</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permImportarArchivosView"></label>
+            </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Comprobante egreso</strong>
+                <small>Gestión de comprobantes de egreso</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permComprobanteEgresosView"></label>
+            </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Historial</strong>
+                <small>Consulta de historial de movimientos</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permHistorialView"></label>
+            </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Perfil</strong>
+                <small>Configuración de perfil de usuario</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permPerfilView"></label>
+            </div>
+
+            <div class="permiso-row">
+              <div class="permiso-area">
+                <strong>Usuarios</strong>
+                <small>Gestión de usuarios</small>
+              </div>
+              <label class="permiso-check"><input type="checkbox" name="permUsuariosView"></label>
+            </div>
+
+          <div class="permiso-group-row">
+            <span>Editar</span>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Crear usuarios</strong>
+              <small>Alta de nuevos usuarios</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permCrearUsuariosEdit"></label>
+          </div>
+
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Editar usuarios</strong>
+              <small>Modificacion de datos y accesos</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permEditarUsuariosEdit"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Eliminar usuarios</strong>
+              <small>Desvincular o eliminar cuentas</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permEliminarUsuariosEdit"></label>
+          </div>
+
+          <div class="permiso-row">
+            <div class="permiso-area">
+              <strong>Gestionar permisos</strong>
+              <small>Control total de accesos por rol</small>
+            </div>
+            <label class="permiso-check permiso-check-edit"><input type="checkbox" name="permGestionarPermisosEdit"></label>
+          </div>
+        </div>
+      </section>
 
       <div class="form-actions">
         <button type="button" class="btn" data-close="1">Cancelar</button>
@@ -305,5 +387,6 @@
 </div>
 
 <script th:src="@{/JS/usuarios.js}"></script>
+</body>
 </body>
 </html>
