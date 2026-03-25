@@ -43,18 +43,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr th:each="f : ${facturas}">
-            <td th:text="${f.doctoReferencia}"></td>
-            <td th:text="${f.fecha != null ? #temporals.format(f.fecha, 'dd/MM/yyyy') : '-'}"></td>
-            <td th:text="${f.proveedor}"></td>
-            <td th:text="${f.descItem}"></td>
-            <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-          </tr>
+  <tr th:each="f : ${facturas}">
+    <td th:text="${f.doctoReferencia != null ? f.doctoReferencia : '-'}"></td>
+    <td th:text="${f.descItem != null ? f.descItem : '-'}"></td>
+    <td th:text="${f.codigoBarraPrincipal != null ? f.codigoBarraPrincipal : '-'}"></td>
+    <td th:text="${f.cantidad != null ? f.cantidad : '-'}"></td>
+    <td th:text="${f.valorSubtotal != null ? '$ ' + #numbers.formatDecimal(f.valorSubtotal, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+    <td th:text="${f.valorImptos != null ? '$ ' + #numbers.formatDecimal(f.valorImptos, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+    <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+  </tr>
 
-          <tr th:if="${#lists.isEmpty(facturas)}">
-            <td colspan="6">No se encontraron facturas relacionadas.</td>
-          </tr>
-        </tbody>
+  <tr th:if="${#lists.isEmpty(facturas)}">
+    <td colspan="7">No se encontraron facturas relacionadas.</td>
+  </tr>
+</tbody>
       </table>
     </div>
   </main>
