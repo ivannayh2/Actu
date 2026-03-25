@@ -1,11 +1,11 @@
 server:
-  port: 8085
+  port: 8083
 
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/proveedoresdoc?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Bogota
     username: root
-    password: root1234
+    password: administrar
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

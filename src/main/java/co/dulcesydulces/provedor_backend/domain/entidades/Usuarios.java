@@ -24,7 +24,7 @@ public class Usuarios {
     private List<String> permisos;
 
     @Id
-    @Column(name="codigo", length = 30)
+    @Column(name="codigo", length = 100)
     private String codigo;
 
     @Column(name="rol", nullable = false, length = 15)

@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Detalle egreso</title>
+
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
   <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
@@ -24,8 +26,9 @@
           Documento: <strong th:text="${doctoEgreso}"></strong>
         </p>
       </div>
+
       <div class="actions">
-        <a class="btn" th:href="@{/egresos}">Volver</a>
+        <a class="btn" href="javascript:history.back()">Volver</a>
       </div>
     </div>
 
@@ -33,31 +36,37 @@
       <table>
         <thead>
           <tr>
-            <th>Docto causación</th>
-            <th></th>
-            <th>Fecha egreso</th>
-            <th>Tercero</th>
-            <th>Valor egreso</th>
+            <th>Número factura</th>
+            <th>Débitos</th>
+            <th>Creditos</th>
+            <th>Total factura</th>
           </tr>
         </thead>
+
         <tbody>
+          <tr th:if="${#lists.isEmpty(detalles)}">
+            <td colspan="4">No se encontraron doctos de causación relacionados.</td>
+          </tr>
+
           <tr th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="5"><strong>Total</strong></td>
-            <td><strong th:text="'$ ' + ${#numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong></td>
+            <td colspan="3"><strong>Total</strong></td>
+            <td>
+              <strong th:text="${'$ ' + #numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong>
+            </td>
           </tr>
 
           <tr th:each="d : ${detalles}">
-            <td th:text="${d.doctoCausacion}"></td>
             <td class="cell-actions">
-              <a class="link-detalle" th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">Ver detalle</a>
+              <span th:text="${d.doctoCausacion}"></span>
+              <a class="link-detalle"
+                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                Ver detalle
+              </a>
             </td>
-            <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
-            <td th:text="${d.tercero}"></td>
+            
+            <td>-</td>
+            <td>-</td>
             <td th:text="${d.vlrEgreso != null ? '$ ' + #numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-          </tr>
-
-          <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="5">No se encontraron doctos de causación relacionados.</td>
           </tr>
         </tbody>
       </table>

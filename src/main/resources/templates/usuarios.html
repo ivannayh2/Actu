@@ -6,9 +6,9 @@
   <title>Usuarios</title>
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
 
- <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -17,8 +17,6 @@
 
 <div th:replace="~{fragments/topbar :: topbar('usuarios')}"></div>
 <div th:replace="~{fragments/sidebar :: sidebar('usuarios')}"></div>
-
-
 
 <main class="container">
   <div class="page-head">
@@ -49,7 +47,6 @@
 
   <section class="roles-grid">
 
-    <!-- Solo mostrar sección ADMINISTRADOR si el usuario tiene rol ADMINISTRADOR -->
     <article class="role-card role-admin" sec:authorize="hasAuthority('ADMINISTRADOR')">
       <div class="role-title">Administrador <span class="user-count" th:text="|${porRol['ADMINISTRADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
@@ -88,7 +85,10 @@
                       <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
                         <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
                       </span>
-                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                      <span class="menu-label"
+                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                        Inactivar
+                      </span>
                     </button>
                   </li>
                   <li>
@@ -107,7 +107,7 @@
       </div>
     </article>
 
-    <!-- Solo mostrar sección PUBLICADOR si el usuario tiene rol ADMINISTRADOR -->
+  
     <article class="role-card role-pub" sec:authorize="hasAuthority('ADMINISTRADOR')">
       <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
@@ -124,7 +124,7 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <strong th:text="${u.nombreUsuario}"></strong><br>
                 <small th:text="${u.codigo}">COD</small>
               </div>
             </div>
@@ -167,7 +167,13 @@
 
     <!-- Mostrar sección PROVEEDORES a todos, pero para PUBLICADOR será la única visible -->
     <article class="role-card role-prov">
-      <div class="role-title">Proveedor <span class="user-count" th:text="|${porRol['PROVEEDORES'].size()} usuarios|">0 usuarios</span></div>
+      <div class="role-title">
+        Proveedor
+        <span class="user-count"
+              th:text="|${porRol['PROVEEDORES'] != null ? porRol['PROVEEDORES'].size() : 0} usuarios|">
+          0 usuarios
+        </span>
+      </div>
       <div class="role-body">
         <ul class="user-list" id="list-prov">
             <li th:each="u : ${porRol['PROVEEDORES']}" class="user-item"
@@ -182,7 +188,7 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"> </strong><br>
+                <strong th:text="${u.nombreUsuario}"></strong><br>
                 <small th:text="${u.codigo}">COD</small>
               </div>
             </div>
@@ -205,7 +211,10 @@
                       <span class="menu-icon" aria-hidden="true" th:unless="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')}">
                         <img class="menu-icon-img" th:src="@{/icons/inhabilitar.png}" alt="">
                       </span>
-                      <span class="menu-label" th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">Inactivar</span>
+                      <span class="menu-label"
+                            th:text="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? 'Activar' : 'Inactivar'">
+                        Inactivar
+                      </span>
                     </button>
                   </li>
                   <li>
@@ -218,7 +227,6 @@
                   </li>
                 </ul>
               </div>
-
             </div>
           </li>
         </ul>
@@ -227,7 +235,6 @@
   </section>
 </main>
 
-<!-- Modal -->
 <div id="modal" class="modal hidden" aria-hidden="true">
   <div class="modal-backdrop" data-close="1"></div>
   <div class="modal-card" role="dialog" aria-modal="true">
@@ -239,8 +246,6 @@
     </div>
 
     <form id="formUsuario" class="form" autocomplete="off">
-
-      <!-- anti-autofill -->
       <input type="text" name="fakeusernameremembered" style="display:none">
       <input type="password" name="fakepasswordremembered" style="display:none">
 
@@ -271,7 +276,7 @@
 
         <label>
           Clave
-          <!-- ✅ EL FIX IMPORTANTE: id y name correctos -->
+        
           <input id="password_hash" name="password_hash"
                  type="password" maxlength="150" autocomplete="new-password" required>
         </label>
