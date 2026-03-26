@@ -231,17 +231,17 @@ public class PlanosUploadService {
                 }
 
                 batch.add(new Object[]{
-                        uploadId,
-                        c[0].trim(),      // docto_proveedor
-                        c[1].trim(),      // nro_documento
-                        c[2].trim(),      // referencia_1
-                        c[3].trim(),      // razon_social_proveedor
-                        parseMoney(c[4]), // valor_bruto (puede ser negativo)
-                        parseMoney(c[5]), // valor_dsctos
-                        parseMoney(c[6]), // valor_imptos
-                        parseMoney(c[7]), // valor_neto (puede ser negativo)
-                        parseMoney(c[8]), // valor_retenciones
-                        c[9].trim()       // notas
+                    uploadId,
+                    c[0].trim().replaceFirst("^[^-]+-", ""), // 👈 AQUÍ
+                    c[1].trim(),      // nro_documento
+                    c[2].trim(),      // referencia_1
+                    c[3].trim(),      // razon_social_proveedor
+                    parseMoney(c[4]), // valor_bruto
+                    parseMoney(c[5]), // valor_dsctos
+                    parseMoney(c[6]), // valor_imptos
+                    parseMoney(c[7]), // valor_neto
+                    parseMoney(c[8]), // valor_retenciones
+                    c[9].trim()       // notas
                 });
 
                 if (batch.size() >= 2000) {

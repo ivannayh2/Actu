@@ -11,10 +11,10 @@ import co.dulcesydulces.provedor_backend.domain.entidades.FacturaPlano;
 public interface FacturaPlanoRepository extends JpaRepository<FacturaPlano, Long> {
 
     @Query("""
-        SELECT f
-        FROM FacturaPlano f
-        WHERE f.doctoCausacion = :doctoCausacion
-        ORDER BY f.doctoCausacion ASC
-    """)
-    List<FacturaPlano> buscarPorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
+    SELECT f
+    FROM FacturaPlano f
+    WHERE f.doctoCausacion = :doctoCausacion
+    ORDER BY f.fecha ASC, f.doctoReferencia ASC
+""")
+List<FacturaPlano> buscarPorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
 }
