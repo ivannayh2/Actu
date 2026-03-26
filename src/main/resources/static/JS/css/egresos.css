@@ -1,3 +1,26 @@
+/* Estilo tipo logo Uxcel para nombre proveedor */
+.egresos-header-proveedor {
+	margin: 18px 0 0 0;
+	padding-left: 110px;
+	padding-bottom: 8px;
+	width: 100%;
+	box-sizing: border-box;
+}
+.egresos-header-proveedor-nombre {
+	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	font-weight: 800;
+	font-size: 2.1em;
+	color: rgba(24,28,50,0.09);
+	letter-spacing: 0.01em;
+	display: block;
+}
+.egresos-header-proveedor-label {
+	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	font-weight: 400;
+	font-size: 0.97em;
+	color: #a3aab5;
+	letter-spacing: 0.01em;
+}
 .egresos-page {
 max-width: 1320px;
 font-family: "Public Sans", "Segoe UI", sans-serif;
@@ -94,10 +117,10 @@ color: #b91c1c;
 .egresos-page .filters {
 margin: 0;
 padding: 14px;
-background: #ffffff;
-border: 1px solid #e5eaf3;
-border-radius: 14px;
-box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+background: transparent;
+border: none;
+border-radius: 0;
+box-shadow: none;
 display: grid;
 grid-template-columns: repeat(3, minmax(0, 1fr));
 gap: 10px 12px;

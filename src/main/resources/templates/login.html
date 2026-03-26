@@ -26,14 +26,14 @@
       <img th:src="@{/img/logo.png}" alt="Logo">
     </div>
 
-    <h2>Bienvenido!</h2>
-    <p class="subtitle">Accede para gestionar tus módulos</p>
+    <h2>¡Bienvenido!</h2>
+    <p class="subtitle">Ingresa con tu usuario para continuar</p>
 
     <form method="post" th:action="@{/login}" autocomplete="on">
 
-            <label>Usuario (codigo, nombre o email)</label>
-      <input name="codigo"
-              placeholder="codigo, nombre o email"
+          <label>Usuario</label>
+          <input name="codigo"
+             placeholder="Usuario"
              required
              autocomplete="username" />
 

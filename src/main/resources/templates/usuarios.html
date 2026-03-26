@@ -25,7 +25,7 @@
       <p class="subtitle-main">Gestión de Accesos de Usuario</p>
     </div>
     <div class="actions">
-      <button id="btnNuevo" class="btn primary" type="button" sec:authorize="hasAuthority('ADMINISTRADOR')">
+      <button id="btnNuevo" class="btn primary" type="button" sec:authorize="hasAnyAuthority('ADMINISTRADOR','PUBLICADOR')">
         <span class="btn-icon-wrap" aria-hidden="true">
           <img class="btn-icon-img" th:src="@{/icons/newUserIcon.png}" alt="">
         </span>
@@ -35,9 +35,13 @@
   </div>
 
   <div class="users-toolbar" role="tablist" aria-label="Filtros de usuarios">
-    <button class="users-tab is-active" type="button" data-user-filter="all" role="tab" aria-selected="true">
+    <button class="users-tab" type="button" data-user-filter="all" role="tab" aria-selected="false">
       <span>Todos</span>
       <span id="filterAllCount" class="tab-count">0</span>
+    </button>
+    <button class="users-tab is-active" type="button" data-user-filter="active" role="tab" aria-selected="true">
+      <span>Activos</span>
+      <span id="filterActiveCount" class="tab-count">0</span>
     </button>
     <button class="users-tab" type="button" data-user-filter="inactive" role="tab" aria-selected="false">
       <span>Inactivos</span>
@@ -63,8 +67,7 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"> </strong><br>
-                <small th:text="${u.codigo}">COD</small>
+                <strong th:text="${u.nombreUsuario}"></strong><small th:text="${u.codigo}">COD</small>
               </div>
             </div>
             <div class="row-actions">
@@ -124,8 +127,7 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"></strong><br>
-                <small th:text="${u.codigo}">COD</small>
+                <strong th:text="${u.nombreUsuario}"></strong><small th:text="${u.codigo}">COD</small>
               </div>
             </div>
             <div class="row-actions">
@@ -188,13 +190,11 @@
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
               </div>
               <div class="user-meta">
-                <strong th:text="${u.nombreUsuario}"></strong><br>
-                <small th:text="${u.codigo}">COD</small>
+                <strong th:text="${u.nombreUsuario}"></strong><small th:text="${u.codigo}">COD</small>
               </div>
             </div>
-            <div class="row-actions">
+            <div class="row-actions" sec:authorize="hasAnyAuthority('ADMINISTRADOR','PUBLICADOR')">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
-
               <div class="user-menu">
                 <button class="kebab-btn" type="button">⋮</button>
                 <ul class="kebab-dropdown">
@@ -257,9 +257,12 @@
 
         <label>
           Rol
-          <select id="rol" name="rol" required autocomplete="off">
+          <select id="rol" name="rol" required autocomplete="off" sec:authorize="!hasAuthority('PUBLICADOR')">
             <option value="ADMINISTRADOR">ADMINISTRADOR</option>
             <option value="PUBLICADOR">PUBLICADOR</option>
+            <option value="PROVEEDORES">PROVEEDOR</option>
+          </select>
+          <select id="rol" name="rol" required autocomplete="off" sec:authorize="hasAuthority('PUBLICADOR')">
             <option value="PROVEEDORES">PROVEEDOR</option>
           </select>
         </label>
@@ -282,7 +285,7 @@
         </label>
       </section>
 
-      <section class="permisos-section" aria-label="Permisos y accesos">
+      <section class="permisos-section" aria-label="Permisos y accesos" sec:authorize="hasAuthority('ADMINISTRADOR')">
         <div class="permisos-shell">
           <h3 class="permisos-title">Permisos</h3>
           <p class="permisos-subtitle">Selecciona las areas que este rol puede ver o editar.</p>
