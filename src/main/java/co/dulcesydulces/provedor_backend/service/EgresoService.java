@@ -40,10 +40,15 @@ public class EgresoService {
         this.facturaPlanoRepository = facturaPlanoRepository;
     }
 
+    /**
+     * Listado resumen de egresos para la vista /egresos.
+     * Si llega doctoSa, lista el egreso o los egresos relacionados.
+     */
     public List<EgresoPlanoResumen> buscarPlanoSegunUsuario(
             Authentication auth,
             String proveedor,
             String numeroEgreso,
+            String doctoSa,
             LocalDate fechaDocumento
     ) {
         boolean esAdmin = auth.getAuthorities().stream()
@@ -56,7 +61,12 @@ public class EgresoService {
                 .anyMatch(a -> a.getAuthority().equals("PROVEEDORES"));
 
         if (esAdmin || esPublicador) {
-            return egresoPlanoRepository.buscarConFiltros(proveedor, numeroEgreso, fechaDocumento);
+            return egresoPlanoRepository.buscarConFiltros(
+                    proveedor,
+                    numeroEgreso,
+                    doctoSa,
+                    fechaDocumento
+            );
         }
 
         if (esProveedor) {
@@ -64,6 +74,48 @@ public class EgresoService {
             return egresoPlanoRepository.buscarPorTerceroYFiltros(
                     usuarioLogueado,
                     numeroEgreso,
+                    doctoSa,
+                    fechaDocumento
+            );
+        }
+
+        return List.of();
+    }
+
+    /**
+     * Detalle completo por filas, útil para la vista detallada.
+     */
+    public List<EgresoPlano> buscarDetalleSegunUsuario(
+            Authentication auth,
+            String proveedor,
+            String numeroEgreso,
+            String doctoSa,
+            LocalDate fechaDocumento
+    ) {
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
+
+        boolean esPublicador = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
+
+        boolean esProveedor = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("PROVEEDORES"));
+
+        if (esAdmin || esPublicador) {
+            return egresoPlanoRepository.buscarDetallesConFiltros(
+                    proveedor,
+                    numeroEgreso,
+                    doctoSa,
+                    fechaDocumento
+            );
+        }
+
+        if (esProveedor) {
+            String usuarioLogueado = auth.getName();
+            return egresoPlanoRepository.buscarDetallesPorTerceroYFiltros(
+                    usuarioLogueado,
+                    numeroEgreso,
+                    doctoSa,
                     fechaDocumento
             );
         }

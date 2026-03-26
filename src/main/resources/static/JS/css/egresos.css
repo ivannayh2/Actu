@@ -399,4 +399,22 @@ flex-direction: column;
 .egresos-page .modal-actions .btn {
 width: 100%;
 }
+.egreso-relacionado-box{
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  border: 1px solid #d9e1ec;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.egreso-relacionado-content{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.egreso-relacionado-content p{
+  margin: 0;
+}
 }

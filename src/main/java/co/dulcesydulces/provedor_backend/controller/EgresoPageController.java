@@ -2,7 +2,6 @@ package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoCreateRequest;
-import co.dulcesydulces.provedor_backend.domain.dto.EgresoPlanoResumen;
 import co.dulcesydulces.provedor_backend.service.EgresoService;
 import co.dulcesydulces.provedor_backend.service.ProveedoresService;
 import jakarta.validation.Valid;
@@ -36,42 +34,70 @@ public class EgresoPageController {
     }
 
     @GetMapping
-    public String page(
-            @RequestParam(required = false) String proveedor,
-            @RequestParam(required = false) String numeroEgreso,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
-            Model model,
-            Authentication auth
-    ) {
-        List<EgresoPlanoResumen> detalle = service.buscarPlanoSegunUsuario(auth, proveedor, numeroEgreso, fechaDocumento);
+public String page(
+        @RequestParam(required = false) String proveedor,
+        @RequestParam(required = false) String numeroEgreso,
+        @RequestParam(required = false) String doctoSa,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
+        Model model,
+        Authentication auth
+) {
+    boolean esAdmin = auth.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
+
+    boolean esPublicador = auth.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
+
+    boolean puedeFiltrarProveedor = esAdmin || esPublicador;
+    boolean puedeCrearEgreso = esAdmin || esPublicador;
+
+    model.addAttribute("proveedor", proveedor);
+    model.addAttribute("numeroEgreso", numeroEgreso);
+    model.addAttribute("doctoSa", doctoSa);
+    model.addAttribute("fechaDocumento", fechaDocumento);
+    model.addAttribute("puedeFiltrarProveedor", puedeFiltrarProveedor);
+    model.addAttribute("puedeCrearEgreso", puedeCrearEgreso);
+    model.addAttribute("proveedoresOptions", proveedoresService.getListaEnOptions());
+    model.addAttribute("nuevoEgreso", new EgresoCreateRequest());
+
+    if (doctoSa != null && !doctoSa.trim().isEmpty()) {
+        var detalle = service.buscarPlanoSegunUsuario(
+                auth,
+                proveedor,
+                numeroEgreso,
+                doctoSa,
+                fechaDocumento
+        );
 
         BigDecimal totalVlrEgreso = detalle.stream()
-                .map(EgresoPlanoResumen::getVlrEgreso)
+                .map(d -> d.getVlrEgreso())
                 .filter(v -> v != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        boolean esAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
-
-        boolean esPublicador = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
-
-        boolean puedeFiltrarProveedor = esAdmin || esPublicador;
-        boolean puedeCrearEgreso = esAdmin || esPublicador;
-
-        model.addAttribute("egresos", detalle);
         model.addAttribute("detalle", detalle);
         model.addAttribute("totalVlrEgreso", totalVlrEgreso);
-        model.addAttribute("proveedor", proveedor);
-        model.addAttribute("numeroEgreso", numeroEgreso);
-        model.addAttribute("fechaDocumento", fechaDocumento);
-        model.addAttribute("puedeFiltrarProveedor", puedeFiltrarProveedor);
-        model.addAttribute("puedeCrearEgreso", puedeCrearEgreso);
-        model.addAttribute("proveedoresOptions", proveedoresService.getListaEnOptions());
-        model.addAttribute("nuevoEgreso", new EgresoCreateRequest());
 
         return "egresos";
     }
+
+    var detalles = service.buscarDetalleSegunUsuario(
+            auth,
+            proveedor,
+            numeroEgreso,
+            null,
+            fechaDocumento
+    );
+
+    BigDecimal totalDetalleEgreso = detalles.stream()
+            .map(d -> d.getVlrEgreso())
+            .filter(v -> v != null)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    model.addAttribute("detalles", detalles);
+    model.addAttribute("totalDetalleEgreso", totalDetalleEgreso);
+
+    return "egresosDetallado";
+}
 
     @GetMapping("/detallado")
     public String verDetalleEgreso(
