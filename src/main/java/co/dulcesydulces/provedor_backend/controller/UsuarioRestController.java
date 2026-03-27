@@ -42,10 +42,18 @@ public class UsuarioRestController {
     }
 
 
+
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<?> update(@PathVariable String codigo, @RequestBody Usuarios u) {
         return ResponseEntity.ok(service.actualizar(codigo, u));
+    }
+
+    @PutMapping("/{codigo}/desactivar")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<?> toggleEstado(@PathVariable String codigo) {
+        Usuarios usuario = service.toggleEstado(codigo);
+        return ResponseEntity.ok(usuario);
     }
 
 

@@ -56,7 +56,8 @@ btnNuevo.addEventListener("click", () => {
   inputCodigo.disabled = false;
   inputPasswordHash.required = true; // requerido en creación
   openModal("Nuevo usuario");
-  autoCheckPermisosPorRol();
+  // Marcar permisos por defecto del rol actual
+  setTimeout(autoCheckPermisosPorRol, 0);
 });
 // Autochequeo de permisos según el rol seleccionado
 function autoCheckPermisosPorRol() {
@@ -202,6 +203,18 @@ document.addEventListener("click", async (e) => {
       inputEmail.value = u.email || "";
       inputPasswordHash.value = ""; // no mostramos hash, solo se cambia si escriben nueva clave
       inputPasswordHash.required = false; // no requerido en edición
+
+      // Marcar permisos: si el usuario tiene permisos personalizados, usarlos; si no, usar los del rol
+      setTimeout(() => {
+        const checks = form.querySelectorAll('input[type="checkbox"]');
+        if (Array.isArray(u.permisos) && u.permisos.length > 0) {
+          checks.forEach(chk => {
+            chk.checked = u.permisos.includes(chk.name);
+          });
+        } else {
+          autoCheckPermisosPorRol();
+        }
+      }, 0);
     } catch (error) {
       console.error("Error in edit handler:", error);
       alert("Error al cargar usuario: " + error.message);
@@ -306,29 +319,37 @@ function initUserFilters() {
   if (!tabs.length) return;
 
   const items = Array.from(document.querySelectorAll(".user-item"));
+
   const allCountEl = document.getElementById("filterAllCount");
+  const activeCountEl = document.getElementById("filterActiveCount");
   const inactiveCountEl = document.getElementById("filterInactiveCount");
 
   const isInactive = (item) => item.classList.contains("is-disabled");
+  const isActive = (item) => !item.classList.contains("is-disabled");
 
   const updateCounts = () => {
     const allCount = items.length;
+    const activeCount = items.filter(isActive).length;
     const inactiveCount = items.filter(isInactive).length;
 
     if (allCountEl) allCountEl.textContent = String(allCount);
+    if (activeCountEl) activeCountEl.textContent = String(activeCount);
     if (inactiveCountEl) inactiveCountEl.textContent = String(inactiveCount);
   };
 
   const applyFilter = (filter) => {
     items.forEach((item) => {
-      const shouldShow = filter === "all" ? true : isInactive(item);
+      let shouldShow = true;
+      if (filter === "inactive") shouldShow = isInactive(item);
+      else if (filter === "active") shouldShow = isActive(item);
+      // "all" muestra todos
       item.classList.toggle("hidden-by-filter", !shouldShow);
     });
 
     tabs.forEach((tab) => {
-      const isActive = tab.dataset.userFilter === filter;
-      tab.classList.toggle("is-active", isActive);
-      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      const isActiveTab = tab.dataset.userFilter === filter;
+      tab.classList.toggle("is-active", isActiveTab);
+      tab.setAttribute("aria-selected", isActiveTab ? "true" : "false");
     });
   };
 
@@ -339,7 +360,7 @@ function initUserFilters() {
   });
 
   updateCounts();
-  applyFilter("all");
+  applyFilter("active");
 }
 
 initUserFilters();

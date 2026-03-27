@@ -27,6 +27,10 @@ public class HomeController {
             if (user != null) {
                 session.setAttribute("usuario", user.getCodigo());
                 session.setAttribute("rol", user.getRol());
+                String rol = user.getRol() != null ? user.getRol().toUpperCase() : "";
+                if (rol.equals("PROVEEDOR") || rol.equals("PROVEEDORES")) {
+                    return "redirect:/egresos";
+                }
             }
         }
         return "home"; // home.html

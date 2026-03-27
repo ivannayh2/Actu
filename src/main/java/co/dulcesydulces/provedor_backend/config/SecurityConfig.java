@@ -34,7 +34,15 @@ public class SecurityConfig {
         .usernameParameter("codigo")
         .passwordParameter("clave")
         .failureUrl("/login?error")
-        .defaultSuccessUrl("/home", true)
+        .successHandler((request, response, authentication) -> {
+          boolean isProveedor = authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("PROVEEDORES"));
+          if (isProveedor) {
+            response.sendRedirect("/egresos");
+          } else {
+            response.sendRedirect("/home");
+          }
+        })
         .permitAll()
       )
       .logout(logout -> logout

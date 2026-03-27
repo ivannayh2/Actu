@@ -14,8 +14,15 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
+
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
   <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+
+
+  
+  <div th:if="${rol} == 'PROVEEDORES'" class="egresos-header-proveedor">
+    <span class="egresos-header-proveedor-nombre" th:text="${nombreUsuario}"></span>
+  </div>
 
   <main class="container egresos-page">
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
@@ -45,12 +52,10 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <a class="btn btn-compact" th:href="@{/egresos}">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </a>
       </div>
@@ -65,7 +70,7 @@
         <thead>
           <tr>
             <th>Docto egreso</th>
-            <th></th>
+            <th>Acciones</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -74,12 +79,17 @@
         </thead>
         <tbody>
           <tr th:if="${!#lists.isEmpty(detalle)}">
-            <td colspan="5"><strong>Total</strong></td>
-            <td><strong th:text="${totalVlrEgreso}"></strong></td>
+            <td></td>
+            <td></td>
+            <td colspan="3"><strong>Total</strong></td>
+            <td><strong th:text="${totalVlrEgreso != null ? '$ ' + #numbers.formatDecimal(totalVlrEgreso, 1, 'POINT', 2, 'COMMA') : '-'}"></strong></td>
           </tr>
 
           <tr th:each="d : ${detalle}">
-            <td th:text="${d.doctoEgreso}"></td>
+            <td>
+              <span th:if="${d.doctoEgreso != null}" th:text="${d.doctoEgreso}"></span>
+              <span th:if="${d.doctoEgreso == null}">&nbsp;</span>
+            </td>
             <td class="cell-actions">
               <a class="link-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
@@ -90,7 +100,7 @@
           </tr>
 
           <tr th:if="${#lists.isEmpty(detalle)}">
-            <td colspan="6">No se encontraron registros en egresos_plano.</td>
+            <td colspan="6" style="text-align: center; padding: 20px;">No se encontraron registros en egresos_plano.</td>
           </tr>
         </tbody>
       </table>

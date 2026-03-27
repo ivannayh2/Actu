@@ -73,6 +73,7 @@
         <thead>
           <tr>
             <th>Número factura</th>
+            <th></th>
             <th>Débitos</th>
             <th>Créditos</th>
             <th>Total factura</th>
@@ -81,29 +82,29 @@
 
         <tbody>
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="4">No se encontraron facturas relacionadas.</td>
+            <td colspan="5">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="3"><strong>Total</strong></td>
+            <td></td>
+            <td></td>
+            <td colspan="2"><strong>Total</strong></td>
             <td>
               <strong th:text="${'$ ' + #numbers.formatDecimal(totalDetalleEgreso, 1, 'POINT', 2, 'COMMA')}"></strong>
             </td>
           </tr>
 
           <tr th:each="d : ${detalles}">
+            <td><span th:text="${d.doctoSa != null ? d.doctoSa : '-'}"></span></td>
             <td class="cell-actions">
-              <span th:text="${d.doctoSa != null ? d.doctoSa : '-'}"></span>
-              <a class="btn btn-compact"
+              <a class="btn btn-compact link-detalle"
                   th:if="${d.doctoCausacion != null}"
                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
                 Ver detalle
               </a>
             </td>
-
             <td>-</td>
             <td>-</td>
-
             <td th:text="${d.vlrEgreso != null ? '$ ' + #numbers.formatDecimal(d.vlrEgreso, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
           </tr>
         </tbody>
