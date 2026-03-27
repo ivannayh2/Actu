@@ -38,13 +38,25 @@
       <input type="text" name="usuario" th:value="${usuario}" placeholder="Buscar por usuario">
     </label>
 
-    <label>Fecha
-      <input type="date" name="fecha">
+    <label>Tipo de movimiento
+      <select name="tipoMovimiento" th:value="${tipoMovimiento}">
+        <option value="">Todos</option>
+        <option value="creo">Creó usuario</option>
+        <option value="elimino">Eliminó usuario</option>
+        <option value="inactivo">Inactivó usuario</option>
+        <option value="activo">Activó usuario</option>
+        <option value="archivo">Cargó archivo</option>
+      </select>
     </label>
 
-    <label>Movimiento
-      <input type="text" name="archivo" th:value="${archivo}" placeholder="Buscar por movimiento">
+    <label>Fecha
+      <input type="date" name="fecha" th:value="${fecha}">
     </label>
+
+    <div style="margin-top: 1.2em; display: flex; gap: 1em;">
+      <button type="submit" class="btn primary">Buscar</button>
+      <a href="/historial" class="btn" style="background:#f3f4f6; color:#222; border:1px solid #cbd5e1;">Limpiar filtros</a>
+    </div>
   </form>
 
   <div class="table-wrap">
