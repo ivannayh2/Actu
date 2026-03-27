@@ -64,7 +64,7 @@ public class ConsultasDocumentosService {
 
         List<Map<String, Object>> rows = jdbc.queryForList(
             """
-                SELECT *
+                SELECT id as id, usuario, nombre_egresos, nombre_facturas, nombre_notas, creado_en as fecha, NULL as movimiento
                 FROM uploads
                 WHERE (? IS NULL OR ? = '' OR LOWER(usuario) LIKE LOWER(CONCAT('%', ?, '%')))
                   AND (
@@ -73,8 +73,11 @@ public class ConsultasDocumentosService {
                         OR LOWER(COALESCE(nombre_facturas, '')) LIKE LOWER(CONCAT('%', ?, '%'))
                         OR LOWER(COALESCE(nombre_notas, '')) LIKE LOWER(CONCAT('%', ?, '%'))
                   )
-                ORDER BY 1 DESC
-                LIMIT 200
+                UNION ALL
+                SELECT h.id as id, u.nombre_usuario as usuario, NULL as nombre_egresos, NULL as nombre_facturas, NULL as nombre_notas, h.fecha_hora as fecha, h.movimiento
+                FROM Historial h
+                JOIN Usuarios u ON h.usuario_codigo = u.codigo
+                WHERE (? IS NULL OR ? = '' OR LOWER(u.nombre_usuario) LIKE LOWER(CONCAT('%', ?, '%')))
             """,
             usuarioFiltro,
             usuarioFiltro,
@@ -83,22 +86,28 @@ public class ConsultasDocumentosService {
             archivoFiltro,
             archivoFiltro,
             archivoFiltro,
-            archivoFiltro
+            archivoFiltro,
+            usuarioFiltro,
+            usuarioFiltro,
+            usuarioFiltro
         );
 
+        // Ordenar por fecha descendente (ya que UNION ALL no garantiza el orden)
         return rows.stream()
             .map(this::mapHistorial)
+            .sorted((a, b) -> b.getFechaCarga().compareTo(a.getFechaCarga()))
             .toList();
     }
 
     private HistorialCargaView mapHistorial(Map<String, Object> row) {
         return new HistorialCargaView(
-            toLong(firstValue(row, "upload_id", "id")),
-            toText(firstValue(row, "usuario", "user")),
-            toText(firstValue(row, "nombre_egresos", "archivo_egresos")),
-            toText(firstValue(row, "nombre_facturas", "archivo_facturas")),
-            toText(firstValue(row, "nombre_notas", "archivo_notas")),
-            formatFechaCarga(firstValue(row, "creado_en", "created_at", "fecha_carga", "fecha"))
+            toLong(firstValue(row, "id")),
+            toText(firstValue(row, "usuario")),
+            toText(firstValue(row, "nombre_egresos")),
+            toText(firstValue(row, "nombre_facturas")),
+            toText(firstValue(row, "nombre_notas")),
+            formatFechaCarga(firstValue(row, "fecha")),
+            toText(firstValue(row, "movimiento"))
         );
     }
 

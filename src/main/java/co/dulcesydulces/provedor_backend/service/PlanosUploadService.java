@@ -28,12 +28,13 @@ public class PlanosUploadService {
     }
 
     @Transactional
-    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
+    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas, String usuario) throws Exception {
         validarTxt(egresos);
         validarTxt(facturas);
         validarTxt(notas);
 
         long uploadId = uploadsRepository.crearUpload(
+                usuario,
                 egresos.getOriginalFilename(),
                 facturas.getOriginalFilename(),
                 notas.getOriginalFilename()

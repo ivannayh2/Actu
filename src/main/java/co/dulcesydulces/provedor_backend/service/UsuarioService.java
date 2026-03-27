@@ -5,6 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import co.dulcesydulces.provedor_backend.domain.entidades.Historial;
+import co.dulcesydulces.provedor_backend.repository.HistorialRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +20,8 @@ import co.dulcesydulces.provedor_backend.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
+    @Autowired
+    private HistorialRepository historialRepository;
 
     private final UsuarioRepository usuarioRepository;
     private final ProveedoresRepository proveedoresRepository;
@@ -47,6 +54,22 @@ public class UsuarioService {
 
         Usuarios guardado = usuarioRepository.save(u);
         sincronizarProveedor(guardado);
+
+        // Registrar en historial
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String creador = (authentication != null) ? authentication.getName() : "anon";
+            Usuarios usuarioCreador = usuarioRepository.findByCodigo(creador).orElse(null);
+            if (usuarioCreador != null) {
+                Historial h = new Historial();
+                h.setUsuario(usuarioCreador);
+                h.setFechaHora(java.time.LocalDateTime.now());
+                h.setMovimiento("Creó el usuario '" + guardado.getCodigo() + "' (" + guardado.getNombreUsuario() + ")");
+                historialRepository.save(h);
+            }
+        } catch (Exception ex) {
+            // No bloquear creación si falla historial
+        }
 
         return guardado;
     }
