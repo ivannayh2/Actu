@@ -21,13 +21,19 @@ public class HistorialPageController {
     @GetMapping
     public String page(
         @RequestParam(required = false) String usuario,
-        @RequestParam(required = false) String archivo,
+        @RequestParam(required = false) String fecha,
+        @RequestParam(required = false) String tipoMovimiento,
         Model model
     ) {
-        var historial = consultasDocumentosService.buscarHistorial(usuario, archivo);
+        var historial = consultasDocumentosService.buscarHistorial(
+            (usuario != null && !usuario.isBlank()) ? usuario : null,
+            (fecha != null && !fecha.isBlank()) ? fecha : null,
+            (tipoMovimiento != null && !tipoMovimiento.isBlank()) ? tipoMovimiento : null
+        );
         model.addAttribute("historial", historial);
         model.addAttribute("usuario", usuario);
-        model.addAttribute("archivo", archivo);
+        model.addAttribute("fecha", fecha);
+        model.addAttribute("tipoMovimiento", tipoMovimiento);
         model.addAttribute("totalCargas", historial.size());
         return "historial";
     }
