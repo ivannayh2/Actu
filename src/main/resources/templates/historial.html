@@ -60,7 +60,7 @@
         <tr th:each="carga : ${historial}">
           <td th:text="${carga.usuario}">system</td>
           <td th:text="${carga.fechaCarga}">2026-03-12 10:00</td>
-          <td th:text="'Cargó archivo de egresos ' + (carga.nombreEgresos != null ? carga.nombreEgresos : '-')">Creó egreso EG-2026-003</td>
+          <td th:text="${carga.movimiento != '-' ? carga.movimiento : 'Cargó archivo de egresos ' + (carga.nombreEgresos != null ? carga.nombreEgresos : '-')}">Movimiento</td>
         </tr>
         <tr th:if="${#lists.isEmpty(historial)}">
           <td colspan="3">No hay registros de historial para los filtros seleccionados.</td>
