@@ -38,13 +38,25 @@
       <input type="text" name="usuario" th:value="${usuario}" placeholder="Buscar por usuario">
     </label>
 
-    <label>Fecha
-      <input type="date" name="fecha">
+    <label>Tipo de movimiento
+      <select name="tipoMovimiento" th:value="${tipoMovimiento}">
+        <option value="">Todos</option>
+        <option value="creo">Creó usuario</option>
+        <option value="elimino">Eliminó usuario</option>
+        <option value="inactivo">Inactivó usuario</option>
+        <option value="activo">Activó usuario</option>
+        <option value="archivo">Cargó archivo</option>
+      </select>
     </label>
 
-    <label>Movimiento
-      <input type="text" name="archivo" th:value="${archivo}" placeholder="Buscar por movimiento">
+    <label>Fecha
+      <input type="date" name="fecha" th:value="${fecha}">
     </label>
+
+    <div style="margin-top: 1.2em; display: flex; gap: 1em;">
+      <button type="submit" class="btn primary">Buscar</button>
+      <a href="/historial" class="btn" style="background:#f3f4f6; color:#222; border:1px solid #cbd5e1;">Limpiar filtros</a>
+    </div>
   </form>
 
   <div class="table-wrap">
@@ -60,7 +72,7 @@
         <tr th:each="carga : ${historial}">
           <td th:text="${carga.usuario}">system</td>
           <td th:text="${carga.fechaCarga}">2026-03-12 10:00</td>
-          <td th:text="'Cargó archivo de egresos ' + (carga.nombreEgresos != null ? carga.nombreEgresos : '-')">Creó egreso EG-2026-003</td>
+          <td th:text="${carga.movimiento != '-' ? carga.movimiento : 'Cargó archivo de egresos ' + (carga.nombreEgresos != null ? carga.nombreEgresos : '-')}">Movimiento</td>
         </tr>
         <tr th:if="${#lists.isEmpty(historial)}">
           <td colspan="3">No hay registros de historial para los filtros seleccionados.</td>

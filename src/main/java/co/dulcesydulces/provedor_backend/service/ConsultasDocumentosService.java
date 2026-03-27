@@ -58,47 +58,84 @@ public class ConsultasDocumentosService {
         );
     }
 
-    public List<HistorialCargaView> buscarHistorial(String usuario, String archivo) {
+    public List<HistorialCargaView> buscarHistorial(String usuario, String fecha, String tipoMovimiento) {
         String usuarioFiltro = normalizarTexto(usuario);
-        String archivoFiltro = normalizarTexto(archivo);
+        String fechaFiltro = (fecha != null && !fecha.isBlank()) ? fecha : null;
+        String tipoFiltro = (tipoMovimiento != null && !tipoMovimiento.isBlank()) ? tipoMovimiento : null;
+
+        // Filtros separados para uploads y movimientos de usuario
+        String movimientoCondHistorial = "";
+        String movimientoCondUploads = "";
+        if (tipoFiltro != null) {
+            switch (tipoFiltro) {
+                case "creo":
+                    // Solo movimientos de creación de usuario
+                    movimientoCondHistorial = " AND h.movimiento LIKE 'Creó el usuario%' ";
+                    movimientoCondUploads = " AND 1=0 ";
+                    break;
+                case "elimino":
+                    movimientoCondHistorial = " AND h.movimiento LIKE 'Eliminó el usuario%' ";
+                    movimientoCondUploads = " AND 1=0 ";
+                    break;
+                case "inactivo":
+                    movimientoCondHistorial = " AND h.movimiento LIKE 'inactivó el usuario%' ";
+                    movimientoCondUploads = " AND 1=0 ";
+                    break;
+                case "activo":
+                    movimientoCondHistorial = " AND h.movimiento LIKE 'activó el usuario%' ";
+                    movimientoCondUploads = " AND 1=0 ";
+                    break;
+                case "archivo":
+                    movimientoCondUploads = " AND (nombre_egresos IS NOT NULL OR nombre_facturas IS NOT NULL OR nombre_notas IS NOT NULL) ";
+                    movimientoCondHistorial = " AND 1=0 ";
+                    break;
+            }
+        }
+
+        String sql =
+            "SELECT id as id, usuario, nombre_egresos, nombre_facturas, nombre_notas, creado_en as fecha, NULL as movimiento " +
+            "FROM uploads " +
+            "WHERE (? IS NULL OR ? = '' OR LOWER(usuario) LIKE LOWER(CONCAT('%', ?, '%'))) " +
+            "  AND (? IS NULL OR DATE(creado_en) = ?) " +
+            movimientoCondUploads +
+            " UNION ALL " +
+            "SELECT h.id as id, u.nombre_usuario as usuario, NULL as nombre_egresos, NULL as nombre_facturas, NULL as nombre_notas, h.fecha_hora as fecha, h.movimiento " +
+            "FROM Historial h " +
+            "JOIN Usuarios u ON h.usuario_codigo = u.codigo " +
+            "WHERE (? IS NULL OR ? = '' OR LOWER(u.nombre_usuario) LIKE LOWER(CONCAT('%', ?, '%'))) " +
+            "  AND (? IS NULL OR DATE(h.fecha_hora) = ?) " +
+            movimientoCondHistorial;
 
         List<Map<String, Object>> rows = jdbc.queryForList(
-            """
-                SELECT *
-                FROM uploads
-                WHERE (? IS NULL OR ? = '' OR LOWER(usuario) LIKE LOWER(CONCAT('%', ?, '%')))
-                  AND (
-                        ? IS NULL OR ? = ''
-                        OR LOWER(COALESCE(nombre_egresos, '')) LIKE LOWER(CONCAT('%', ?, '%'))
-                        OR LOWER(COALESCE(nombre_facturas, '')) LIKE LOWER(CONCAT('%', ?, '%'))
-                        OR LOWER(COALESCE(nombre_notas, '')) LIKE LOWER(CONCAT('%', ?, '%'))
-                  )
-                ORDER BY 1 DESC
-                LIMIT 200
-            """,
+            sql,
             usuarioFiltro,
             usuarioFiltro,
             usuarioFiltro,
-            archivoFiltro,
-            archivoFiltro,
-            archivoFiltro,
-            archivoFiltro,
-            archivoFiltro
+            fechaFiltro,
+            fechaFiltro,
+            usuarioFiltro,
+            usuarioFiltro,
+            usuarioFiltro,
+            fechaFiltro,
+            fechaFiltro
         );
 
+        // Ordenar por fecha descendente (ya que UNION ALL no garantiza el orden)
         return rows.stream()
             .map(this::mapHistorial)
+            .sorted((a, b) -> b.getFechaCarga().compareTo(a.getFechaCarga()))
             .toList();
     }
 
     private HistorialCargaView mapHistorial(Map<String, Object> row) {
         return new HistorialCargaView(
-            toLong(firstValue(row, "upload_id", "id")),
-            toText(firstValue(row, "usuario", "user")),
-            toText(firstValue(row, "nombre_egresos", "archivo_egresos")),
-            toText(firstValue(row, "nombre_facturas", "archivo_facturas")),
-            toText(firstValue(row, "nombre_notas", "archivo_notas")),
-            formatFechaCarga(firstValue(row, "creado_en", "created_at", "fecha_carga", "fecha"))
+            toLong(firstValue(row, "id")),
+            toText(firstValue(row, "usuario")),
+            toText(firstValue(row, "nombre_egresos")),
+            toText(firstValue(row, "nombre_facturas")),
+            toText(firstValue(row, "nombre_notas")),
+            formatFechaCarga(firstValue(row, "fecha")),
+            toText(firstValue(row, "movimiento"))
         );
     }
 

@@ -1,18 +1,10 @@
-/* Reducir espacio entre la primera columna y la columna de acciones */
-.egresos-page table tbody td:first-child {
-	padding-right: 2px;
-}
-.egresos-page table tbody td.cell-actions {
-	padding-left: 0;
-	padding-right: 8px;
-}
+
 .egresos-page .cell-actions {
 	width: 100px;
 	text-align: left; 
 	white-space: nowrap;
 	padding: 11px 12px;
 }
-
 
 .egresos-page .link-detalle {
 	display: inline-block;
@@ -34,7 +26,7 @@
 	color: #4218ca;
 	text-decoration: underline; 
 }
-/* Estilo tipo logo Uxcel para nombre proveedor */
+
 .egresos-header-proveedor {
 	margin: 18px 0 0 0;
 	padding-left: 110px;
@@ -65,8 +57,8 @@ font-family: "Public Sans", "Segoe UI", sans-serif;
 .egresos-page .page-head {
 margin: 0 0 14px;
 padding: 16px 18px;
-		background: transparent !important;
-	border: none;
+background: #ffffff;
+border: 1px solid #e5eaf3;
 border-radius: 16px;
 box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 display: flex;
@@ -132,10 +124,10 @@ transform: translateY(-1px);
 .egresos-page .alert {
 margin: 0 0 10px;
 padding: 10px 12px;
-		box-shadow: none;
+border-radius: 10px;
 font-size: 13px;
 font-weight: 600;
-border: 0px solid transparent;
+border: 1px solid transparent;
 }
 
 .egresos-page .alert-ok {
@@ -277,9 +269,9 @@ border-bottom: none;
 }
 
 .egresos-page .cell-actions {
-	text-align: left;
-	white-space: nowrap;
-	padding: 0;
+width: 140px;
+text-align: center;
+white-space: nowrap;
 }
 
 
@@ -486,14 +478,4 @@ width: 100%;
 .egreso-relacionado-content p{
   margin: 0;
 }
-}
-/* Forzamos la especificidad usando el contenedor principal */
-.egresos-page table tbody td.cell-actions .link-detalle {
-	border: none !important;
-	outline: none !important;
-	background: transparent !important;
-	box-shadow: none !important;
-	text-decoration: none;
-	color: #5b2af7 !important;
-	padding: 0;
 }
