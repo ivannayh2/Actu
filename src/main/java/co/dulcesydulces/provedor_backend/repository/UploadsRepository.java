@@ -1,3 +1,6 @@
+    public void deleteAllUploads() {
+        jdbc.update("DELETE FROM uploads");
+    }
 package co.dulcesydulces.provedor_backend.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;

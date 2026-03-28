@@ -37,7 +37,7 @@ public class Usuarios {
     @JsonProperty("nombre_usuario")
     private String nombreUsuario;
 
-    @Column(name="email", length = 120)
+    @Column(name="email", length = 120, nullable = false)
     private String email;
 
     @Column(name="password_hash", length = 150)

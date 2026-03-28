@@ -1,3 +1,29 @@
+/* Mensaje de error del formulario de usuario */
+.msg {
+	margin: 10px 0 0 0;
+	padding: 10px 16px;
+	border-radius: 8px;
+	background: #fff0f0;
+	color: #b91c1c;
+	border: 1px solid #fca5a5;
+	font-size: 14px;
+	font-weight: 500;
+	box-shadow: 0 2px 8px rgba(185, 28, 28, 0.06);
+	display: none;
+}
+
+.msg.active {
+	display: block;
+	animation: shake 0.2s 1;
+}
+
+@keyframes shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(-4px); }
+	50% { transform: translateX(4px); }
+	75% { transform: translateX(-2px); }
+	100% { transform: translateX(0); }
+}
 :root {
 --primary: #5b2af7;
 --primary-hover: #4c23ce;
