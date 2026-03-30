@@ -1,6 +1,4 @@
-    public void deleteAllUploads() {
-        jdbc.update("DELETE FROM uploads");
-    }
+
 package co.dulcesydulces.provedor_backend.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +11,10 @@ public class UploadsRepository {
 
     public UploadsRepository(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
+    }
+
+    public void deleteAllUploads() {
+        jdbc.update("DELETE FROM uploads");
     }
 
     public long crearUpload(String usuario, String egresosName, String facturasName, String notasName) {

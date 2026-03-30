@@ -1,12 +1,15 @@
 package co.dulcesydulces.provedor_backend.domain.dto;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class HistorialCargaView {
     private final Long id;
     private final String usuario;
     private final String nombreEgresos;
     private final String nombreFacturas;
     private final String nombreNotas;
-    private final String fechaCarga;
+    private final LocalDateTime fechaCarga;
     private final String movimiento;
 
     public HistorialCargaView(
@@ -15,7 +18,7 @@ public class HistorialCargaView {
         String nombreEgresos,
         String nombreFacturas,
         String nombreNotas,
-        String fechaCarga,
+        LocalDateTime fechaCarga,
         String movimiento
     ) {
         this.id = id;
@@ -32,6 +35,11 @@ public class HistorialCargaView {
     public String getNombreEgresos() { return nombreEgresos; }
     public String getNombreFacturas() { return nombreFacturas; }
     public String getNombreNotas() { return nombreNotas; }
-    public String getFechaCarga() { return fechaCarga; }
+    public LocalDateTime getFechaCarga() { return fechaCarga; }
     public String getMovimiento() { return movimiento; }
+
+    public String getFechaCargaFormateada() {
+        if (fechaCarga == null) return "Sin fecha";
+        return fechaCarga.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
 }
