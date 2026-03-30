@@ -34,70 +34,77 @@ public class EgresoPageController {
     }
 
     @GetMapping
-public String page(
-        @RequestParam(required = false) String proveedor,
-        @RequestParam(required = false) String numeroEgreso,
-        @RequestParam(required = false) String doctoSa,
-        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
-        Model model,
-        Authentication auth
-) {
-    boolean esAdmin = auth.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
+    public String page(
+            @RequestParam(required = false) String proveedor,
+            @RequestParam(required = false) String numeroEgreso,
+            @RequestParam(required = false) String doctoSa,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
+            Model model,
+            Authentication auth
+    ) {
+        boolean esAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMINISTRADOR"));
 
-    boolean esPublicador = auth.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
+        boolean esPublicador = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("PUBLICADOR"));
 
-    boolean puedeFiltrarProveedor = esAdmin || esPublicador;
-    boolean puedeCrearEgreso = esAdmin || esPublicador;
+        boolean puedeFiltrarProveedor = esAdmin || esPublicador;
+        boolean puedeCrearEgreso = esAdmin || esPublicador;
 
-    model.addAttribute("proveedor", proveedor);
-    model.addAttribute("numeroEgreso", numeroEgreso);
-    model.addAttribute("doctoSa", doctoSa);
-    model.addAttribute("fechaDocumento", fechaDocumento);
-    model.addAttribute("puedeFiltrarProveedor", puedeFiltrarProveedor);
-    model.addAttribute("puedeCrearEgreso", puedeCrearEgreso);
-    model.addAttribute("proveedoresOptions", proveedoresService.getListaEnOptions());
-    model.addAttribute("nuevoEgreso", new EgresoCreateRequest());
+        model.addAttribute("proveedor", proveedor);
+        model.addAttribute("numeroEgreso", numeroEgreso);
+        model.addAttribute("doctoSa", doctoSa);
+        model.addAttribute("fechaDocumento", fechaDocumento);
+        model.addAttribute("puedeFiltrarProveedor", puedeFiltrarProveedor);
+        model.addAttribute("puedeCrearEgreso", puedeCrearEgreso);
+        model.addAttribute("proveedoresOptions", proveedoresService.getListaEnOptions());
+        model.addAttribute("nuevoEgreso", new EgresoCreateRequest());
 
-    if (doctoSa != null && !doctoSa.trim().isEmpty()) {
-        var detalle = service.buscarPlanoSegunUsuario(
+        if (doctoSa != null && !doctoSa.trim().isEmpty()) {
+            var detalle = service.buscarPlanoSegunUsuario(
+                    auth,
+                    proveedor,
+                    numeroEgreso,
+                    doctoSa,
+                    fechaDocumento
+            );
+
+            BigDecimal totalVlrEgreso = detalle.stream()
+                    .map(d -> d.getVlrEgreso())
+                    .filter(v -> v != null)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            model.addAttribute("detalle", detalle);
+            model.addAttribute("totalVlrEgreso", totalVlrEgreso);
+
+            return "egresos";
+        }
+
+        var detalles = service.buscarDetalleSegunUsuario(
                 auth,
                 proveedor,
                 numeroEgreso,
-                doctoSa,
+                null,
                 fechaDocumento
         );
 
-        BigDecimal totalVlrEgreso = detalle.stream()
+        BigDecimal totalDebitos = detalles.stream()
                 .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null)
+                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) > 0)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        model.addAttribute("detalle", detalle);
-        model.addAttribute("totalVlrEgreso", totalVlrEgreso);
+        BigDecimal totalCreditos = detalles.stream()
+                .map(d -> d.getVlrEgreso())
+                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::abs)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return "egresos";
+        model.addAttribute("detalles", detalles);
+        model.addAttribute("totalDebitos", totalDebitos);
+        model.addAttribute("totalCreditos", totalCreditos);
+
+        return "egresosDetallado";
     }
-
-    var detalles = service.buscarDetalleSegunUsuario(
-            auth,
-            proveedor,
-            numeroEgreso,
-            null,
-            fechaDocumento
-    );
-
-    BigDecimal totalDetalleEgreso = detalles.stream()
-            .map(d -> d.getVlrEgreso())
-            .filter(v -> v != null)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    model.addAttribute("detalles", detalles);
-    model.addAttribute("totalDetalleEgreso", totalDetalleEgreso);
-
-    return "egresosDetallado";
-}
 
     @GetMapping("/detallado")
     public String verDetalleEgreso(
@@ -106,14 +113,21 @@ public String page(
     ) {
         var detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
 
-        BigDecimal totalDetalleEgreso = detalles.stream()
+        BigDecimal totalDebitos = detalles.stream()
                 .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null)
+                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) > 0)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalCreditos = detalles.stream()
+                .map(d -> d.getVlrEgreso())
+                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::abs)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("doctoEgreso", doctoEgreso);
         model.addAttribute("detalles", detalles);
-        model.addAttribute("totalDetalleEgreso", totalDetalleEgreso);
+        model.addAttribute("totalDebitos", totalDebitos);
+        model.addAttribute("totalCreditos", totalCreditos);
 
         return "egresosDetallado";
     }

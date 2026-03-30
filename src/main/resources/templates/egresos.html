@@ -44,7 +44,7 @@
       </div>
 
       <div class="field">
-        <label for="numeroEgreso">Egreso</label>
+        <label for="numeroEgreso">Numero egreso</label>
         <div class="control">
           <input id="numeroEgreso" type="search" name="numeroEgreso" th:value="${numeroEgreso}">
         </div>
@@ -69,8 +69,8 @@
       <table>
         <thead>
           <tr>
-            <th>Docto egreso</th>
-            <th>Acciones</th>
+            <th>Numero egreso</th>
+            <th>Detalles</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -91,7 +91,7 @@
               <span th:if="${d.doctoEgreso == null}">&nbsp;</span>
             </td>
             <td class="cell-actions">
-              <a class="link-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
+              <a class="btn btn-compact" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
