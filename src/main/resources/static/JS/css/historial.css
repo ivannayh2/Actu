@@ -1,3 +1,58 @@
+/* Modal de confirmación eliminar historial */
+.modal-confirm-eliminar {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-confirm-eliminar .modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 28px 22px 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  min-width: 320px;
+  max-width: 90vw;
+  text-align: center;
+}
+.modal-confirm-eliminar h2 {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  color: #1e293b;
+}
+.modal-confirm-eliminar .modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+.modal-confirm-eliminar .btn-cancelar {
+  background: #f3f4f6;
+  color: #222;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-confirm-eliminar .btn-cancelar:hover {
+  background: #e5e7eb;
+}
+.modal-confirm-eliminar .btn-eliminar {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-confirm-eliminar .btn-eliminar:hover {
+  background: #dc2626;
+}
 .historial-page {
   max-width: 1320px;
   font-family: "Public Sans", "Segoe UI", sans-serif;
