@@ -50,6 +50,12 @@ public class EgresoPlano {
     @Column(name = "vlr_egreso", precision = 14, scale = 2)
     private BigDecimal vlrEgreso;
 
+    @Column(name = "valor_docto", precision = 14, scale = 2)
+    private BigDecimal valorDocto;
+
+    @Column(name = "pronto_pago", precision = 14, scale = 2)
+    private BigDecimal prontoPago;
+
     @Column(name = "notas", columnDefinition = "TEXT")
     private String notas;
 
@@ -134,6 +140,22 @@ public class EgresoPlano {
 
     public void setVlrEgreso(BigDecimal vlrEgreso) {
         this.vlrEgreso = vlrEgreso;
+    }
+
+    public BigDecimal getProntoPago() {
+        return prontoPago;
+    }
+
+    public void setProntoPago(BigDecimal prontoPago) {
+        this.prontoPago = prontoPago;
+    }
+
+    public BigDecimal getValorDocto() {
+        return valorDocto;
+    }
+
+    public void setValorDocto(BigDecimal valorDocto) {
+        this.valorDocto = valorDocto;
     }
 
     public String getNotas() {

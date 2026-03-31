@@ -25,7 +25,9 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
             MAX(e.tercero) AS tercero,
             MAX(e.razonSocial) AS razonSocial,
             MAX(e.doctoCausacion) AS doctoCausacion,
-            SUM(e.vlrEgreso) AS vlrEgreso
+            SUM(e.vlrEgreso) AS vlrEgreso,
+            SUM(e.prontoPago) AS prontoPago,
+            MAX(e.valorDocto) AS valorDocto
         FROM EgresoPlano e
         WHERE (:tercero IS NULL OR :tercero = '' OR LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')))
           AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
@@ -54,7 +56,9 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
             MAX(e.tercero) AS tercero,
             MAX(e.razonSocial) AS razonSocial,
             MAX(e.doctoCausacion) AS doctoCausacion,
-            SUM(e.vlrEgreso) AS vlrEgreso
+            SUM(e.vlrEgreso) AS vlrEgreso,
+            SUM(e.prontoPago) AS prontoPago,
+            MAX(e.valorDocto) AS valorDocto
         FROM EgresoPlano e
         WHERE LOWER(e.tercero) = LOWER(:tercero)
           AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
