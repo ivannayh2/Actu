@@ -2,6 +2,7 @@ package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoCreateRequest;
+import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 import co.dulcesydulces.provedor_backend.service.EgresoService;
 import co.dulcesydulces.provedor_backend.service.ProveedoresService;
 import jakarta.validation.Valid;
@@ -70,8 +72,7 @@ public class EgresoPageController {
             );
 
             BigDecimal totalVlrEgreso = detalle.stream()
-                    .map(d -> d.getVlrEgreso())
-                    .filter(v -> v != null)
+                    .map(d -> d.getVlrEgreso() != null ? d.getVlrEgreso() : BigDecimal.ZERO)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             model.addAttribute("detalle", detalle);
@@ -88,20 +89,9 @@ public class EgresoPageController {
                 fechaDocumento
         );
 
-        BigDecimal totalDebitos = detalles.stream()
-                .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) > 0)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalCreditos = detalles.stream()
-                .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) < 0)
-                .map(BigDecimal::abs)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        cargarTotalesDetalle(model, detalles);
 
         model.addAttribute("detalles", detalles);
-        model.addAttribute("totalDebitos", totalDebitos);
-        model.addAttribute("totalCreditos", totalCreditos);
 
         return "egresosDetallado";
     }
@@ -113,21 +103,10 @@ public class EgresoPageController {
     ) {
         var detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
 
-        BigDecimal totalDebitos = detalles.stream()
-                .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) > 0)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        BigDecimal totalCreditos = detalles.stream()
-                .map(d -> d.getVlrEgreso())
-                .filter(v -> v != null && v.compareTo(BigDecimal.ZERO) < 0)
-                .map(BigDecimal::abs)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         model.addAttribute("doctoEgreso", doctoEgreso);
         model.addAttribute("detalles", detalles);
-        model.addAttribute("totalDebitos", totalDebitos);
-        model.addAttribute("totalCreditos", totalCreditos);
+
+        cargarTotalesDetalle(model, detalles);
 
         return "egresosDetallado";
     }
@@ -162,5 +141,41 @@ public class EgresoPageController {
         }
 
         return "redirect:/egresos";
+    }
+
+    private void cargarTotalesDetalle(Model model, java.util.List<EgresoPlano> detalles) {
+        BigDecimal totalDebitos = detalles.stream()
+                .map(this::valorAjustado)
+                .filter(v -> v.compareTo(BigDecimal.ZERO) > 0)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalCreditos = detalles.stream()
+                .map(this::valorAjustado)
+                .filter(v -> v.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::abs)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalProntoPago = detalles.stream()
+                .map(d -> nvl(d.getProntoPago()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalValorDocto = detalles.stream()
+                .map(EgresoPlano::getValorDocto)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(BigDecimal.ZERO);
+
+        model.addAttribute("totalDebitos", totalDebitos);
+        model.addAttribute("totalCreditos", totalCreditos);
+        model.addAttribute("totalProntoPago", totalProntoPago);
+        model.addAttribute("totalValorDocto", totalValorDocto);
+    }
+
+    private BigDecimal valorAjustado(EgresoPlano d) {
+        return nvl(d.getVlrEgreso()).add(nvl(d.getProntoPago()));
+    }
+
+    private BigDecimal nvl(BigDecimal valor) {
+        return valor != null ? valor : BigDecimal.ZERO;
     }
 }
