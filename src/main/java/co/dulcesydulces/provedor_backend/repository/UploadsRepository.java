@@ -24,4 +24,8 @@ public class UploadsRepository {
         if (id == null) throw new IllegalStateException("No se pudo obtener upload_id");
         return id;
     }
+
+    public void deleteAllUploads() {
+        jdbc.update("DELETE FROM uploads");
+    }
 }
