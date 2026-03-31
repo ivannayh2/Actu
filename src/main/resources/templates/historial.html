@@ -71,7 +71,7 @@
       <tbody>
         <tr th:each="carga : ${historial}">
           <td th:text="${carga.usuario}">system</td>
-          <td th:text="${carga.fechaCarga}">2026-03-12 10:00</td>
+          <td th:text="${carga.fechaCargaFormateada}">2026-03-12 10:00</td>
           <td th:text="${carga.movimiento != '-' ? carga.movimiento : 'Cargó archivo de egresos ' + (carga.nombreEgresos != null ? carga.nombreEgresos : '-')}">Movimiento</td>
         </tr>
         <tr th:if="${#lists.isEmpty(historial)}">
@@ -81,10 +81,20 @@
     </table>
   </div>
 
-  <div class="table-foot">
-    <p class="entries-count" th:text="'Mostrando ' + (totalCargas != null ? totalCargas : 0) + ' de ' + (totalCargas != null ? totalCargas : 0) + ' entradas'">Mostrando 0 de 0 entradas</p>
-  </div>
+  <!-- Se eliminó la sección de total de cargas -->
 </main>
 
+<!-- Modal de confirmación para eliminar historial -->
+<div id="modal-confirm-eliminar" class="modal-confirm-eliminar" style="display:none;">
+  <div class="modal-content">
+    <h2>¿Seguro que deseas borrar todo el historial?</h2>
+    <div class="modal-actions">
+      <button id="cancelar-eliminar" class="btn-cancelar" type="button">Cancelar</button>
+      <button id="confirmar-eliminar" class="btn-eliminar" type="button">Eliminar</button>
+    </div>
+  </div>
+</div>
+
 </body>
+<script th:src="@{/JS/historial.js}"></script>
 </html>

@@ -120,8 +120,24 @@ async function apiCreate(payload) {
   });
 
   const text = await r.text();            // ✅ para ver errores aunque no sean JSON
-  if (!r.ok) throw new Error(text || "Error creando");
-  return text ? JSON.parse(text) : {};
+  if (!r.ok) {
+    if (text && (text.includes("correo electrónico es obligatorio") || text.toLowerCase().includes("email") || text.toLowerCase().includes("correo"))) {
+      throw new Error("<strong>El correo electrónico es obligatorio.</strong> Por favor ingresa un correo válido.");
+    }
+    if (text && (text.includes("Ya existe un usuario con ese código") || text.toLowerCase().includes("codigo") || text.toLowerCase().includes("código"))) {
+      throw new Error("<strong>El código ya está en uso.</strong> Por favor ingresa un código único para el usuario.");
+    }
+    if (text && text.trim().startsWith("<")) {
+      throw new Error("<strong>Error al crear usuario.</strong> Revisa los datos e inténtalo de nuevo.");
+    }
+    throw new Error(text || "Error creando");
+  }
+  // Si la respuesta parece JSON, parsea, si no, retorna objeto vacío
+  try {
+    return text && text.trim().startsWith('{') ? JSON.parse(text) : {};
+  } catch (e) {
+    return {};
+  }
 }
 
 async function apiUpdate(codigo, payload) {
@@ -267,7 +283,8 @@ form.addEventListener("submit", async (e) => {
     closeModal();
     location.reload();
   } catch (err) {
-    msg.textContent = err.message;
+    msg.innerHTML = err.message;
+    msg.classList.add("active");
   }
 });
 

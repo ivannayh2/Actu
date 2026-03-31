@@ -1,10 +1,6 @@
 package co.dulcesydulces.provedor_backend.service;
 
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +13,6 @@ import co.dulcesydulces.provedor_backend.domain.dto.HistorialCargaView;
 @Service
 public class ConsultasDocumentosService {
 
-    private static final DateTimeFormatter HISTORIAL_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     private final JdbcTemplate jdbc;
 
@@ -58,7 +53,7 @@ public class ConsultasDocumentosService {
         );
     }
 
-    public List<HistorialCargaView> buscarHistorial(String usuario, String fecha, String tipoMovimiento) {
+    public List<HistorialCargaView> buscarHistorial(String usuario, String fecha, String tipoMovimiento, boolean soloProveedores) {
         String usuarioFiltro = normalizarTexto(usuario);
         String fechaFiltro = (fecha != null && !fecha.isBlank()) ? fecha : null;
         String tipoFiltro = (tipoMovimiento != null && !tipoMovimiento.isBlank()) ? tipoMovimiento : null;
@@ -93,10 +88,12 @@ public class ConsultasDocumentosService {
         }
 
         String sql =
-            "SELECT id as id, usuario, nombre_egresos, nombre_facturas, nombre_notas, creado_en as fecha, NULL as movimiento " +
-            "FROM uploads " +
-            "WHERE (? IS NULL OR ? = '' OR LOWER(usuario) LIKE LOWER(CONCAT('%', ?, '%'))) " +
-            "  AND (? IS NULL OR DATE(creado_en) = ?) " +
+            "SELECT up.id as id, up.usuario, up.nombre_egresos, up.nombre_facturas, up.nombre_notas, up.creado_en as fecha, NULL as movimiento " +
+            "FROM uploads up " +
+            (soloProveedores ? "JOIN Usuarios uup ON up.usuario = uup.nombre_usuario " : "") +
+            "WHERE (? IS NULL OR ? = '' OR LOWER(up.usuario) LIKE LOWER(CONCAT('%', ?, '%'))) " +
+            "  AND (? IS NULL OR DATE(up.creado_en) = ?) " +
+            (soloProveedores ? " AND uup.rol = 'proveedor' " : "") +
             movimientoCondUploads +
             " UNION ALL " +
             "SELECT h.id as id, u.nombre_usuario as usuario, NULL as nombre_egresos, NULL as nombre_facturas, NULL as nombre_notas, h.fecha_hora as fecha, h.movimiento " +
@@ -104,6 +101,7 @@ public class ConsultasDocumentosService {
             "JOIN Usuarios u ON h.usuario_codigo = u.codigo " +
             "WHERE (? IS NULL OR ? = '' OR LOWER(u.nombre_usuario) LIKE LOWER(CONCAT('%', ?, '%'))) " +
             "  AND (? IS NULL OR DATE(h.fecha_hora) = ?) " +
+            (soloProveedores ? " AND u.rol = 'proveedor' " : "") +
             movimientoCondHistorial;
 
         List<Map<String, Object>> rows = jdbc.queryForList(
@@ -120,10 +118,15 @@ public class ConsultasDocumentosService {
             fechaFiltro
         );
 
-        // Ordenar por fecha descendente (ya que UNION ALL no garantiza el orden)
+        // Ordenar por fecha descendente usando LocalDateTime
         return rows.stream()
             .map(this::mapHistorial)
-            .sorted((a, b) -> b.getFechaCarga().compareTo(a.getFechaCarga()))
+            .sorted((a, b) -> {
+                if (a.getFechaCarga() == null && b.getFechaCarga() == null) return 0;
+                if (a.getFechaCarga() == null) return 1;
+                if (b.getFechaCarga() == null) return -1;
+                return b.getFechaCarga().compareTo(a.getFechaCarga());
+            })
             .toList();
     }
 
@@ -134,9 +137,30 @@ public class ConsultasDocumentosService {
             toText(firstValue(row, "nombre_egresos")),
             toText(firstValue(row, "nombre_facturas")),
             toText(firstValue(row, "nombre_notas")),
-            formatFechaCarga(firstValue(row, "fecha")),
+            toLocalDateTime(firstValue(row, "fecha")),
             toText(firstValue(row, "movimiento"))
         );
+    }
+
+    private java.time.LocalDateTime toLocalDateTime(Object value) {
+        if (value == null) return null;
+        if (value instanceof java.sql.Timestamp ts) {
+            return ts.toLocalDateTime();
+        }
+        if (value instanceof java.time.LocalDateTime ldt) {
+            return ldt;
+        }
+        if (value instanceof java.sql.Date date) {
+            return date.toLocalDate().atStartOfDay();
+        }
+        if (value instanceof java.time.LocalDate ld) {
+            return ld.atStartOfDay();
+        }
+        try {
+            return java.time.LocalDateTime.parse(value.toString(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private Object firstValue(Map<String, Object> row, String... keys) {
@@ -149,24 +173,6 @@ public class ConsultasDocumentosService {
         return null;
     }
 
-    private String formatFechaCarga(Object value) {
-        if (value == null) {
-            return "Sin fecha";
-        }
-        if (value instanceof Timestamp timestamp) {
-            return timestamp.toLocalDateTime().format(HISTORIAL_FORMATTER);
-        }
-        if (value instanceof LocalDateTime dateTime) {
-            return dateTime.format(HISTORIAL_FORMATTER);
-        }
-        if (value instanceof Date date) {
-            return date.toLocalDate().toString();
-        }
-        if (value instanceof LocalDate localDate) {
-            return localDate.toString();
-        }
-        return value.toString();
-    }
 
     private Long toLong(Object value) {
     if (value instanceof Number number) {

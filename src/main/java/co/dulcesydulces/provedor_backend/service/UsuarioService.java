@@ -48,6 +48,13 @@ public class UsuarioService {
 
     @Transactional
     public Usuarios crear(Usuarios u) {
+        if (u.getEmail() == null || u.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("El correo electrónico es obligatorio");
+        }
+        // Validar código duplicado
+        if (usuarioRepository.findByCodigo(u.getCodigo()).isPresent()) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese código");
+        }
         if (u.getPassword_hash() != null && !u.getPassword_hash().startsWith("$2a$")) {
             u.setPassword_hash(passwordEncoder.encode(u.getPassword_hash()));
         }
