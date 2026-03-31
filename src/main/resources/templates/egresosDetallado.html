@@ -60,6 +60,22 @@
       white-space: nowrap;
     }
   </style>
+</style>
+<style>
+  /* Hover animado para el botón Ver detalle */
+  a.btn.btn-compact {
+    transition: color 0.25s, background 0.25s;
+    position: relative;
+    z-index: 1;
+  }
+  a.btn.btn-compact:hover {
+    color: #424ce1;
+    background: #ffffff00;
+    box-shadow: 0 2px 8px 0 rgba(78,140,255,0.08);
+    text-decoration: none;
+    transition: color 0.25s, background 0.25s, box-shadow 0.25s;
+  }
+</style>
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
@@ -96,6 +112,25 @@
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
+      </div>
+
+      <div class="field" th:if="${!#lists.isEmpty(detalles)}">
+        <label for="smartSearch">Búsqueda inteligente</label>
+        <div class="control">
+          <input
+            id="smartSearch"
+            type="search"
+            placeholder="Busca por factura, débito o crédito..."
+            autocomplete="off"
+            aria-describedby="searchStatus">
+        </div>
+      </div>
+
+      <div class="smart-search-actions" th:if="${!#lists.isEmpty(detalles)}">
+        <button id="clearSmartSearch" class="btn btn-compact" type="button">
+          Limpiar búsqueda
+        </button>
+        <span id="searchStatus" class="search-status" aria-live="polite"></span>
       </div>
 
       <div class="filters-actions">
@@ -439,5 +474,6 @@
       });
     })();
   </script>
+
 </body>
 </html>

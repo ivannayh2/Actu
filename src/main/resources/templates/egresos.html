@@ -28,8 +28,9 @@
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
-    <form class="filters" method="get" th:action="@{/egresos}">
-      <div class="field" th:if="${puedeFiltrarProveedor}">
+
+    <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
+      <div class="field field-proveedor" th:if="${puedeFiltrarProveedor}">
         <label for="proveedor">Proveedor</label>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
@@ -50,26 +51,35 @@
         </div>
       </div>
 
-      <div class="filters-actions">
+      <div class="field" style="min-width:220px;">
+        <label for="busquedaInteligente">Búsqueda inteligente</label>
+        <div class="control">
+          <input id="busquedaInteligente" type="search" name="busquedaInteligente" placeholder="Buscar por descripción, valor, etc." th:value="${busquedaInteligente}">
+        </div>
+      </div>
+
+
+      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
         <button class="btn btn-primary btn-compact" type="submit">
           Filtrar
         </button>
-
         <a class="btn btn-compact" th:href="@{/egresos}">
           Limpiar
         </a>
       </div>
     </form>
 
-    <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
-    </div>
+
+      <div class="filters-actions" th:if="${puedeCrearEgreso}" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
+        <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
+      </div>
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Numero egreso</th>
+            <th></th>
             <th>Detalles</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
@@ -79,6 +89,7 @@
         </thead>
         <tbody>
           <tr th:if="${!#lists.isEmpty(detalle)}">
+            <td></td>
             <td></td>
             <td></td>
             <td colspan="3"><strong>Total</strong></td>
@@ -91,8 +102,9 @@
               <span th:if="${d.doctoEgreso == null}">&nbsp;</span>
             </td>
             <td class="cell-actions">
-              <a class="btn btn-compact" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
+              <a class="btn btn-compact btn-ver-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
+            <td></td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
             <td th:text="${d.razonSocial}"></td>

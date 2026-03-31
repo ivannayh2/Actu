@@ -1,3 +1,4 @@
+
 package co.dulcesydulces.provedor_backend.repository;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,5 +23,9 @@ public class UploadsRepository {
         Long id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         if (id == null) throw new IllegalStateException("No se pudo obtener upload_id");
         return id;
+    }
+
+    public void deleteAllUploads() {
+        jdbc.update("DELETE FROM uploads");
     }
 }

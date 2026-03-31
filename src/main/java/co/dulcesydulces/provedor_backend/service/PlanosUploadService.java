@@ -63,22 +63,22 @@ public class PlanosUploadService {
     // EGRESOS (11 columnas)
     // =========================
     private void importarEgresos(long uploadId, MultipartFile file) throws Exception {
-        List<Object[]> batch = new ArrayList<>(2000);
+    List<Object[]> batch = new ArrayList<>(2000);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            int lineNo = 0;
-            boolean headerSkipped = false;
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+        String line;
+        int lineNo = 0;
+        boolean headerSkipped = false;
 
-            while ((line = br.readLine()) != null) {
-                lineNo++;
-                if (line.isBlank()) continue;
+        while ((line = br.readLine()) != null) {
+            lineNo++;
+            if (line.isBlank()) continue;
 
-                // Saltar encabezado
-                if (!headerSkipped) {
-                    headerSkipped = true;
-                    continue;
-                }
+            // Saltar encabezado
+            if (!headerSkipped) {
+                headerSkipped = true;
+                continue;
+            }
 
                 // saltar gran total
                 if (line.trim().toLowerCase().startsWith("gran total")) {
@@ -120,15 +120,30 @@ public class PlanosUploadService {
                     prontoPago
                 });
 
-                if (batch.size() >= 2000) {
-                    batchInsertEgresos(batch);
-                    batch.clear();
-                }
+            batch.add(new Object[]{
+                    uploadId,
+                    doctoEgreso,
+                    Date.valueOf(fecha),
+                    tercero,
+                    suc,
+                    razon,
+                    doctoSa,
+                    doctoCausacion,
+                    vlrEgreso,
+                    notas,
+                    valorDocto,
+                    prontoPago
+            });
+
+            if (batch.size() >= 2000) {
+                batchInsertEgresos(batch);
+                batch.clear();
             }
         }
-
-        if (!batch.isEmpty()) batchInsertEgresos(batch);
     }
+
+    if (!batch.isEmpty()) batchInsertEgresos(batch);
+}
 
     private void batchInsertEgresos(List<Object[]> batch) {
         jdbc.batchUpdate("""

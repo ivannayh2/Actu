@@ -1,9 +1,59 @@
+/* Proveedor más pequeño para que quepan los filtros */
+.egresos-page .filters .field-proveedor {
+	min-width: 80px;
+	max-width: 120px;
+}
+.egresos-page .filters .field-proveedor input {
+	width: 100%;
+	min-width: 60px;
+	max-width: 110px;
+	font-size: 12px;
+	padding: 6px 8px;
+}
+
+/* BOTÓN VER DETALLE solo texto con hover */
+
+.egresos-page .cell-actions .btn.btn-compact {
+	background: none;
+	border: none;
+	color: #5b2af7;
+	font-size: 13px;
+	font-weight: 700;
+	text-decoration: none;
+	box-shadow: none;
+	padding: 0 8px;
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	transition: color 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.egresos-page .cell-actions .btn.btn-compact::after {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 0%;
+	height: 2px;
+	background: #2563eb;
+	transition: width 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+
+.egresos-page .cell-actions .btn.btn-compact:hover {
+	color: #2563eb;
+}
+.egresos-page .cell-actions .btn.btn-compact:hover::after {
+	width: 100%;
+}
+
 
 .egresos-page .cell-actions {
 	width: 100px;
 	text-align: left; 
 	white-space: nowrap;
-	padding: 11px 12px;
+	padding: 11px 4px;
 }
 
 .egresos-page .link-detalle {
@@ -143,16 +193,28 @@ color: #b91c1c;
 }
 
 .egresos-page .filters {
-margin: 0;
-padding: 14px;
-background: transparent;
-border: none;
-border-radius: 0;
-box-shadow: none;
-display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
-gap: 10px 12px;
-align-items: end;
+	margin: 0;
+	padding: 14px;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px 12px;
+	align-items: end;
+}
+
+@media (max-width: 1200px) {
+	.egresos-page .filters {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 700px) {
+	.egresos-page .filters {
+		grid-template-columns: 1fr;
+	}
 }
 
 .egresos-page .filters label {
@@ -195,6 +257,17 @@ display: inline-flex;
 align-items: center;
 justify-content: center;
 gap: 6px;
+}
+.egresos-page .btn-compact {
+	border: none;
+	background: transparent;
+	color: #1f2937;
+	text-decoration: none;
+	box-shadow: none;
+}
+.egresos-page .btn-compact:hover,
+.egresos-page .btn-compact:focus {
+	text-decoration: none;
 }
 
 .egresos-page .filters-actions .btn-compact {
@@ -249,11 +322,15 @@ white-space: nowrap;
 }
 
 .egresos-page tbody td {
-padding: 11px 12px;
-border-bottom: 1px solid #eef2f8;
-color: #0f172a;
-font-size: 13px;
-vertical-align: middle;
+	padding: 11px 12px;
+	border-bottom: 1px solid #eef2f8;
+	color: #0f172a;
+	font-size: 13px;
+	vertical-align: middle;
+}
+
+.egresos-page tbody td:first-child {
+	padding-right: 1px;
 }
 
 .egresos-page tbody tr:nth-child(even) td {
@@ -273,8 +350,6 @@ width: 140px;
 text-align: center;
 white-space: nowrap;
 }
-
-
 
 .egresos-page .cell-actions .link-detalle {
 	color: #2563eb;
