@@ -1,3 +1,35 @@
+/* Proveedor más pequeño para que quepan los filtros */
+.egresos-page .filters .field-proveedor {
+	min-width: 80px;
+	max-width: 120px;
+}
+.egresos-page .filters .field-proveedor input {
+	width: 100%;
+	min-width: 60px;
+	max-width: 110px;
+	font-size: 12px;
+	padding: 6px 8px;
+}
+
+/* BOTÓN VER DETALLE solo texto con hover */
+.egresos-page .cell-actions .btn.btn-compact {
+	background: none !important;
+	border: none !important;
+	color: #5b2af7 !important;
+	font-size: 13px;
+	font-weight: 700;
+	text-decoration: none !important;
+	box-shadow: none !important;
+	padding: 0 8px;
+	display: inline-block;
+	cursor: pointer;
+	transition: color 0.2s;
+}
+
+.egresos-page .cell-actions .btn.btn-compact:hover {
+	color: #2563eb !important; /* azul visible pero sobrio */
+	text-decoration: none !important;
+}
 
 .egresos-page .cell-actions {
 	width: 100px;
@@ -143,16 +175,28 @@ color: #b91c1c;
 }
 
 .egresos-page .filters {
-margin: 0;
-padding: 14px;
-background: transparent;
-border: none;
-border-radius: 0;
-box-shadow: none;
-display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
-gap: 10px 12px;
-align-items: end;
+	margin: 0;
+	padding: 14px;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 10px 12px;
+	align-items: end;
+}
+
+@media (max-width: 1200px) {
+	.egresos-page .filters {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 700px) {
+	.egresos-page .filters {
+		grid-template-columns: 1fr;
+	}
 }
 
 .egresos-page .filters label {
@@ -195,6 +239,18 @@ display: inline-flex;
 align-items: center;
 justify-content: center;
 gap: 6px;
+}
+.egresos-page .btn-compact {
+	border: none !important;
+	background: transparent !important;
+	color: #1f2937 !important;
+	text-decoration: none !important;
+	box-shadow: none !important;
+}
+.egresos-page .btn-compact:hover,
+.egresos-page .btn-compact:focus {
+	background: #f3f4f6 !important;
+	text-decoration: none !important;
 }
 
 .egresos-page .filters-actions .btn-compact {
