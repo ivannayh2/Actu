@@ -1,7 +1,5 @@
 package co.dulcesydulces.provedor_backend.controller;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +27,7 @@ public class UploadsController {
             Model model
     ) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = (authentication != null) ? authentication.getName() : "anon";
-            long uploadId = planosUploadService.procesar(egresosFile, facturasFile, notasFile, username);
+            long uploadId = planosUploadService.procesar(egresosFile, facturasFile, notasFile);
             model.addAttribute("msg", "Archivos procesados OK. upload_id=" + uploadId);
         } catch (Exception e) {
             model.addAttribute("msg", "Error procesando archivos: " + e.getMessage());

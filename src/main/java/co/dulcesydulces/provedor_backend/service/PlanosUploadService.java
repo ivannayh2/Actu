@@ -28,13 +28,12 @@ public class PlanosUploadService {
     }
 
     @Transactional
-    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas, String usuario) throws Exception {
+    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
         validarTxt(egresos);
         validarTxt(facturas);
         validarTxt(notas);
 
         long uploadId = uploadsRepository.crearUpload(
-                usuario,
                 egresos.getOriginalFilename(),
                 facturas.getOriginalFilename(),
                 notas.getOriginalFilename()
@@ -64,71 +63,74 @@ public class PlanosUploadService {
     // EGRESOS (12 columnas en el TXT, usamos 0..8)
     // =========================
     private void importarEgresos(long uploadId, MultipartFile file) throws Exception {
-        List<Object[]> batch = new ArrayList<>(2000);
+    List<Object[]> batch = new ArrayList<>(2000);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            int lineNo = 0;
-            boolean headerSkipped = false;
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+        String line;
+        int lineNo = 0;
+        boolean headerSkipped = false;
 
-            while ((line = br.readLine()) != null) {
-                lineNo++;
-                if (line.isBlank()) continue;
+        while ((line = br.readLine()) != null) {
+            lineNo++;
+            if (line.isBlank()) continue;
 
-                // Saltar encabezado
-                if (!headerSkipped) {
-                    headerSkipped = true;
-                    continue;
-                }
+            // Saltar encabezado
+            if (!headerSkipped) {
+                headerSkipped = true;
+                continue;
+            }
 
-                String[] c = line.split(SEP, -1);
+            String[] c = line.split(SEP, -1);
 
-                // Egresos tiene 12 columnas según tu ejemplo
-                if (c.length < 12) {
-                    throw new IllegalArgumentException(
-                            "Egresos: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 12. Línea: " + line
-                    );
-                }
-                String doctoEgreso = c[0].trim().replaceFirst("^[^-]+-", "");
-                //String doctoEgreso = c[0].trim();
-                LocalDate fecha = parseFecha(c[1]);
-                String tercero = c[2].trim();
-                String suc = c[3].trim();
-                String razon = c[4].trim();
-                //String doctoSa = c[5].trim();
-                String doctoSa = c[5].trim().replaceFirst("^[^-]+-", "");
-                String doctoCausacion = c[6].trim().replaceFirst("^[^-]+-", "");
-                BigDecimal vlrEgreso = parseMoney(c[7]);
-                String notas = c[8].trim();
+            // Egresos tiene 11 columnas
+            if (c.length < 11) {
+                throw new IllegalArgumentException(
+                        "Egresos: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 11. Línea: " + line
+                );
+            }
 
-                batch.add(new Object[]{
-                        uploadId,
-                        doctoEgreso,
-                        Date.valueOf(fecha),
-                        tercero,
-                        suc,
-                        razon,
-                        doctoSa,
-                        doctoCausacion,
-                        vlrEgreso,
-                        notas
-                });
+            String doctoEgreso = c[0].trim().replaceFirst("^[^-]+-", "");
+            LocalDate fecha = parseFecha(c[1]);
+            String tercero = c[2].trim();
+            String suc = c[3].trim();
+            String razon = c[4].trim();
+            String doctoSa = c[5].trim().replaceFirst("^[^-]+-", "");
+            String doctoCausacion = c[6].trim().replaceFirst("^[^-]+-", "");
+            BigDecimal vlrEgreso = parseMoney(c[7]);
+            String notas = c[8].trim();
+            BigDecimal valorDocto = parseMoney(c[9]);
+            BigDecimal prontoPago = parseMoney(c[10]);
 
-                if (batch.size() >= 2000) {
-                    batchInsertEgresos(batch);
-                    batch.clear();
-                }
+            batch.add(new Object[]{
+                    uploadId,
+                    doctoEgreso,
+                    Date.valueOf(fecha),
+                    tercero,
+                    suc,
+                    razon,
+                    doctoSa,
+                    doctoCausacion,
+                    vlrEgreso,
+                    notas,
+                    valorDocto,
+                    prontoPago
+            });
+
+            if (batch.size() >= 2000) {
+                batchInsertEgresos(batch);
+                batch.clear();
             }
         }
-
-        if (!batch.isEmpty()) batchInsertEgresos(batch);
     }
+
+    if (!batch.isEmpty()) batchInsertEgresos(batch);
+}
 
     private void batchInsertEgresos(List<Object[]> batch) {
         jdbc.batchUpdate("""
             INSERT INTO egresos_plano
-            (upload_id, docto_egreso, fecha_egreso, tercero, suc, razon_social, docto_sa, docto_causacion, vlr_egreso, notas)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (upload_id, docto_egreso, fecha_egreso, tercero, suc, razon_social, docto_sa, docto_causacion, vlr_egreso, notas, valor_docto, pronto_pago)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, batch);
     }
 

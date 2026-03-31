@@ -13,15 +13,11 @@ public class UploadsRepository {
         this.jdbc = jdbc;
     }
 
-    public void deleteAllUploads() {
-        jdbc.update("DELETE FROM uploads");
-    }
-
-    public long crearUpload(String usuario, String egresosName, String facturasName, String notasName) {
+    public long crearUpload(String egresosName, String facturasName, String notasName) {
         jdbc.update("""
             INSERT INTO uploads (usuario, nombre_egresos, nombre_facturas, nombre_notas)
             VALUES (?, ?, ?, ?)
-        """, usuario, egresosName, facturasName, notasName);
+        """, "system", egresosName, facturasName, notasName);
 
         // MySQL: forma rápida de obtener el último ID en esta conexión
         Long id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
