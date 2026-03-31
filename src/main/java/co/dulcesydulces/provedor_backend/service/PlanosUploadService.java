@@ -28,9 +28,8 @@ public class PlanosUploadService {
     }
 
     @Transactional
+
     public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
-        // Eliminar todos los registros anteriores antes de cargar los nuevos
-        uploadsRepository.deleteAllUploads();
 
         // Si no se envían archivos, solo elimina y retorna -1
         if ((egresos == null || egresos.isEmpty()) && (facturas == null || facturas.isEmpty()) && (notas == null || notas.isEmpty())) {
