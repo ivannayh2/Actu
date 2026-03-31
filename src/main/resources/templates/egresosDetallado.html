@@ -146,81 +146,119 @@
       </div>
     </form>
 
+    <div class="smart-search-wrap" th:if="${!#lists.isEmpty(detalles)}">
+      <div class="field">
+        <label for="smartSearch">Búsqueda inteligente</label>
+        <div class="control">
+          <input
+            id="smartSearch"
+            type="search"
+            placeholder="Busca por factura, débito o crédito..."
+            autocomplete="off"
+            aria-describedby="searchStatus">
+        </div>
+      </div>
+
+      <div class="smart-search-actions">
+        <button id="clearSmartSearch" class="btn btn-compact" type="button">
+          Limpiar búsqueda
+        </button>
+        <span id="searchStatus" class="search-status" aria-live="polite"></span>
+      </div>
+    </div>
+
     <div class="page-actions" th:if="${puedeCrearEgreso}">
       <button id="openModalBtn" class="btn btn-primary" type="button">Nuevo egreso</button>
     </div>
 
     <div class="table-wrap">
+
+      
       <table>
-        <thead>
-          <tr>
-              <th>Número factura</th>
-              <th></th>
-              <th class="text-right">Débitos</th>
-              <th class="text-right">Créditos</th>
-          </tr>
-        </thead>
+  <thead>
+    <tr>
+      <th>Número factura</th>
+      <th class="text-right">Débitos</th>
+      <th class="text-right">Créditos</th>
+    </tr>
+  </thead>
 
-        <tbody id="tablaDetallesBody">
-          <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="3">No se encontraron facturas relacionadas.</td>
-          </tr>
+  <tbody id="tablaDetallesBody">
+    <tr th:if="${#lists.isEmpty(detalles)}">
+      <td colspan="3">No se encontraron facturas relacionadas.</td>
+    </tr>
 
-          <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="4">No se encontraron facturas relacionadas.</td>
-          </tr>
+    <tr id="sinCoincidenciasRow" class="table-hidden">
+      <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
+    </tr>
 
-          <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td><strong>Total</strong></td>
-            <td></td>
-            <td class="text-right">
-              <strong id="totalDebitosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
-            </td>
-            <td class="text-right">
-              <strong id="totalCreditosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos, 1, 'POINT', 2, 'COMMA')}"></strong>
-            </td>
-          </tr>
+    <tr th:each="d : ${detalles}"
+        th:with="
+          factura=${d.doctoSa != null ? d.doctoSa : '-'},
+          valorAjustado=${(d.vlrEgreso != null ? d.vlrEgreso : 0) + (d.prontoPago != null ? d.prontoPago : 0)},
+          debitoValor=${valorAjustado > 0 ? valorAjustado : 0},
+          creditoValor=${valorAjustado < 0 ? valorAjustado.abs() : 0}
+        "
+        class="detalle-row"
+        th:attr="
+          data-factura=${factura},
+          data-debito=${debitoValor},
+          data-credito=${creditoValor},
+          data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
+        ">
 
-          <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
-          </tr>
+      <td class="cell-actions">
+        <span th:text="${factura}"></span>
+        <a class="btn btn-compact"
+           th:if="${d.doctoCausacion != null}"
+           th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+          Ver detalle
+        </a>
+      </td>
 
-          <tr th:each="d : ${detalles}"
-              th:with="
-                factura=${d.doctoSa != null ? d.doctoSa : '-'},
-                debitoValor=${d.vlrEgreso != null and d.vlrEgreso > 0 ? d.vlrEgreso : 0},
-                creditoValor=${d.vlrEgreso != null and d.vlrEgreso < 0 ? d.vlrEgreso.abs() : 0}
-              "
-              class="detalle-row"
-              th:attr="
-                data-factura=${factura},
-                data-debito=${debitoValor},
-                data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
-              ">
-            <td>
-              <span th:text="${factura}"></span>
-            </td>
-            <td>
-              <a class="btn btn-compact"
-                 th:if="${d.doctoCausacion != null}"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                Ver detalle
-              </a>
-            </td>
-            <td class="text-right"
-                th:text="${debitoValor > 0
-                          ? '$ ' + #numbers.formatDecimal(debitoValor, 1, 'POINT', 2, 'COMMA')
-                          : '-'}">
-            </td>
-            <td class="text-right"
-                th:text="${creditoValor > 0
-                          ? '$ ' + #numbers.formatDecimal(creditoValor, 1, 'POINT', 2, 'COMMA')
-                          : '-'}">
-            </td>
-          </tr>
+      <td class="text-right"
+          th:text="${debitoValor > 0
+                    ? '$ ' + #numbers.formatDecimal(debitoValor, 1, 'POINT', 2, 'COMMA')
+                    : '-'}">
+      </td>
+
+      <td class="text-right"
+          th:text="${creditoValor > 0
+                    ? '$ ' + #numbers.formatDecimal(creditoValor, 1, 'POINT', 2, 'COMMA')
+                    : '-'}">
+      </td>
+    </tr>
+
+    <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
+      <td><strong>Valor documento</strong></td>
+      <td></td>
+      <td class="text-right">
+        <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+      </td>
+    </tr>
+
+    <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
+      <td><strong>Pronto pago</strong></td>
+      <td></td>
+      <td class="text-right">
+        <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+      </td>
+    </tr>
+
+    <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
+      <td><strong>Total</strong></td>
+      <td class="text-right">
+        <strong id="totalDebitosView"
+                th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
+      </td>
+      <td class="text-right">
+        <strong id="totalCreditosView"
+                th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
 
     <div id="modal"
          class="modal hidden"
