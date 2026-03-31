@@ -41,9 +41,9 @@ public class PlanosUploadService {
         validarTxt(notas);
 
         long uploadId = uploadsRepository.crearUpload(
-            egresos.getOriginalFilename(),
-            facturas.getOriginalFilename(),
-            notas.getOriginalFilename()
+                egresos.getOriginalFilename(),
+                facturas.getOriginalFilename(),
+                notas.getOriginalFilename()
         );
 
         importarEgresos(uploadId, egresos);
@@ -67,7 +67,7 @@ public class PlanosUploadService {
     private static final String SEP = "\t";
 
     // =========================
-    // EGRESOS (12 columnas en el TXT, usamos 0..8)
+    // EGRESOS (11 columnas)
     // =========================
     private void importarEgresos(long uploadId, MultipartFile file) throws Exception {
     List<Object[]> batch = new ArrayList<>(2000);
@@ -87,26 +87,45 @@ public class PlanosUploadService {
                 continue;
             }
 
-            String[] c = line.split(SEP, -1);
+                // saltar gran total
+                if (line.trim().toLowerCase().startsWith("gran total")) {
+                continue;
+               }
 
-            // Egresos tiene 11 columnas
-            if (c.length < 11) {
-                throw new IllegalArgumentException(
+                String[] c = line.split(SEP, -1);
+
+                if (c.length < 11) {
+                    throw new IllegalArgumentException(
                         "Egresos: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 11. Línea: " + line
-                );
-            }
+                    );
+                }
 
-            String doctoEgreso = c[0].trim().replaceFirst("^[^-]+-", "");
-            LocalDate fecha = parseFecha(c[1]);
-            String tercero = c[2].trim();
-            String suc = c[3].trim();
-            String razon = c[4].trim();
-            String doctoSa = c[5].trim().replaceFirst("^[^-]+-", "");
-            String doctoCausacion = c[6].trim().replaceFirst("^[^-]+-", "");
-            BigDecimal vlrEgreso = parseMoney(c[7]);
-            String notas = c[8].trim();
-            BigDecimal valorDocto = parseMoney(c[9]);
-            BigDecimal prontoPago = parseMoney(c[10]);
+                String doctoEgreso = c[0].trim().replaceFirst("^[^-]+-", "");
+                LocalDate fecha = parseFecha(c[1], "Egresos", lineNo, line);
+                String tercero = c[2].trim();
+                String suc = c[3].trim();
+                String razon = c[4].trim();
+                String doctoSa = c[5].trim().replaceFirst("^[^-]+-", "");
+                String doctoCausacion = c[6].trim().replaceFirst("^[^-]+-", "");
+                BigDecimal vlrEgreso = parseMoney(c[7]);
+                String notas = c[8].trim();
+                BigDecimal valorDocto = parseMoney(c[9]);
+                BigDecimal prontoPago = parseMoney(c[10]);
+
+                batch.add(new Object[]{
+                    uploadId,
+                    doctoEgreso,
+                    Date.valueOf(fecha),
+                    tercero,
+                    suc,
+                    razon,
+                    doctoSa,
+                    doctoCausacion,
+                    vlrEgreso,
+                    notas,
+                    valorDocto,
+                    prontoPago
+                });
 
             batch.add(new Object[]{
                     uploadId,
@@ -162,34 +181,38 @@ public class PlanosUploadService {
                     continue;
                 }
 
+                // saltar gran total
+                if (line.trim().toLowerCase().startsWith("gran total")) {
+                continue;
+               }
+
                 String[] c = line.split(SEP, -1);
 
                 if (c.length < 15) {
                     throw new IllegalArgumentException(
-                            "Facturas: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 15. Línea: " + line
+                        "Facturas: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 15. Línea: " + line
                     );
                 }
 
-                // Nota: viene en notación científica "8,69302E+12". Guardamos tal cual (VARCHAR)
                 String codigoBarraPrincipal = c[8].trim();
 
                 batch.add(new Object[]{
-                        uploadId,
-                        c[0].trim(),                    // docto_causacion
-                        c[1].trim(),                    // documento
-                        c[2].trim(),                    // docto_referencia
-                        c[3].trim(),                    // proveedor
-                        c[4].trim(),                    // razon_social_proveedor
-                        Date.valueOf(parseFecha(c[5])), // fecha
-                        c[6].trim(),                    // item
-                        c[7].trim(),                    // desc_item
-                        codigoBarraPrincipal,           // codigo_barra_principal
-                        c[9].trim(),                    // um
-                        parseDecimalPlain(c[10]),       // cantidad (no es dinero)
-                        parseMoney(c[11]),              // valor_subtotal
-                        parseMoney(c[12]),              // valor_imptos
-                        parseMoney(c[13]),              // valor_dsctos
-                        parseMoney(c[14])               // valor_neto
+                    uploadId,
+                    c[0].trim(),                                           // docto_causacion
+                    c[1].trim(),                                           // documento
+                    c[2].trim(),                                           // docto_referencia
+                    c[3].trim(),                                           // proveedor
+                    c[4].trim(),                                           // razon_social_proveedor
+                    Date.valueOf(parseFecha(c[5], "Facturas", lineNo, line)), // fecha
+                    c[6].trim(),                                           // item
+                    c[7].trim(),                                           // desc_item
+                    codigoBarraPrincipal,                                  // codigo_barra_principal
+                    c[9].trim(),                                           // um
+                    parseDecimalPlain(c[10]),                              // cantidad
+                    parseMoney(c[11]),                                     // valor_subtotal
+                    parseMoney(c[12]),                                     // valor_imptos
+                    parseMoney(c[13]),                                     // valor_dsctos
+                    parseMoney(c[14])                                      // valor_neto
                 });
 
                 if (batch.size() >= 2000) {
@@ -232,26 +255,31 @@ public class PlanosUploadService {
                     continue;
                 }
 
+                // saltar gran total
+                if (line.trim().toLowerCase().startsWith("gran total")) {
+                continue;
+               }
+
                 String[] c = line.split(SEP, -1);
 
                 if (c.length < 10) {
                     throw new IllegalArgumentException(
-                            "Notas: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 10. Línea: " + line
+                        "Notas: línea " + lineNo + " tiene " + c.length + " columnas, se esperaban 10. Línea: " + line
                     );
                 }
 
                 batch.add(new Object[]{
                     uploadId,
-                    c[0].trim().replaceFirst("^[^-]+-", ""), // 👈 AQUÍ
-                    c[1].trim(),      // nro_documento
-                    c[2].trim(),      // referencia_1
-                    c[3].trim(),      // razon_social_proveedor
-                    parseMoney(c[4]), // valor_bruto
-                    parseMoney(c[5]), // valor_dsctos
-                    parseMoney(c[6]), // valor_imptos
-                    parseMoney(c[7]), // valor_neto
-                    parseMoney(c[8]), // valor_retenciones
-                    c[9].trim()       // notas
+                    c[0].trim().replaceFirst("^[^-]+-", ""),
+                    c[1].trim(),
+                    c[2].trim(),
+                    c[3].trim(),
+                    parseMoney(c[4]),
+                    parseMoney(c[5]),
+                    parseMoney(c[6]),
+                    parseMoney(c[7]),
+                    parseMoney(c[8]),
+                    c[9].trim()
                 });
 
                 if (batch.size() >= 2000) {
@@ -277,21 +305,33 @@ public class PlanosUploadService {
     // PARSERS
     // =========================
 
-    private LocalDate parseFecha(String s) {
+    private LocalDate parseFecha(String s, String archivo, int lineNo, String line) {
         String v = s == null ? "" : s.trim();
-        if (v.isEmpty()) throw new IllegalArgumentException("Fecha vacía");
 
-        // dd/MM/yyyy
-        String[] p = v.split("/");
-        if (p.length == 3) {
-            int d = Integer.parseInt(p[0]);
-            int m = Integer.parseInt(p[1]);
-            int y = Integer.parseInt(p[2]);
-            return LocalDate.of(y, m, d);
+        if (v.isEmpty()) {
+            throw new IllegalArgumentException(
+                archivo + ": fecha vacía en línea " + lineNo + ". Línea: " + line
+            );
         }
 
-        // fallback yyyy-MM-dd
-        return LocalDate.parse(v);
+        try {
+            // dd/MM/yyyy
+            String[] p = v.split("/");
+            if (p.length == 3) {
+                int d = Integer.parseInt(p[0]);
+                int m = Integer.parseInt(p[1]);
+                int y = Integer.parseInt(p[2]);
+                return LocalDate.of(y, m, d);
+            }
+
+            // fallback yyyy-MM-dd
+            return LocalDate.parse(v);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                archivo + ": fecha inválida '" + v + "' en línea " + lineNo + ". Línea: " + line
+            );
+        }
     }
 
     /**
