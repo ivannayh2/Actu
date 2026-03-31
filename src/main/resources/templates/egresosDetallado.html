@@ -60,6 +60,22 @@
       white-space: nowrap;
     }
   </style>
+</style>
+<style>
+  /* Hover animado para el botón Ver detalle */
+  a.btn.btn-compact {
+    transition: color 0.25s, background 0.25s;
+    position: relative;
+    z-index: 1;
+  }
+  a.btn.btn-compact:hover {
+    color: #424ce1;
+    background: #ffffff00;
+    box-shadow: 0 2px 8px 0 rgba(78,140,255,0.08);
+    text-decoration: none;
+    transition: color 0.25s, background 0.25s, box-shadow 0.25s;
+  }
+</style>
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
@@ -138,9 +154,10 @@
       <table>
         <thead>
           <tr>
-            <th>Número factura</th>
-            <th class="text-right">Débitos</th>
-            <th class="text-right">Créditos</th>
+              <th>Número factura</th>
+              <th></th>
+              <th class="text-right">Débitos</th>
+              <th class="text-right">Créditos</th>
           </tr>
         </thead>
 
@@ -149,8 +166,13 @@
             <td colspan="3">No se encontraron facturas relacionadas.</td>
           </tr>
 
+          <tr th:if="${#lists.isEmpty(detalles)}">
+            <td colspan="4">No se encontraron facturas relacionadas.</td>
+          </tr>
+
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
             <td><strong>Total</strong></td>
+            <td></td>
             <td class="text-right">
               <strong id="totalDebitosView"
                       th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
@@ -162,7 +184,7 @@
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -178,31 +200,27 @@
                 data-credito=${creditoValor},
                 data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
               ">
-
-            <td class="cell-actions">
+            <td>
               <span th:text="${factura}"></span>
+            </td>
+            <td>
               <a class="btn btn-compact"
                  th:if="${d.doctoCausacion != null}"
                  th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
                 Ver detalle
               </a>
             </td>
-
             <td class="text-right"
                 th:text="${debitoValor > 0
                           ? '$ ' + #numbers.formatDecimal(debitoValor, 1, 'POINT', 2, 'COMMA')
                           : '-'}">
             </td>
-
             <td class="text-right"
                 th:text="${creditoValor > 0
                           ? '$ ' + #numbers.formatDecimal(creditoValor, 1, 'POINT', 2, 'COMMA')
                           : '-'}">
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
 
     <div id="modal"
          class="modal hidden"
