@@ -98,6 +98,25 @@
         </div>
       </div>
 
+      <div class="field" th:if="${!#lists.isEmpty(detalles)}">
+        <label for="smartSearch">Búsqueda inteligente</label>
+        <div class="control">
+          <input
+            id="smartSearch"
+            type="search"
+            placeholder="Busca por factura, débito o crédito..."
+            autocomplete="off"
+            aria-describedby="searchStatus">
+        </div>
+      </div>
+
+      <div class="smart-search-actions" th:if="${!#lists.isEmpty(detalles)}">
+        <button id="clearSmartSearch" class="btn btn-compact" type="button">
+          Limpiar búsqueda
+        </button>
+        <span id="searchStatus" class="search-status" aria-live="polite"></span>
+      </div>
+
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
           <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
@@ -110,27 +129,6 @@
         </a>
       </div>
     </form>
-
-    <div class="smart-search-wrap" th:if="${!#lists.isEmpty(detalles)}">
-      <div class="field">
-        <label for="smartSearch">Búsqueda inteligente</label>
-        <div class="control">
-          <input
-            id="smartSearch"
-            type="search"
-            placeholder="Busca por factura, débito o crédito..."
-            autocomplete="off"
-            aria-describedby="searchStatus">
-        </div>
-      </div>
-
-      <div class="smart-search-actions">
-        <button id="clearSmartSearch" class="btn btn-compact" type="button">
-          Limpiar búsqueda
-        </button>
-        <span id="searchStatus" class="search-status" aria-live="polite"></span>
-      </div>
-    </div>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
       <button id="openModalBtn" class="btn btn-primary" type="button">Nuevo egreso</button>
@@ -420,7 +418,6 @@
       });
     })();
   </script>
-  <h1>cambios</h1>
 
 </body>
 </html>
