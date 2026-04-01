@@ -15,6 +15,7 @@ body {
   position: relative;
   padding-left: 0;
   padding-top: var(--topbar-height);
+  background-color: #f6f6f6;
   transition: padding-left var(--sidebar-transition);
 }
 
@@ -63,7 +64,6 @@ body.sidebar-open {
   background: rgba(255,255,255,0.82); /* blanco casi transparente, puedes ajustar el color */
   box-shadow: 0 2px 16px 0 rgba(30,34,90,0.07), 0 1.5px 4px 0 rgba(30,34,90,0.04);
   backdrop-filter: blur(6px) saturate(120%);
-}
 }
 
 body.sidebar-open .topbar {
