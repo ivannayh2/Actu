@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -32,7 +32,10 @@
       display: flex;
       gap: 8px;
       align-items: center;
+      justify-content: flex-end;
       flex-wrap: wrap;
+      grid-column: 1 / -1;
+      width: 100%;
     }
 
     .search-status {
@@ -132,40 +135,7 @@
         </button>
         <span id="searchStatus" class="search-status" aria-live="polite"></span>
       </div>
-
-      <div class="filters-actions">
-        <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
-          Filtrar
-        </button>
-
-        <a class="btn btn-compact" th:href="@{/egresos}">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
-          Limpiar
-        </a>
-      </div>
     </form>
-
-    <div class="smart-search-wrap" th:if="${!#lists.isEmpty(detalles)}">
-      <div class="field">
-        <label for="smartSearch">Búsqueda inteligente</label>
-        <div class="control">
-          <input
-            id="smartSearch"
-            type="search"
-            placeholder="Busca por factura, débito o crédito..."
-            autocomplete="off"
-            aria-describedby="searchStatus">
-        </div>
-      </div>
-
-      <div class="smart-search-actions">
-        <button id="clearSmartSearch" class="btn btn-compact" type="button">
-          Limpiar búsqueda
-        </button>
-        <span id="searchStatus" class="search-status" aria-live="polite"></span>
-      </div>
-    </div>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
       <button id="openModalBtn" class="btn btn-primary" type="button">Nuevo egreso</button>
@@ -233,7 +203,7 @@
       <td><strong>Valor documento</strong></td>
       <td></td>
       <td class="text-right">
-        <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+        <strong class="kpi-number" th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
       </td>
     </tr>
 
@@ -241,18 +211,18 @@
       <td><strong>Pronto pago</strong></td>
       <td></td>
       <td class="text-right">
-        <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+        <strong class="kpi-number" th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
       </td>
     </tr>
 
     <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
       <td><strong>Total</strong></td>
       <td class="text-right">
-        <strong id="totalDebitosView"
+        <strong id="totalDebitosView" class="kpi-number"
                 th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
       </td>
       <td class="text-right">
-        <strong id="totalCreditosView"
+        <strong id="totalCreditosView" class="kpi-number"
                 th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
       </td>
     </tr>
@@ -345,6 +315,11 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
+        const filtersForm = document.querySelector('form.filters');
+        const proveedorInput = document.getElementById('proveedor');
+        const fechaDocumentoInput = document.getElementById('fechaDocumento');
+        const doctoSaInput = document.getElementById('doctoSa');
+
         const modal = document.getElementById('modal');
         const openModalBtn = document.getElementById('openModalBtn');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -432,6 +407,25 @@
         }
 
         const debouncedFilterTable = debounce(filterTable, 120);
+        const debouncedSubmitFilters = debounce(function () {
+          if (!filtersForm) return;
+          if (typeof filtersForm.requestSubmit === 'function') {
+            filtersForm.requestSubmit();
+            return;
+          }
+          filtersForm.submit();
+        }, 350);
+
+        function bindAutoSubmit(input, events) {
+          if (!input) return;
+          events.forEach(function (eventName) {
+            input.addEventListener(eventName, debouncedSubmitFilters);
+          });
+        }
+
+        bindAutoSubmit(proveedorInput, ['input', 'search']);
+        bindAutoSubmit(fechaDocumentoInput, ['change']);
+        bindAutoSubmit(doctoSaInput, ['input', 'search']);
 
         if (smartSearchInput) {
           smartSearchInput.addEventListener('input', debouncedFilterTable);
@@ -440,8 +434,22 @@
 
         if (clearSmartSearchBtn && smartSearchInput) {
           clearSmartSearchBtn.addEventListener('click', function () {
+            const hasServerFilters = [proveedorInput, fechaDocumentoInput, doctoSaInput].some(function (input) {
+              return !!(input && input.value);
+            });
+
             smartSearchInput.value = '';
+            if (proveedorInput) proveedorInput.value = '';
+            if (fechaDocumentoInput) fechaDocumentoInput.value = '';
+            if (doctoSaInput) doctoSaInput.value = '';
+
             filterTable();
+
+            if (hasServerFilters && filtersForm) {
+              filtersForm.submit();
+              return;
+            }
+
             smartSearchInput.focus();
           });
         }
