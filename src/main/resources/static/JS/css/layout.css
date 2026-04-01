@@ -65,7 +65,6 @@ body.sidebar-open {
   box-shadow: 0 2px 16px 0 rgba(30,34,90,0.07), 0 1.5px 4px 0 rgba(30,34,90,0.04);
   backdrop-filter: blur(6px) saturate(120%);
 }
-}
 
 body.sidebar-open .topbar {
   left: calc(var(--sidebar-width) + (var(--sidebar-gap) * 2));
