@@ -53,6 +53,11 @@ public class PlanosUploadService {
         return uploadId;
     }
 
+    @Transactional
+    public int eliminarTodoLoImportado() {
+        return uploadsRepository.deleteAllImportedData();
+    }
+
     private void validarTxt(MultipartFile f) {
         if (f == null || f.isEmpty()) {
             throw new IllegalArgumentException("Archivo vacío.");

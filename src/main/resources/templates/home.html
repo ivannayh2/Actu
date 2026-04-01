@@ -27,6 +27,9 @@
       </div>
       <div class="actions">
         <button class="btn primary" type="submit" form="uploadPlanosForm">Cargar y procesar</button>
+        <form th:action="@{/uploads/planos/eliminar-todo}" method="post" onsubmit="return confirm('Se eliminaran todos los registros importados. Esta accion no se puede deshacer. ¿Deseas continuar?');">
+          <button class="btn danger" type="submit">Eliminar</button>
+        </form>
       </div>
     </div>
 

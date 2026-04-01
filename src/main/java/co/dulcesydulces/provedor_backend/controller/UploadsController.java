@@ -34,4 +34,15 @@ public class UploadsController {
         }
         return "home"; // o el nombre real de tu template
     }
+
+    @PostMapping("/planos/eliminar-todo")
+    public String eliminarTodoLoImportado(Model model) {
+        try {
+            int total = planosUploadService.eliminarTodoLoImportado();
+            model.addAttribute("msg", "Se eliminaron " + total + " registros importados.");
+        } catch (Exception e) {
+            model.addAttribute("msg", "Error eliminando registros importados: " + e.getMessage());
+        }
+        return "home";
+    }
 }
