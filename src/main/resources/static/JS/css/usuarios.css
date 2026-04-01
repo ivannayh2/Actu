@@ -25,15 +25,15 @@
 	100% { transform: translateX(0); }
 }
 :root {
---primary: #5b2af7;
---primary-hover: #4c23ce;
+--primary: #0051a5;
+--primary-hover: #003d7a;
 --page-bg: #f1f4fa;
---panel-bg: #f7f9fc;
+--panel-bg: #ffffff;
 --card: #ffffff;
---text: #0f172a;
+--text: #222222;
 --muted: #6b7280;
---border: #e5eaf3;
---line-soft: #dbe4f3;
+--border: #E5E5E5;
+	--line-soft: #E5E5E5;
 --item-soft: #eef4ff;
 --item-soft-strong: #e7efff;
 --active-dot: #6d28d9;
@@ -42,7 +42,7 @@
 --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
 --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 --shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.18);
-font-family: "Public Sans", "Segoe UI", sans-serif;
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
 -webkit-font-smoothing: antialiased;
 }
 
@@ -73,7 +73,7 @@ margin: 0 0 14px;
 padding: 16px 18px;
 background: #ffffff;
 border: 1px solid var(--border);
-border-radius: 16px;
+border-radius: 14px;
 box-shadow: var(--shadow-sm);
 }
 
@@ -86,14 +86,15 @@ gap: 2px;
 h1 {
 margin: 0;
 font-size: 22px;
-font-weight: 700;
-letter-spacing: -0.01em;
+font-weight: 600;
+letter-spacing: -0.02em;
 }
 
 .subtitle-main {
 margin: 0;
-font-size: 13px;
-color: var(--muted);
+font-size: 14px;
+font-weight: 400;
+color: #333333;
 }
 
 .actions {
@@ -107,7 +108,7 @@ align-items: center;
 gap: 6px;
 padding: 6px;
 margin: 0 0 14px;
-background: #edf2fb;
+background: #f6f6f6;
 border: 1px solid var(--border);
 border-radius: 18px;
 box-shadow: var(--shadow-sm);
@@ -149,12 +150,12 @@ align-items: center;
 justify-content: center;
 font-size: 10px;
 font-weight: 700;
-background: #dbe6fb;
+background: #f6f6f6;
 color: #1d4ed8;
 }
 
 .users-tab.is-active .tab-count {
-background: #ebe3ff;
+background: #f6f6f6;
 color: #6d28d9;
 }
 
@@ -162,29 +163,39 @@ color: #6d28d9;
 border: 1px solid var(--line-soft);
 background: #ffffff;
 padding: 10px 16px;
-border-radius: 12px;
+border-radius: 14px;
 cursor: pointer;
 font-size: 13px;
 font-weight: 600;
 color: #1f2937;
-transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn:hover {
-background: #f3f7ff;
+background: #f6f6f6;
 border-color: #cad7ed;
+transform: translateY(-2px);
+box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+.btn:active {
+transform: translateY(0) scale(0.98);
+box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
 .btn.primary {
-background: linear-gradient(90deg, #602ff5, #5b2af7 52%, #4e1fe8 100%);
+background: #0051a5;
 border: 0;
 color: #ffffff;
-box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
+font-weight: 600;
+font-size: 13px;
 }
 
 .btn.primary:hover {
-background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
-transform: translateY(-1px);
+background: #003d7a;
+transform: translateY(-2px);
+box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
 }
 
 #btnNuevo {
@@ -230,7 +241,7 @@ overflow: visible;
 .role-title {
 padding: 10px 14px;
 font-size: 13px;
-font-weight: 700;
+font-weight: 600;
 display: flex;
 align-items: center;
 gap: 8px;
@@ -288,7 +299,7 @@ box-shadow: 0 0 0 6px #e7efff;
 
 .user-item.is-disabled {
 opacity: 0.72;
-background: #f3f5f9;
+background: #f6f6f6;
 border-color: #e2e8f2;
 }
 
@@ -399,7 +410,7 @@ cursor: pointer;
 }
 
 .icon-btn:hover {
-background: #eff5ff;
+background: #f6f6f6;
 border-color: #c4d4ec;
 }
 
@@ -577,7 +588,7 @@ border: none;
 .modal-head h2 {
 margin: 0;
 font-size: 19px;
-font-weight: 700;
+font-weight: 600;
 }
 
 .modal-head .icon-btn {
@@ -614,8 +625,8 @@ display: flex;
 flex-direction: column;
 gap: 7px;
 font-size: 13px;
-font-weight: 600;
-color: #374151;
+font-weight: 400;
+color: #333333;
 }
 
 input,
@@ -626,7 +637,8 @@ border-radius: 10px;
 padding: 11px 13px;
 font-family: inherit;
 font-size: 13px;
-color: #111827;
+font-weight: 400;
+color: #333333;
 }
 
 input:focus,
@@ -653,7 +665,7 @@ margin-top: 4px;
 .permisos-title {
 margin: 0;
 font-size: 19px;
-font-weight: 700;
+font-weight: 600;
 color: #111827;
 display: inline-flex;
 align-items: center;
@@ -672,7 +684,8 @@ gap: 0;
 .permisos-subtitle {
 margin: 6px 0 10px;
 font-size: 12px;
-color: #6b7280;
+font-weight: 400;
+color: #333333;
 }
 
 .permisos-head,
@@ -746,7 +759,8 @@ color: #111827;
 
 .permiso-area small {
 font-size: 11px;
-color: #6b7280;
+font-weight: 400;
+color: #333333;
 }
 
 .permiso-check {

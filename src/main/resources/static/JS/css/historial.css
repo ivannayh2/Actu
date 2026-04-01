@@ -28,17 +28,19 @@
   justify-content: center;
 }
 .modal-confirm-eliminar .btn-cancelar {
-  background: #f3f4f6;
+  background: #f6f6f6;
   color: #222;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #E5E5E5;
   border-radius: 8px;
   padding: 8px 22px;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .modal-confirm-eliminar .btn-cancelar:hover {
   background: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
 }
 .modal-confirm-eliminar .btn-eliminar {
   background: #ef4444;
@@ -48,14 +50,22 @@
   padding: 8px 22px;
   font-size: 15px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .modal-confirm-eliminar .btn-eliminar:hover {
   background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(220, 38, 38, 0.28);
+}
+
+.modal-confirm-eliminar .btn-cancelar:active,
+.modal-confirm-eliminar .btn-eliminar:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 .historial-page {
   max-width: 1320px;
-  font-family: "Public Sans", "Segoe UI", sans-serif;
+  font-family: "Instrument Sans", "Segoe UI", sans-serif;
 }
 
 .historial-page .page-head {
@@ -68,10 +78,14 @@
 
 .historial-page .page-head h1 {
   margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .historial-page .subtitle-main {
-  color: #64748b;
+  font-weight: 400;
+  color: #333333;
   margin-top: 4px;
 }
 
@@ -86,8 +100,8 @@
   max-width: none;
   padding: 14px;
   background: #ffffff;
-  border: 1px solid #e5eaf3;
-  border-radius: 14px;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   display: grid;
   grid-template-columns: repeat(3, minmax(210px, 1fr));
@@ -99,28 +113,30 @@
   grid-column: 1 / -1;
   margin: 0 0 2px;
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.1;
-  color: #0f172a;
+  letter-spacing: -0.02em;
+  color: #222222;
 }
 
 .historial-page .filters label {
   display: grid;
   gap: 6px;
   font-size: 12px;
-  font-weight: 700;
-  color: #374151;
+  font-weight: 400;
+  color: #333333;
 }
 
 .historial-page .filters input[type="text"],
 .historial-page .filters input[type="date"] {
   width: 100%;
   height: 40px;
-  border-radius: 10px;
-  border: 1px solid #dbe3f1;
+  border-radius: 8px;
+  border: 1px solid #E5E5E5;
   background: #ffffff;
   font-size: 13px;
-  color: #111827;
+  font-weight: 400;
+  color: #333333;
   padding: 10px 12px;
 }
 
@@ -139,8 +155,8 @@
   max-width: none;
   margin-top: 0;
   background: #ffffff;
-  border: 1px solid #e5eaf3;
-  border-radius: 14px;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   overflow: hidden;
   padding: 0;
@@ -152,36 +168,40 @@
   box-shadow: none;
   border-collapse: separate;
   border-spacing: 0;
+  line-height: 1.25;
 }
 
 .historial-page thead th {
-  background: #f8faff;
-  color: #1f2937;
-  border-bottom: 1px solid #e5eaf3;
-  font-size: 11px;
-  letter-spacing: 0;
+  background: #f6f6f6;
+  color: #86868B;
+  border-bottom: 1px solid #E5E5E5;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
   padding: 12px 14px;
   white-space: nowrap;
-  font-weight: 700;
   text-align: left;
 }
 
 .historial-page tbody td {
-  border-bottom: 1px solid #eef2f8;
-  color: #0f172a;
-  font-size: 13px;
+  border-bottom: 1px solid #E5E5E5;
+  font-weight: 400;
+  color: #1D1D1F;
+  font-size: 14px;
+  line-height: 1.25;
   padding: 12px 14px;
   vertical-align: middle;
   text-align: left;
 }
 
 .historial-page tbody tr:nth-child(even) td {
-  background: #fbfdff;
+  background: #f6f6f6;
 }
 
 .historial-page tbody tr:hover td {
-  background: #f1f6ff;
+  background: #f6f6f6;
 }
 
 .historial-page tbody tr:last-child td {
@@ -189,7 +209,7 @@
 }
 
 .historial-page tbody td:first-child {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .historial-page tbody tr td[colspan="3"] {
@@ -208,7 +228,8 @@
 .historial-page .entries-count {
   margin: 0;
   font-size: 13px;
-  color: #334155;
+  font-weight: 400;
+  color: #333333;
 }
 
 @media (max-width: 1080px) {

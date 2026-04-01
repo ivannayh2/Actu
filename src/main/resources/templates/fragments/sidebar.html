@@ -37,11 +37,11 @@
       </details>
 
       <!-- PUBLICADOR ve solo lo que le corresponde -->
-      <a sec:authorize="hasAuthority('PUBLICADOR')"
+      <a sec:authorize="hasAuthority('PUBLICADOR') and hasAuthority('permImportarArchivosView')"
          th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
          <i class="icon-home"></i> <span>Importar Archivos</span>
       </a>
-      <a sec:authorize="hasAuthority('PUBLICADOR')"
+      <a sec:authorize="hasAuthority('PUBLICADOR') and hasAuthority('permComprobanteEgresosView')"
          th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
          <i class="icon-egresos"></i> <span>Comprobante egreso</span>
       </a>
@@ -67,7 +67,11 @@
       </details>
 
       <!-- PROVEEDORES mantiene su lógica actual -->
-      <a sec:authorize="hasAuthority('PROVEEDORES')"
+      <a sec:authorize="hasAuthority('PROVEEDORES') and hasAuthority('permImportarArchivosView')"
+        th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
+        <i class="icon-home"></i> <span>Importar Archivos</span>
+      </a>
+      <a sec:authorize="hasAuthority('PROVEEDORES') and hasAuthority('permComprobanteEgresosView')"
          th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
          <i class="icon-egresos"></i> <span>Comprobante egreso</span>
       </a>

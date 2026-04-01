@@ -1,5 +1,7 @@
 package co.dulcesydulces.provedor_backend.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import co.dulcesydulces.provedor_backend.domain.entidades.Usuarios;
+import co.dulcesydulces.provedor_backend.repository.UsuarioRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -18,7 +23,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, UsuarioRepository usuarioRepository) throws Exception {
     http
       .csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(auth -> auth
@@ -35,12 +40,23 @@ public class SecurityConfig {
         .passwordParameter("clave")
         .failureUrl("/login?error")
         .successHandler((request, response, authentication) -> {
-          boolean isProveedor = authentication.getAuthorities().stream()
-            .anyMatch(a -> a.getAuthority().equals("PROVEEDORES"));
-          if (isProveedor) {
+          String codigo = authentication.getName();
+          Usuarios user = usuarioRepository.findByCodigo(codigo).orElse(null);
+
+          boolean isAdmin = user != null && "ADMINISTRADOR".equalsIgnoreCase(user.getRol());
+          List<String> permisos = (user != null && user.getPermisos() != null) ? user.getPermisos() : List.of();
+
+          boolean canImportFiles = permisos.stream()
+            .anyMatch(p -> "permImportarArchivosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+          boolean canComprobanteEgresos = permisos.stream()
+            .anyMatch(p -> "permComprobanteEgresosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+
+          if (isAdmin || canImportFiles) {
+            response.sendRedirect("/home");
+          } else if (canComprobanteEgresos) {
             response.sendRedirect("/egresos");
           } else {
-            response.sendRedirect("/home");
+            response.sendRedirect("/configuracion/perfil");
           }
         })
         .permitAll()

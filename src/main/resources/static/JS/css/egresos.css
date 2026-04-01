@@ -16,7 +16,7 @@
 .egresos-page .cell-actions .btn.btn-compact {
 	background: none;
 	border: none;
-	color: #5b2af7;
+	color: #0051a5;
 	font-size: 13px;
 	font-weight: 700;
 	text-decoration: none;
@@ -25,27 +25,10 @@
 	display: inline-block;
 	cursor: pointer;
 	position: relative;
-	transition: color 0.25s cubic-bezier(0.4,0,0.2,1);
 }
-
-.egresos-page .cell-actions .btn.btn-compact::after {
-	content: '';
-	display: block;
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: 0%;
-	height: 2px;
-	background: #2563eb;
-	transition: width 0.25s cubic-bezier(0.4,0,0.2,1);
-}
-
 
 .egresos-page .cell-actions .btn.btn-compact:hover {
-	color: #2563eb;
-}
-.egresos-page .cell-actions .btn.btn-compact:hover::after {
-	width: 100%;
+	color: #003d7a;
 }
 
 
@@ -58,7 +41,7 @@
 
 .egresos-page .link-detalle {
 	display: inline-block;
-	color: #5b2af7; 
+	color: #0051a5; 
 	font-size: 13px;
 	font-weight: 600;
 	text-decoration: none; 
@@ -85,7 +68,7 @@
 	box-sizing: border-box;
 }
 .egresos-header-proveedor-nombre {
-	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
 	font-weight: 800;
 	font-size: 2.1em;
 	color: rgba(24,28,50,0.09);
@@ -93,7 +76,7 @@
 	display: block;
 }
 .egresos-header-proveedor-label {
-	font-family: 'Public Sans', 'Segoe UI', sans-serif;
+	font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
 	font-weight: 400;
 	font-size: 0.97em;
 	color: #a3aab5;
@@ -101,15 +84,15 @@
 }
 .egresos-page {
 max-width: 1320px;
-font-family: "Public Sans", "Segoe UI", sans-serif;
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
 }
 
 .egresos-page .page-head {
 margin: 0 0 14px;
 padding: 16px 18px;
 background: #ffffff;
-border: 1px solid #e5eaf3;
-border-radius: 16px;
+border: 1px solid #E5E5E5;
+border-radius: 14px;
 box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 display: flex;
 align-items: center;
@@ -126,15 +109,16 @@ gap: 2px;
 .egresos-page .page-head h1 {
 margin: 0;
 font-size: 22px;
-font-weight: 700;
-letter-spacing: -0.01em;
-color: #0f172a;
+font-weight: 600;
+letter-spacing: -0.02em;
+color: #222222;
 }
 
 .egresos-page .subtitle-main {
 margin: 0;
-font-size: 13px;
-color: #6b7280;
+font-size: 14px;
+font-weight: 400;
+color: #333333;
 }
 
 .egresos-page .actions {
@@ -143,32 +127,42 @@ justify-content: flex-end;
 }
 
 .egresos-page .btn {
-border: 1px solid #dbe4f3;
+border: 1px solid #E5E5E5;
 background: #ffffff;
 padding: 10px 16px;
-border-radius: 12px;
+border-radius: 14px;
 cursor: pointer;
 font-size: 13px;
 font-weight: 700;
 color: #1f2937;
-transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .egresos-page .btn:hover {
-background: #f3f7ff;
+background: #f6f6f6;
 border-color: #cad7ed;
+transform: translateY(-2px);
+box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+.egresos-page .btn:active {
+transform: translateY(0) scale(0.98);
+box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
 .egresos-page .btn.btn-primary {
-background: linear-gradient(90deg, #602ff5, #5b2af7 52%, #4e1fe8 100%);
+background: #0051a5;
 border: 0;
 color: #ffffff;
-box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
+font-weight: 600;
+font-size: 13px;
 }
 
 .egresos-page .btn.btn-primary:hover {
-background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
-transform: translateY(-1px);
+background: #003d7a;
+transform: translateY(-2px);
+box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
 }
 
 .egresos-page .alert {
@@ -221,8 +215,8 @@ color: #b91c1c;
 display: grid;
 gap: 6px;
 font-size: 12px;
-font-weight: 700;
-color: #374151;
+font-weight: 400;
+color: #333333;
 }
 
 .egresos-page .filters input[type="text"],
@@ -231,11 +225,12 @@ color: #374151;
 width: 100%;
 height: 40px;
 padding: 8px 12px;
-border-radius: 10px;
-border: 1px solid #dbe3f1;
+border-radius: 8px;
+border: 1px solid #E5E5E5;
 background: #ffffff;
 font-size: 13px;
-color: #111827;
+font-weight: 400;
+color: #333333;
 transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -272,7 +267,7 @@ gap: 6px;
 
 .egresos-page .filters-actions .btn-compact {
 padding: 8px 12px;
-border-radius: 10px;
+border-radius: 14px;
 font-size: 12px;
 font-weight: 700;
 }
@@ -298,8 +293,8 @@ justify-content: flex-start;
 
 .egresos-page .table-wrap {
 background: #ffffff;
-border: 1px solid #e5eaf3;
-border-radius: 14px;
+border: 1px solid #E5E5E5;
+border-radius: 12px;
 box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 overflow: hidden;
 }
@@ -308,25 +303,73 @@ overflow: hidden;
 width: 100%;
 border-collapse: separate;
 border-spacing: 0;
+line-height: 1.25;
 }
 
 .egresos-page thead th {
 text-align: left;
-font-size: 11px;
-letter-spacing: 0.02em;
+font-size: 12px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+line-height: 1.2;
 padding: 11px 12px;
 background: #f8faff;
-color: #1f2937;
-border-bottom: 1px solid #e5eaf3;
+color: #86868B;
+border-bottom: 1px solid #E5E5E5;
 white-space: nowrap;
 }
 
 .egresos-page tbody td {
 	padding: 11px 12px;
-	border-bottom: 1px solid #eef2f8;
-	color: #0f172a;
-	font-size: 13px;
+	border-bottom: 1px solid #E5E5E5;
+	font-weight: 500;
+	color: #1D1D1F;
+	font-size: 14px;
+	line-height: 1.25;
 	vertical-align: middle;
+}
+
+.egresos-page .text-right {
+	font-family: "Instrument Sans", "Segoe UI", sans-serif;
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.egresos-page .kpi-number {
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.1;
+	color: #1D1D1F;
+	font-family: "Instrument Sans", "Segoe UI", sans-serif;
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.egresos-page .fila-resumen td {
+	font-weight: 600;
+	color: #1D1D1F;
+}
+
+/* Directional indicator: arrow only gets color, number stays #1D1D1F */
+.kpi-arrow {
+	display: inline-block;
+	font-size: 0.55em;
+	line-height: 1;
+	vertical-align: middle;
+	margin-left: 4px;
+	font-weight: 600;
+}
+.kpi-arrow--up   { color: #16a34a; }
+.kpi-arrow--down { color: #dc2626; }
+
+.egresos-page tbody td:nth-child(4),
+.egresos-page tbody td:nth-child(5),
+.egresos-page tbody td:nth-child(6),
+.egresos-page tbody td:nth-child(7) {
+	font-family: "Instrument Sans", "Segoe UI", sans-serif;
+	font-variant-numeric: tabular-nums;
+	font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 .egresos-page tbody td:first-child {
@@ -334,11 +377,11 @@ white-space: nowrap;
 }
 
 .egresos-page tbody tr:nth-child(even) td {
-background: #fbfdff;
+background: #ffffff;
 }
 
 .egresos-page tbody tr:hover td {
-background: #f1f6ff;
+background: #f6f6f6;
 }
 
 .egresos-page tbody tr:last-child td {
@@ -399,7 +442,7 @@ display: none;
 width: min(94vw, 520px);
 background: #ffffff;
 border: 1px solid #e5eaf3;
-border-top: 3px solid #5b2af7;
+border-top: 3px solid #0051a5;
 border-radius: 16px;
 padding: 20px 22px 22px;
 box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
@@ -417,8 +460,8 @@ border-bottom: 1px solid #eef2f8;
 .egresos-page .modal-head h3 {
 margin: 0;
 font-size: 17px;
-font-weight: 700;
-color: #0f172a;
+font-weight: 600;
+color: #222222;
 }
 
 .egresos-page .modal-head .btn {
@@ -446,8 +489,8 @@ gap: 6px;
 
 .egresos-page .field-row label {
 font-size: 12px;
-font-weight: 700;
-color: #374151;
+font-weight: 400;
+color: #333333;
 }
 
 .egresos-page .field-row input,
@@ -460,7 +503,8 @@ border-radius: 10px;
 padding: 8px 12px;
 font-size: 13px;
 background: #ffffff;
-color: #111827;
+font-weight: 400;
+color: #333333;
 font-family: inherit;
 }
 
@@ -472,7 +516,8 @@ color: #9ca3af;
 height: 40px;
 padding: 4px 6px;
 background: #ffffff;
-color: #374151;
+font-weight: 400;
+color: #333333;
 }
 
 .egresos-page .field-row input[type="file"]::file-selector-button {

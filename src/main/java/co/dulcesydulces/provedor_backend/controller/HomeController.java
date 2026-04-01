@@ -1,5 +1,7 @@
 package co.dulcesydulces.provedor_backend.controller;
 
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -27,9 +29,18 @@ public class HomeController {
             if (user != null) {
                 session.setAttribute("usuario", user.getCodigo());
                 session.setAttribute("rol", user.getRol());
-                String rol = user.getRol() != null ? user.getRol().toUpperCase() : "";
-                if (rol.equals("PROVEEDOR") || rol.equals("PROVEEDORES")) {
-                    return "redirect:/egresos";
+                boolean isAdmin = "ADMINISTRADOR".equalsIgnoreCase(user.getRol());
+                List<String> permisos = user.getPermisos() != null ? user.getPermisos() : List.of();
+                boolean canImportFiles = permisos.stream()
+                    .anyMatch(p -> "permImportarArchivosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+                boolean canComprobanteEgresos = permisos.stream()
+                    .anyMatch(p -> "permComprobanteEgresosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+
+                if (!isAdmin && !canImportFiles) {
+                    if (canComprobanteEgresos) {
+                        return "redirect:/egresos";
+                    }
+                    return "redirect:/configuracion/perfil";
                 }
             }
         }
