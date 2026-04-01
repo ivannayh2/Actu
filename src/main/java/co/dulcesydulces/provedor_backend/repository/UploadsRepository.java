@@ -28,4 +28,13 @@ public class UploadsRepository {
     public void deleteAllUploads() {
         jdbc.update("DELETE FROM uploads");
     }
+
+    public int deleteAllImportedData() {
+        int total = 0;
+        total += jdbc.update("DELETE FROM egresos_plano");
+        total += jdbc.update("DELETE FROM facturas_plano");
+        total += jdbc.update("DELETE FROM notas_plano");
+        total += jdbc.update("DELETE FROM uploads");
+        return total;
+    }
 }

@@ -28,7 +28,14 @@ public class PlanosUploadService {
     }
 
     @Transactional
+
     public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
+
+        // Si no se envían archivos, solo elimina y retorna -1
+        if ((egresos == null || egresos.isEmpty()) && (facturas == null || facturas.isEmpty()) && (notas == null || notas.isEmpty())) {
+            return -1L;
+        }
+
         validarTxt(egresos);
         validarTxt(facturas);
         validarTxt(notas);
@@ -44,6 +51,11 @@ public class PlanosUploadService {
         importarNotas(uploadId, notas);
 
         return uploadId;
+    }
+
+    @Transactional
+    public int eliminarTodoLoImportado() {
+        return uploadsRepository.deleteAllImportedData();
     }
 
     private void validarTxt(MultipartFile f) {
