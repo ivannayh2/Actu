@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Detalle facturas</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+
+  <main class="container egresos-page">
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Facturas relacionadas</h1>
+        <p class="subtitle-main">
+          Docto causación: <strong th:text="${doctoCausacion}"></strong>
+        </p>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="history.back()">Volver</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Documento referencia</th>
+            <th>Descripcion item</th>
+            <th>Codigo de barras</th>
+            <th>Cantidad</th>
+            <th>Valor subtotal</th>
+            <th>Valor impuestos locales</th>
+            <th>Valor neto</th>
+          </tr>
+        </thead>
+        <tbody>
+  <tr th:each="f : ${facturas}">
+    <td th:text="${f.doctoReferencia != null ? f.doctoReferencia : '-'}"></td>
+    <td th:text="${f.descItem != null ? f.descItem : '-'}"></td>
+    <td th:text="${f.codigoBarraPrincipal != null ? f.codigoBarraPrincipal : '-'}"></td>
+    <td th:text="${f.cantidad != null ? f.cantidad : '-'}"></td>
+    <td th:text="${f.valorSubtotal != null ? '$ ' + #numbers.formatDecimal(f.valorSubtotal, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+    <td th:text="${f.valorImptos != null ? '$ ' + #numbers.formatDecimal(f.valorImptos, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+    <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+  </tr>
+
+  <tr th:if="${#lists.isEmpty(facturas)}">
+    <td colspan="7">No se encontraron facturas relacionadas.</td>
+  </tr>
+</tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

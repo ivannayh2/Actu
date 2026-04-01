@@ -91,6 +91,7 @@ public class UsuarioService {
         actual.setRol(u.getRol());
         actual.setEstado_u(u.getEstado_u());
         actual.setRoleId(u.getRoleId());
+        actual.setPermisos(u.getPermisos());
 
         if (u.getPassword_hash() != null && !u.getPassword_hash().isBlank()) {
             if (u.getPassword_hash().startsWith("$2a$")) {

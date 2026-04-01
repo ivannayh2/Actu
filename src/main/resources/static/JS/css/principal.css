@@ -1,14 +1,14 @@
 :root {
---primary: #5b2af7;
---primary-hover: #4c23ce;
---panel-bg: #f7f9fc;
+--primary: #0051a5;
+--primary-hover: #003d7a;
+--panel-bg: #ffffff;
 --card: #ffffff;
---text-main: #0f172a;
+--text-main: #222222;
 --text-muted: #64748b;
---border-color: #e5eaf3;
+--border-color: #E5E5E5;
 --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
 --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-font-family: "Public Sans", "Segoe UI", sans-serif;
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
 -webkit-font-smoothing: antialiased;
 }
 
@@ -43,7 +43,7 @@ margin: 0 0 14px;
 padding: 16px 18px;
 background: #ffffff;
 border: 1px solid var(--border-color);
-border-radius: 16px;
+border-radius: 14px;
 box-shadow: var(--shadow-sm);
 }
 
@@ -56,14 +56,15 @@ gap: 2px;
 h1 {
 margin: 0;
 font-size: 22px;
-font-weight: 700;
-letter-spacing: -0.01em;
+font-weight: 600;
+letter-spacing: -0.02em;
 }
 
 .subtitle-main {
 margin: 0;
-font-size: 13px;
-color: var(--text-muted);
+font-size: 14px;
+font-weight: 400;
+color: #333333;
 }
 
 .actions {
@@ -77,31 +78,41 @@ margin: 0;
 }
 
 .btn {
-border: 1px solid #dbe4f3;
+border: 1px solid #E5E5E5;
 background: #ffffff;
 padding: 10px 16px;
-border-radius: 12px;
+border-radius: 14px;
 cursor: pointer;
 font-size: 13px;
 font-weight: 700;
 color: #1f2937;
-transition: background-color 0.2s ease, transform 0.2s ease;
+transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btn:hover {
-background: #f3f7ff;
+background: #f6f6f6;
+transform: translateY(-2px);
+box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+.btn:active {
+transform: translateY(0) scale(0.98);
+box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
 }
 
 .btn.primary {
-background: linear-gradient(90deg, #602ff5, #5b2af7 52%, #4e1fe8 100%);
+background: #0051a5;
 border: 0;
 color: #ffffff;
-box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
+font-family: "Instrument Sans", "Segoe UI", sans-serif;
+font-weight: 600;
+font-size: 13px;
 }
 
 .btn.primary:hover {
-background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
-transform: translateY(-1px);
+background: #003d7a;
+transform: translateY(-2px);
+box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
 }
 
 .btn.danger {
@@ -119,34 +130,35 @@ display: grid;
 grid-template-columns: 1fr;
 gap: 16px;
 padding: 16px;
-background: rgba(247, 249, 252, 0.55);
+background: #ffffff;
 backdrop-filter: blur(6px);
 -webkit-backdrop-filter: blur(6px);
-border: 1px solid rgba(226, 232, 240, 0.5);
-border-radius: 18px;
+border: 1px solid #E5E5E5;
+border-radius: 14px;
 box-shadow: var(--shadow);
 }
 
 .home-card {
-background: rgba(255, 255, 255, 0.60);
+background: #ffffff;
 backdrop-filter: blur(4px);
 -webkit-backdrop-filter: blur(4px);
-border: 1px solid rgba(226, 232, 240, 0.5);
-border-radius: 14px;
+border: 1px solid transparent;
+border-radius: 12px;
 padding: 16px;
 box-shadow: var(--shadow-sm);
 }
 
 .home-card h2 {
 margin: 0 0 6px;
-font-size: 18px;
-font-weight: 700;
+font-size: 20px;
+font-weight: 600;
 }
 
 .card-subtitle {
 margin: 0 0 14px;
 font-size: 13px;
-color: var(--text-muted);
+font-weight: 400;
+color: #333333;
 }
 
 .upload-grid {
@@ -160,20 +172,21 @@ display: flex;
 flex-direction: column;
 gap: 6px;
 font-size: 12px;
-color: #334155;
+font-weight: 400;
+color: #333333;
 }
 
 .field .label-text {
-font-weight: 700;
+font-weight: 400;
 }
 
 .drop-zone {
 position: relative;
 width: 100%;
 aspect-ratio: 2.2 / 1;
-border: 1px dashed #cdd9ec;
-border-radius: 12px;
-background: #f8fbff;
+border: 1px dashed #E5E5E5;
+border-radius: 10px;
+background: #f6f6f6;
 display: flex;
 align-items: center;
 justify-content: center;
@@ -184,7 +197,7 @@ overflow: hidden;
 
 .drop-zone:hover {
 border-color: #9fb7de;
-background: #eef5ff;
+background: #f6f6f6;
 box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
 
@@ -216,8 +229,8 @@ display: block;
 .drop-content p {
 margin: 0;
 font-size: 12px;
-font-weight: 600;
-color: #334155;
+font-weight: 400;
+color: #333333;
 }
 
 .drop-content small {

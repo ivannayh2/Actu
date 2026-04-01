@@ -1,10 +1,10 @@
 :root {
-  --primary: #5b2af7;
-  --primary-hover: #4c23ce;
+  --primary: #0051a5;
+  --primary-hover: #003d7a;
   --border: #dbe3f1;
-  --text: #0f172a;
+  --text: #222222;
   --muted: #64748b;
-  font-family: "Public Sans", "Segoe UI", sans-serif;
+  font-family: "Instrument Sans", "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -63,7 +63,7 @@ body {
   max-width: 500px;
   padding: 38px 38px 32px 38px;
   border: 1px solid #e5eaf3;
-  border-radius: 22px;
+  border-radius: 13px;
   box-shadow: 0 22px 54px rgba(15, 23, 42, 0.13);
   text-align: center;
   transition: opacity 0.45s ease, transform 0.45s ease;
@@ -116,15 +116,15 @@ body.intro-skip .logo-intro {
   margin: 0;
   color: var(--text);
   font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
   margin: 6px 0 16px;
-  color: var(--muted);
+  color: #333333;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .card label {
@@ -132,8 +132,8 @@ body.intro-skip .logo-intro {
   text-align: left;
   margin-top: 10px;
   font-size: 13px;
-  font-weight: 700;
-  color: #374151;
+  font-weight: 400;
+  color: #333333;
 }
 
 .card input {
@@ -144,7 +144,8 @@ body.intro-skip .logo-intro {
   border-radius: 10px;
   border: 1px solid var(--border);
   background: #ffffff;
-  color: #111827;
+  font-weight: 400;
+  color: #333333;
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -160,24 +161,30 @@ body.intro-skip .logo-intro {
   margin-top: 18px;
   padding: 11px;
   border: 0;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #602ff5, #5b2af7 52%, #4e1fe8 100%);
+  border-radius: 14px;
+  background: #0051a5;
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
+  font-family: "Instrument Sans", "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .card button:hover {
-  background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
-  transform: translateY(-1px);
+  background: #003d7a;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
+}
+
+.card button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 10px rgba(0, 81, 165, 0.22);
 }
 
 .msg {
   margin-top: 12px;
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 9px 10px;
   font-size: 13px;
   font-weight: 600;

@@ -253,13 +253,18 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   msg.textContent = "";
 
+  const permisosSeleccionados = Array.from(
+    form.querySelectorAll('input[type="checkbox"][name^="perm"]:checked')
+  ).map((chk) => chk.name);
+
   // ✅ Payload adaptado a tu tabla/entidad
   const payload = {
     codigo: inputCodigo.value.trim(),
     rol: inputRol.value.trim(),
     nombre_usuario: inputNombre.value.trim(),
     email: inputEmail.value.trim(),
-    password_hash: inputPasswordHash.value // clave en texto plano (se hashea en el service)
+    password_hash: inputPasswordHash.value, // clave en texto plano (se hashea en el service)
+    permisos: permisosSeleccionados
   };
 
   try {

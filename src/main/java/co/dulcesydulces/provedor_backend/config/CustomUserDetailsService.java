@@ -37,6 +37,14 @@ public class CustomUserDetailsService implements UserDetailsService {
       addLegacyAliases(authorities, rol);
     }
 
+    // Also expose user-level permissions as Spring authorities.
+    if (u.getPermisos() != null) {
+      u.getPermisos().stream()
+        .filter(p -> p != null && !p.isBlank())
+        .map(String::trim)
+        .forEach(authorities::add);
+    }
+
     List<SimpleGrantedAuthority> auths = authorities.stream()
       .map(SimpleGrantedAuthority::new)
       .toList();
