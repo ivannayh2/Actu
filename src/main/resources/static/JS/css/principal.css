@@ -69,6 +69,11 @@ color: var(--text-muted);
 .actions {
 display: flex;
 justify-content: flex-end;
+gap: 10px;
+}
+
+.actions form {
+margin: 0;
 }
 
 .btn {
@@ -97,6 +102,16 @@ box-shadow: 0 12px 24px rgba(91, 42, 247, 0.24);
 .btn.primary:hover {
 background: linear-gradient(90deg, #5728e0, #5224de 52%, #4218ca 100%);
 transform: translateY(-1px);
+}
+
+.btn.danger {
+background: #fff5f5;
+border: 1px solid #fca5a5;
+color: #b91c1c;
+}
+
+.btn.danger:hover {
+background: #fee2e2;
 }
 
 .home-grid {
