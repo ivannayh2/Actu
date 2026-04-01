@@ -15,6 +15,7 @@ body {
   position: relative;
   padding-left: 0;
   padding-top: var(--topbar-height);
+  background-color: #f6f6f6;
   transition: padding-left var(--sidebar-transition);
 }
 
