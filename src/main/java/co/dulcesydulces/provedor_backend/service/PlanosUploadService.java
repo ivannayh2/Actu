@@ -305,7 +305,7 @@ public class PlanosUploadService {
             // fallback yyyy-MM-dd
             return LocalDate.parse(v);
 
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
                 archivo + ": fecha inválida '" + v + "' en línea " + lineNo + ". Línea: " + line
             );
