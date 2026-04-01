@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comprobantes de egreso</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+
+  <main class="container egresos-page">
+    <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- Filtros -->
+    <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
+      <div class="field">
+        <label for="fechaDocumento">Fecha documento</label>
+        <div class="control">
+          <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
+        </div>
+      </div>
+
+      <div class="field" style="min-width:220px;">
+        <label for="busquedaInteligente">Búsqueda inteligente</label>
+        <div class="control">
+          <input
+            id="busquedaInteligente"
+            type="search"
+            name="busquedaInteligente"
+            placeholder="Buscar por nombre de archivo o tipo"
+            th:value="${busquedaInteligente}">
+        </div>
+      </div>
+
+      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
+        <button class="btn btn-primary btn-compact" type="submit">Filtrar</button>
+        <a class="btn btn-compact" th:href="@{/egresos}">Limpiar</a>
+      </div>
+    </form>
+
+    <!-- Acción principal -->
+    <div class="filters-actions" th:if="${puedeCrearEgreso}"
+         style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
+      <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha documento</th>
+            <th>Cantidad de soportes</th>
+            <th>Creado en</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="e : ${egresos}">
+            <td th:text="${e.id}"></td>
+            <td th:text="${e.fechaDocumento != null ? #temporals.format(e.fechaDocumento, 'dd/MM/yyyy') : '-'}"></td>
+            <td th:text="${e.cantidadSoportes != null ? e.cantidadSoportes : 0}"></td>
+            <td th:text="${e.creadoEn != null ? #temporals.format(e.creadoEn, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+            <td class="cell-actions">
+              <a class="btn btn-compact btn-ver-detalle"
+                 th:href="@{/egresos/detallado(id=${e.id})}">
+                Ver detalle
+              </a>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(egresos)}">
+            <td colspan="5" style="text-align: center; padding: 20px;">
+              No se encontraron egresos.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal hidden" onclick="closeModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-head">
+          <h3>Nuevo egreso</h3>
+          <button class="btn" type="button" onclick="closeModal()" aria-label="Cerrar">X</button>
+        </div>
+
+        <form class="modal-form" method="post" th:action="@{/egresos}" enctype="multipart/form-data">
+          <div class="field-row">
+            <label for="m-fechaDocumento">Fecha documento</label>
+            <input id="m-fechaDocumento" type="date" name="fechaDocumento" required>
+          </div>
+
+          <div class="field-row">
+            <label for="m-soporte">Soportes de pago</label>
+            <input
+              id="m-soporte"
+              type="file"
+              name="soportes"
+              accept="application/pdf,image/*"
+              multiple
+              required>
+            <small>Puedes adjuntar varios archivos PDF o imágenes.</small>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function openModal() {
+      var modal = document.getElementById('modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+      }
+    }
+
+    function closeModal() {
+      var modal = document.getElementById('modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+</html>
