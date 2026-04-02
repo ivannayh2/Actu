@@ -12,7 +12,7 @@
   <link rel="stylesheet" th:href="@{JS/css/login.css}">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
-<body th:classappend="${param.error != null or param.logout != null or param.resetok != null} ? ' intro-skip' : ' intro-active'">
+<body th:classappend="${param.error != null or param.logout != null or param.resetok != null or param.inactivo != null} ? ' intro-skip' : ' intro-active'">
 
   <div class="logo-intro" id="logoIntro" aria-hidden="false">
     <button type="button" class="logo-intro-btn" id="startLoginBtn" aria-label="Entrar al inicio de sesión">
@@ -49,6 +49,10 @@
 
     <div class="msg msg-error" th:if="${param.error}">
       Usuario o clave incorrectos
+    </div>
+
+    <div class="msg msg-error" th:if="${param.inactivo}">
+      Tu cuenta está inactiva.
     </div>
 
     <div class="msg msg-info" th:if="${param.logout}">

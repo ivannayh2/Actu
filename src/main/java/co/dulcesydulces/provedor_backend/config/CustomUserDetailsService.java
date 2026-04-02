@@ -49,9 +49,16 @@ public class CustomUserDetailsService implements UserDetailsService {
       .map(SimpleGrantedAuthority::new)
       .toList();
 
+    boolean enabled = !"inactivo".equalsIgnoreCase(
+        u.getEstado_u() == null ? "" : u.getEstado_u().trim());
+
     return new org.springframework.security.core.userdetails.User(
       u.getCodigo(),
       u.getPassword_hash(),   // aquí va el hash BCrypt ($2a$10$...)
+      enabled,
+      true,
+      true,
+      true,
       auths
     );
   }

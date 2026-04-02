@@ -3,6 +3,7 @@ package co.dulcesydulces.provedor_backend.config;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,7 +39,13 @@ public class SecurityConfig {
         .loginProcessingUrl("/login")  
         .usernameParameter("codigo")
         .passwordParameter("clave")
-        .failureUrl("/login?error")
+        .failureHandler((request, response, exception) -> {
+          if (exception instanceof DisabledException) {
+            response.sendRedirect("/login?inactivo");
+          } else {
+            response.sendRedirect("/login?error");
+          }
+        })
         .successHandler((request, response, authentication) -> {
           String codigo = authentication.getName();
           Usuarios user = usuarioRepository.findByCodigo(codigo).orElse(null);
