@@ -2,6 +2,7 @@ package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -42,7 +43,8 @@ public class EgresoPageController {
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
             @RequestParam(required = false) String doctoSa,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Model model,
             Authentication auth
     ) {
@@ -83,7 +85,7 @@ public class EgresoPageController {
             return "egresos";
         }
 
-        var detalles = service.buscarDetalleSegunUsuario(
+        List<EgresoPlano> detalles = service.buscarDetalleSegunUsuario(
                 auth,
                 proveedor,
                 numeroEgreso,
@@ -92,7 +94,6 @@ public class EgresoPageController {
         );
 
         cargarTotalesDetalle(model, detalles);
-
         model.addAttribute("detalles", detalles);
 
         return "egresosDetallado";
@@ -103,7 +104,7 @@ public class EgresoPageController {
             @RequestParam("doctoEgreso") String doctoEgreso,
             Model model
     ) {
-        var detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+        List<EgresoPlano> detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
 
         model.addAttribute("doctoEgreso", doctoEgreso);
         model.addAttribute("detalles", detalles);
@@ -127,7 +128,7 @@ public class EgresoPageController {
     public String crear(
             @Valid @ModelAttribute("nuevoEgreso") EgresoCreateRequest req,
             BindingResult br,
-            @RequestParam(name = "soporte", required = false) MultipartFile soporte,
+            @RequestParam(name = "soportes", required = false) MultipartFile[] soportes,
             RedirectAttributes ra
     ) {
         if (br.hasErrors()) {
@@ -136,7 +137,7 @@ public class EgresoPageController {
         }
 
         try {
-            service.crear(req, soporte);
+            service.crear(req, soportes);
             ra.addFlashAttribute("ok", "Egreso creado correctamente.");
         } catch (RuntimeException ex) {
             ra.addFlashAttribute("error", ex.getMessage());
@@ -145,7 +146,7 @@ public class EgresoPageController {
         return "redirect:/egresos";
     }
 
-    private void cargarTotalesDetalle(Model model, java.util.List<EgresoPlano> detalles) {
+    private void cargarTotalesDetalle(Model model, List<EgresoPlano> detalles) {
         BigDecimal totalDebitos = detalles.stream()
                 .map(this::valorAjustado)
                 .filter(v -> v.compareTo(BigDecimal.ZERO) > 0)

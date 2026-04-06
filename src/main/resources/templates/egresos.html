@@ -70,9 +70,22 @@
     </form>
 
 
-      <div class="filters-actions" th:if="${puedeCrearEgreso}" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
-        <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
-      </div>
+
+
+
+    <div class="filters-actions"
+     th:if="${puedeCrearEgreso}"
+     style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
+      <button class="btn btn-primary" type="button" onclick="openModal()">
+       Adjuntar soportes📎
+      </button>
+    </div>
+
+
+
+
+
+
 
     <div class="table-wrap">
       <table>
@@ -119,50 +132,77 @@
     </div>
 
     <div id="modal" class="modal hidden" onclick="closeModal()">
+
+
+
+
+
+
+
+
+
       <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-head">
-          <h3>Nuevo egreso</h3>
-          <button class="btn" type="button" onclick="closeModal()">X</button>
-        </div>
+  <div class="modal-head">
+    <h3>Nuevo egreso</h3>
+    <button class="btn" type="button" onclick="closeModal()" aria-label="Cerrar modal">X</button>
+  </div>
 
-        <form class="modal-form" method="post" th:action="@{/egresos}" enctype="multipart/form-data">
-          <div class="field-row">
-            <label for="m-numeroEgreso">Numero egreso</label>
-            <input id="m-numeroEgreso" type="text" name="numeroEgreso" required maxlength="30" placeholder="Ej. EG-2026-001">
-          </div>
+  <form class="modal-form"
+        method="post"
+        th:action="@{/egresos}"
+        enctype="multipart/form-data">
 
-          <div class="field-row">
-            <label for="m-proveedor">Proveedor</label>
-            <select id="m-proveedor" name="proveedor" required>
-              <option value="">Seleccione un proveedor</option>
-              <option th:each="p : ${proveedoresOptions}"
-                      th:value="${p.usuarioCodigo}"
-                      th:text="${p.usuario != null ? p.usuario.nombreUsuario : p.usuarioCodigo}">
-              </option>
-            </select>
-          </div>
+    <div class="field-row">
+      <label for="m-fechaDocumento">Fecha documento</label>
+      <input id="m-fechaDocumento"
+             type="date"
+             name="fechaDocumento"
+             required>
+    </div>
 
-          <div class="field-row">
-            <label for="m-valorEgreso">Valor egreso</label>
-            <input id="m-valorEgreso" type="number" step="0.01" min="0" name="valorEgreso" required placeholder="0.00">
-          </div>
+    <div class="field-row">
+      <label for="m-soportes">Soportes</label>
+      <input id="m-soportes"
+             type="file"
+             name="soportes"
+             accept="application/pdf,image/*"
+             multiple>
+      <small>Puedes seleccionar varios archivos PDF o imágenes.</small>
+    </div>
 
-          <div class="field-row">
-            <label for="m-fechaDocumento">Fecha documento</label>
-            <input id="m-fechaDocumento" type="date" name="fechaDocumento" required>
-          </div>
+    <div class="modal-actions">
+      <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>
 
-          <div class="field-row">
-            <label for="m-soporte">Soporte de pago</label>
-            <input id="m-soporte" type="file" name="soporte" accept="application/pdf,image/*">
-          </div>
 
-          <div class="modal-actions">
-            <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </main>
 
