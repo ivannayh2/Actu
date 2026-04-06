@@ -182,3 +182,4 @@ public class EgresoPageController {
         return valor != null ? valor : BigDecimal.ZERO;
     }
 }
+/*johan */
