@@ -9,8 +9,16 @@ const inputNombre = document.getElementById("nombre_usuario");
 const inputEmail = document.getElementById("email");
 const inputPasswordHash = document.getElementById("password_hash"); // ✅ id correcto
 
+const hiddenUiPermissions = [
+  "permCrearUsuariosEdit",
+  "permEditarUsuariosEdit",
+  "permEliminarUsuariosEdit",
+  "permGestionarPermisosEdit"
+];
+
 let editMode = false;
 let editingCodigo = null;
+let preservedHiddenPermisos = [];
 
 /* ===== CSRF helper (si Spring Security lo tiene activo) ===== */
 function csrfHeaders() {
@@ -34,6 +42,7 @@ function closeModal() {
   form.reset();
   editMode = false;
   editingCodigo = null;
+  preservedHiddenPermisos = [];
   inputCodigo.disabled = false;
 }
 
@@ -53,6 +62,7 @@ btnNuevo.addEventListener("click", () => {
   form.reset();
   editMode = false;
   editingCodigo = null;
+  preservedHiddenPermisos = [];
   inputCodigo.disabled = false;
   inputPasswordHash.required = true; // requerido en creación
   openModal("Nuevo usuario");
@@ -82,10 +92,7 @@ function autoCheckPermisosPorRol() {
       'permComprobanteEgresosView',
       'permHistorialView',
       'permPerfilView',
-      'permUsuariosView',
-      'permCrearUsuariosEdit',
-      'permEditarUsuariosEdit',
-      'permEliminarUsuariosEdit'
+      'permUsuariosView'
     ]
     // Puedes agregar más roles aquí si lo necesitas
   };
@@ -224,10 +231,12 @@ document.addEventListener("click", async (e) => {
       setTimeout(() => {
         const checks = form.querySelectorAll('input[type="checkbox"]');
         if (Array.isArray(u.permisos) && u.permisos.length > 0) {
+          preservedHiddenPermisos = u.permisos.filter((permiso) => hiddenUiPermissions.includes(permiso));
           checks.forEach(chk => {
             chk.checked = u.permisos.includes(chk.name);
           });
         } else {
+          preservedHiddenPermisos = [];
           autoCheckPermisosPorRol();
         }
       }, 0);
@@ -253,9 +262,14 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
   msg.textContent = "";
 
-  const permisosSeleccionados = Array.from(
+  const permisosSeleccionados = [
+    ...new Set([
+      ...Array.from(
     form.querySelectorAll('input[type="checkbox"][name^="perm"]:checked')
-  ).map((chk) => chk.name);
+      ).map((chk) => chk.name),
+      ...preservedHiddenPermisos
+    ])
+  ];
 
   // ✅ Payload adaptado a tu tabla/entidad
   const payload = {

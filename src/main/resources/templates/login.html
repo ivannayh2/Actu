@@ -37,14 +37,17 @@
              required
              autocomplete="username" />
 
-      <label>Clave</label>
-      <input name="clave"
-             type="password"
-             placeholder="**************"
-             required
-             autocomplete="current-password" />
+          <label for="clave">Clave</label>
+          <div class="input-row">
+       <input id="clave" name="clave"
+         type="password"
+         placeholder="**************"
+         required
+         autocomplete="current-password" />
+       <button type="button" class="toggle-pass" data-target="clave" aria-label="Mostrar contraseña">👁</button>
+          </div>
 
-      <button type="submit">Ingresar</button>
+          <button type="submit" class="login-submit">Ingresar</button>
     </form>
 
     <div class="msg msg-error" th:if="${param.error}">
@@ -109,6 +112,21 @@
       });
 
       autoRevealTimer = window.setTimeout(revealLogin, 1500);
+
+      document.querySelectorAll('.toggle-pass').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var inputId = this.getAttribute('data-target');
+          var input = document.getElementById(inputId);
+          if (!input) {
+            return;
+          }
+
+          var show = input.type === 'password';
+          input.type = show ? 'text' : 'password';
+          this.textContent = show ? 'Ocultar' : '👁';
+          this.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        });
+      });
     });
   </script>
 </body>
