@@ -12,11 +12,6 @@ import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 
 public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> {
 
-    /**
-     * RESUMEN GENERAL
-     * Agrupa por doctoEgreso.
-     * Ahora también permite filtrar por doctoSa.
-     */
     @Query("""
         SELECT 
             e.doctoEgreso AS doctoEgreso,
@@ -43,11 +38,6 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("fecha") LocalDate fecha
     );
 
-    /**
-     * RESUMEN POR PROVEEDOR
-     * Agrupa por doctoEgreso.
-     * Ahora también permite filtrar por doctoSa.
-     */
     @Query("""
         SELECT 
             e.doctoEgreso AS doctoEgreso,
@@ -74,10 +64,6 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("fecha") LocalDate fecha
     );
 
-    /**
-     * DETALLE POR EGRESO
-     * Sirve cuando entras a un egreso puntual.
-     */
     @Query("""
         SELECT e
         FROM EgresoPlano e
@@ -88,10 +74,6 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("doctoEgreso") String doctoEgreso
     );
 
-    /**
-     * DETALLE GENERAL PARA ADMINISTRADOR / PUBLICADOR
-     * Trae filas completas, sin agrupar.
-     */
     @Query("""
         SELECT e
         FROM EgresoPlano e
@@ -108,10 +90,6 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("fecha") LocalDate fecha
     );
 
-    /**
-     * DETALLE GENERAL PARA PROVEEDORES
-     * Solo trae las filas del proveedor logueado.
-     */
     @Query("""
         SELECT e
         FROM EgresoPlano e
@@ -127,4 +105,6 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("doctoSa") String doctoSa,
         @Param("fecha") LocalDate fecha
     );
+
+    boolean existsByDoctoEgreso(String doctoEgreso);
 }

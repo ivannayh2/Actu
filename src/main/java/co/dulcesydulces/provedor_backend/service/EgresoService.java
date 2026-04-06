@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -137,10 +139,30 @@ public class EgresoService {
 
                 validarArchivo(archivo);
 
+                String nombreOriginal = archivo.getOriginalFilename();
+                if (nombreOriginal == null || nombreOriginal.isBlank()) {
+                    nombreOriginal = "archivo_sin_nombre";
+                }
+
+                String doctoEgreso = extraerDoctoEgreso(nombreOriginal);
+                if (doctoEgreso == null) {
+                    throw new RuntimeException(
+                            "No se pudo identificar el docto_egreso en el archivo: " + nombreOriginal
+                    );
+                }
+
+                boolean existeDocto = egresoPlanoRepository.existsByDoctoEgreso(doctoEgreso);
+                if (!existeDocto) {
+                    throw new RuntimeException(
+                            "El docto_egreso " + doctoEgreso + " no existe en egresos_plano"
+                    );
+                }
+
                 String s3Key = subirAS3(archivo);
 
                 EgresoSoportePF soporte = new EgresoSoportePF();
-                soporte.setNombreOriginal(archivo.getOriginalFilename());
+                soporte.setNombreOriginal(nombreOriginal);
+                soporte.setDoctoEgreso(doctoEgreso);
                 soporte.setS3Key(s3Key);
                 soporte.setContentType(archivo.getContentType());
                 soporte.setTamanoBytes(archivo.getSize());
@@ -168,13 +190,33 @@ public class EgresoService {
         }
     }
 
+    private String extraerDoctoEgreso(String nombreArchivo) {
+        if (nombreArchivo == null || nombreArchivo.isBlank()) {
+            return null;
+        }
+
+        Pattern pattern = Pattern.compile("(CE\\d+-\\d+)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(nombreArchivo);
+
+        if (matcher.find()) {
+            return matcher.group(1).toUpperCase();
+        }
+
+        return null;
+    }
+
     private String subirAS3(MultipartFile file) {
         try {
             String original = file.getOriginalFilename() == null ? "soporte" : file.getOriginalFilename();
             String safeName = original.replaceAll("[^a-zA-Z0-9._-]", "_");
             String key = "egresos/" + UUID.randomUUID() + "_" + safeName;
 
-            return s3StorageService.subirArchivo(key, file.getInputStream(), file.getSize(), file.getContentType());
+            return s3StorageService.subirArchivo(
+                    key,
+                    file.getInputStream(),
+                    file.getSize(),
+                    file.getContentType()
+            );
         } catch (IOException ex) {
             throw new RuntimeException("No se pudo subir el soporte a S3", ex);
         }
