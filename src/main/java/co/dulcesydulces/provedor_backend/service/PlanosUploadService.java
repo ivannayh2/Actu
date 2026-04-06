@@ -29,7 +29,7 @@ public class PlanosUploadService {
 
     @Transactional
 
-    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
+    public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas, String usuario) throws Exception {
 
         // Si no se envían archivos, solo elimina y retorna -1
         if ((egresos == null || egresos.isEmpty()) && (facturas == null || facturas.isEmpty()) && (notas == null || notas.isEmpty())) {
@@ -41,6 +41,7 @@ public class PlanosUploadService {
         validarTxt(notas);
 
         long uploadId = uploadsRepository.crearUpload(
+            usuario,
                 egresos.getOriginalFilename(),
                 facturas.getOriginalFilename(),
                 notas.getOriginalFilename()
