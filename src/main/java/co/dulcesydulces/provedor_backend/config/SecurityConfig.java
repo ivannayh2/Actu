@@ -31,9 +31,12 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
     .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/favicon.ico").permitAll()
     .requestMatchers("/login", "/error").permitAll()
-    .requestMatchers("/usuarios/**").hasAnyAuthority("ADMINISTRADOR", "PUBLICADOR")
+    .requestMatchers("/usuarios/**", "/api/usuarios/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permUsuariosView')"))
     .requestMatchers("/historial/**", "/api/historial/**")
       .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permHistorialView')"))
+    .requestMatchers("/configuracion/perfil", "/api/usuarios/*/foto")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permPerfilView')"))
     .anyRequest().authenticated()
 )
 
