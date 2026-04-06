@@ -2,6 +2,8 @@ package co.dulcesydulces.provedor_backend.domain.entidades;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,12 +22,16 @@ public class EgresoSoportePF {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "egreso_id", nullable = false)
     private Egreso egreso;
 
     @Column(name = "nombre_original", nullable = false, length = 255)
     private String nombreOriginal;
+
+    @Column(name = "docto_egreso", length = 50)
+    private String doctoEgreso;
 
     @Column(name = "s3_key", nullable = false, length = 700)
     private String s3Key;
@@ -43,6 +49,10 @@ public class EgresoSoportePF {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Egreso getEgreso() {
         return egreso;
     }
@@ -57,6 +67,14 @@ public class EgresoSoportePF {
 
     public void setNombreOriginal(String nombreOriginal) {
         this.nombreOriginal = nombreOriginal;
+    }
+
+    public String getDoctoEgreso() {
+        return doctoEgreso;
+    }
+
+    public void setDoctoEgreso(String doctoEgreso) {
+        this.doctoEgreso = doctoEgreso;
     }
 
     public String getS3Key() {
@@ -85,5 +103,9 @@ public class EgresoSoportePF {
 
     public LocalDateTime getFechaCarga() {
         return fechaCarga;
+    }
+
+    public void setFechaCarga(LocalDateTime fechaCarga) {
+        this.fechaCarga = fechaCarga;
     }
 }

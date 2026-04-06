@@ -3,7 +3,9 @@ package co.dulcesydulces.provedor_backend.config;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +31,12 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
     .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/favicon.ico").permitAll()
     .requestMatchers("/login", "/error").permitAll()
-    .requestMatchers("/usuarios/**").hasAnyAuthority("ADMINISTRADOR", "PUBLICADOR")
+    .requestMatchers("/usuarios/**", "/api/usuarios/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permUsuariosView')"))
+    .requestMatchers("/historial/**", "/api/historial/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permHistorialView')"))
+    .requestMatchers("/configuracion/perfil", "/api/usuarios/*/foto")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permPerfilView')"))
     .anyRequest().authenticated()
 )
 
@@ -38,7 +45,13 @@ public class SecurityConfig {
         .loginProcessingUrl("/login")  
         .usernameParameter("codigo")
         .passwordParameter("clave")
-        .failureUrl("/login?error")
+        .failureHandler((request, response, exception) -> {
+          if (exception instanceof DisabledException) {
+            response.sendRedirect("/login?inactivo");
+          } else {
+            response.sendRedirect("/login?error");
+          }
+        })
         .successHandler((request, response, authentication) -> {
           String codigo = authentication.getName();
           Usuarios user = usuarioRepository.findByCodigo(codigo).orElse(null);
@@ -50,11 +63,15 @@ public class SecurityConfig {
             .anyMatch(p -> "permImportarArchivosView".equalsIgnoreCase(p != null ? p.trim() : ""));
           boolean canComprobanteEgresos = permisos.stream()
             .anyMatch(p -> "permComprobanteEgresosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+          boolean canHistorial = permisos.stream()
+            .anyMatch(p -> "permHistorialView".equalsIgnoreCase(p != null ? p.trim() : ""));
 
           if (isAdmin || canImportFiles) {
             response.sendRedirect("/home");
           } else if (canComprobanteEgresos) {
             response.sendRedirect("/egresos");
+          } else if (canHistorial) {
+            response.sendRedirect("/historial");
           } else {
             response.sendRedirect("/configuracion/perfil");
           }
