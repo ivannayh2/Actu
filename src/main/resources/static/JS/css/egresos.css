@@ -437,6 +437,9 @@ white-space: nowrap;
 
 .egresos-page .detalle-facturas-table tbody tr.fila-resumen td {
 	background: linear-gradient(180deg, #f8faf8 0%, #f1f5f1 100%);
+}
+
+.egresos-page .detalle-facturas-table tbody tr.fila-resumen td:first-child {
 	box-shadow: inset 4px 0 0 #c9d8cc;
 }
 
@@ -447,6 +450,9 @@ white-space: nowrap;
 .egresos-page .detalle-facturas-table tbody tr#filaTotales td {
 	background: linear-gradient(180deg, #edf4ef 0%, #e5eee7 100%);
 	font-weight: 700;
+}
+
+.egresos-page .detalle-facturas-table tbody tr#filaTotales td:first-child {
 	box-shadow: inset 4px 0 0 #8ba892;
 }
 
