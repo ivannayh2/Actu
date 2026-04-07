@@ -19,10 +19,7 @@
       display: flex;
       gap: 8px;
       align-items: center;
-      justify-content: flex-end;
       flex-wrap: wrap;
-      grid-column: 1 / -1;
-      width: 100%;
     }
 
     .search-status {
@@ -83,28 +80,28 @@
 
     <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <label for="proveedor">Proveedor</label>
+        <h1><label for="proveedor">Proveedor</label></h1>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <label for="fechaDocumento">Fecha</label>
+        <h1><label for="fechaDocumento">Fecha</label></h1>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <label for="doctoSa">Número factura</label>
+        <h1><label for="doctoSa">Número factura</label></h1>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <label for="smartSearch">Búsqueda inteligente</label>
+        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
         <div class="control">
           <input
             id="smartSearch"
@@ -132,15 +129,26 @@
       </div>
     </form>
 
+
+
+
+
+
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtn" class="btn btn-primary" type="button">Nuevo egreso</button>
+      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes📎</button>
     </div>
 
+
+
+
+    
+
     <div class="table-wrap">
-      <table>
+      <table class="detalle-facturas-table">
         <thead>
           <tr>
             <th>Número factura</th>
+            <th>Acciones</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -148,11 +156,11 @@
 
         <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="3">No se encontraron facturas relacionadas.</td>
+            <td colspan="4">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -170,8 +178,11 @@
                 data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
               ">
 
-            <td class="cell-actions">
+            <td>
               <span th:text="${factura}"></span>
+            </td>
+
+            <td class="cell-actions">
               <a class="btn btn-compact"
                  th:if="${d.doctoCausacion != null}"
                  th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
@@ -193,7 +204,7 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Valor documento</strong></td>
+            <td colspan="2"><strong>Valor documento</strong></td>
             <td></td>
             <td class="text-right">
               <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
@@ -201,7 +212,7 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Pronto pago</strong></td>
+            <td colspan="2"><strong>Pronto pago</strong></td>
             <td></td>
             <td class="text-right">
               <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
@@ -209,7 +220,7 @@
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td><strong>Total</strong></td>
+            <td colspan="2"><strong>Total</strong></td>
             <td class="text-right">
               <strong id="totalDebitosView"
                       th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
@@ -223,57 +234,70 @@
       </table>
     </div>
 
+
+
+
+
+
     <div id="modal"
-         class="modal hidden"
-         th:if="${puedeCrearEgreso}"
-         aria-hidden="true"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="modalTitle">
-      <div class="modal-content" role="document">
-        <div class="modal-head">
-          <h3 id="modalTitle">Nuevo egreso</h3>
-          <button id="closeModalBtn" class="btn" type="button" aria-label="Cerrar modal">X</button>
-        </div>
+     class="modal hidden"
+     th:if="${puedeCrearEgreso}"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle">
+  <div class="modal-content" role="document">
+    <div class="modal-head">
+      <h3 id="modalTitle">Adjuntar soportes</h3>
+      <button id="closeModalBtn"
+              class="btn"
+              type="button"
+              aria-label="Cerrar modal">X</button>
+    </div>
 
-        <form class="modal-form" method="post" th:action="@{/egresos}" enctype="multipart/form-data">
-          <div class="field-row">
-            <label for="m-numeroEgreso">Número egreso</label>
-            <input id="m-numeroEgreso" type="text" name="numeroEgreso" required maxlength="30" placeholder="Ej. EG-2026-001">
-          </div>
+    <form class="modal-form"
+          method="post"
+          th:action="@{/egresos}"
+          enctype="multipart/form-data">
 
-          <div class="field-row">
-            <label for="m-proveedor">Proveedor</label>
-            <select id="m-proveedor" name="proveedor" required>
-              <option value="">Seleccione un proveedor</option>
-              <option th:each="p : ${proveedoresOptions}"
-                      th:value="${p.usuarioCodigo}"
-                      th:text="${p.usuario != null ? p.usuario.nombreUsuario : p.usuarioCodigo}">
-              </option>
-            </select>
-          </div>
-
-          <div class="field-row">
-            <label for="m-valorEgreso">Valor egreso</label>
-            <input id="m-valorEgreso" type="number" step="0.01" min="0" name="valorEgreso" required placeholder="0.00">
-          </div>
-
-          <div class="field-row">
-            <label for="m-fechaDocumento">Fecha documento</label>
-            <input id="m-fechaDocumento" type="date" name="fechaDocumento" required>
-          </div>
-
-          <div class="field-row">
-            <label for="m-soporte">Soporte de pago</label>
-            <input id="m-soporte" type="file" name="soporte" accept="application/pdf,image/*">
-          </div>
-
-          <div class="modal-actions">
-            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-          </div>
-        </form>
+      <div class="field-row">
+        <label for="m-fechaDocumento">Fecha documento</label>
+        <input id="m-fechaDocumento"
+               type="date"
+               name="fechaDocumento"
+               required>
       </div>
+
+      <div class="field-row">
+        <label for="m-soportes">Soportes</label>
+        <input id="m-soportes"
+               type="file"
+               name="soportes"
+               accept="application/pdf,image/*"
+               multiple>
+        <small>Solo puedes seleccionar archivos de tipo PDF</small>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="page-actions" th:if="${puedeCrearEgreso}">
+  <button class="btn btn-primary open-modal-btn" type="button">
+    Nuevo egreso
+  </button>
+</div>
+
+
+
+
+
+
+
     </div>
   </main>
 
@@ -308,13 +332,8 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
-        const filtersForm = document.querySelector('form.filters');
-        const proveedorInput = document.getElementById('proveedor');
-        const fechaDocumentoInput = document.getElementById('fechaDocumento');
-        const doctoSaInput = document.getElementById('doctoSa');
-
         const modal = document.getElementById('modal');
-        const openModalBtn = document.getElementById('openModalBtn');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -404,25 +423,6 @@
         }
 
         const debouncedFilterTable = debounce(filterTable, 120);
-        const debouncedSubmitFilters = debounce(function () {
-          if (!filtersForm) return;
-          if (typeof filtersForm.requestSubmit === 'function') {
-            filtersForm.requestSubmit();
-            return;
-          }
-          filtersForm.submit();
-        }, 350);
-
-        function bindAutoSubmit(input, events) {
-          if (!input) return;
-          events.forEach(function (eventName) {
-            input.addEventListener(eventName, debouncedSubmitFilters);
-          });
-        }
-
-        bindAutoSubmit(proveedorInput, ['input', 'search']);
-        bindAutoSubmit(fechaDocumentoInput, ['change']);
-        bindAutoSubmit(doctoSaInput, ['input', 'search']);
 
         if (smartSearchInput) {
           smartSearchInput.addEventListener('input', debouncedFilterTable);
@@ -455,9 +455,9 @@
           });
         }
 
-        if (openModalBtn) {
-          openModalBtn.addEventListener('click', openModal);
-        }
+        openModalButtons.forEach(function (button) {
+          button.addEventListener('click', openModal);
+        });
 
         if (closeModalBtn) {
           closeModalBtn.addEventListener('click', closeModal);

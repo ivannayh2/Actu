@@ -24,9 +24,16 @@
     <span class="egresos-header-proveedor-nombre" th:text="${nombreUsuario}"></span>
   </div>
 
-  <main class="container egresos-page">
+  <main class="container egresos-page egresos-list-page">
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Comprobante egreso</h1>
+        <p class="subtitle-main">Listado general de egresos según filtros y permisos del usuario</p>
+      </div>
+    </div>
 
 
     <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
@@ -51,7 +58,7 @@
         </div>
       </div>
 
-      <div class="field" style="min-width:220px;">
+      <div class="field field-busqueda-inteligente">
         <label for="busquedaInteligente">Búsqueda inteligente</label>
         <div class="control">
           <input id="busquedaInteligente" type="search" name="busquedaInteligente" placeholder="Buscar por descripción, valor, etc." th:value="${busquedaInteligente}">
@@ -59,7 +66,7 @@
       </div>
 
 
-      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
+      <div class="filters-actions filters-actions-inline">
         <button class="btn btn-primary btn-compact" type="submit">
           Filtrar
         </button>
@@ -70,17 +77,25 @@
     </form>
 
 
-      <div class="filters-actions" th:if="${puedeCrearEgreso}" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
-        <button class="btn btn-primary" type="button" onclick="openModal()">Nuevo egreso</button>
-      </div>
+    <div class="page-actions page-actions-tight"
+     th:if="${puedeCrearEgreso}">
+      <button class="btn btn-primary" type="button" onclick="openModal()">
+       Adjuntar soportes
+      </button>
+    </div>
+
+
+
+
+
+
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Numero egreso</th>
-            <th></th>
-            <th>Detalles</th>
+            <th>Acciones</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -89,7 +104,6 @@
         </thead>
         <tbody>
           <tr th:if="${!#lists.isEmpty(detalle)}">
-            <td></td>
             <td></td>
             <td></td>
             <td colspan="3"><strong>Total</strong></td>
@@ -104,7 +118,6 @@
             <td class="cell-actions">
               <a class="btn btn-compact btn-ver-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
-            <td></td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
             <td th:text="${d.razonSocial}"></td>
@@ -112,57 +125,84 @@
           </tr>
 
           <tr th:if="${#lists.isEmpty(detalle)}">
-            <td colspan="6" style="text-align: center; padding: 20px;">No se encontraron registros en egresos_plano.</td>
+            <td colspan="7" class="empty-state-cell">No se encontraron registros en egresos_plano.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div id="modal" class="modal hidden" onclick="closeModal()">
+
+
+
+
+
+
+
+
+
       <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-head">
-          <h3>Nuevo egreso</h3>
-          <button class="btn" type="button" onclick="closeModal()">X</button>
-        </div>
+  <div class="modal-head">
+    <h3>Nuevo egreso</h3>
+    <button class="btn" type="button" onclick="closeModal()" aria-label="Cerrar modal">X</button>
+  </div>
 
-        <form class="modal-form" method="post" th:action="@{/egresos}" enctype="multipart/form-data">
-          <div class="field-row">
-            <label for="m-numeroEgreso">Numero egreso</label>
-            <input id="m-numeroEgreso" type="text" name="numeroEgreso" required maxlength="30" placeholder="Ej. EG-2026-001">
-          </div>
+  <form class="modal-form"
+        method="post"
+        th:action="@{/egresos}"
+        enctype="multipart/form-data">
 
-          <div class="field-row">
-            <label for="m-proveedor">Proveedor</label>
-            <select id="m-proveedor" name="proveedor" required>
-              <option value="">Seleccione un proveedor</option>
-              <option th:each="p : ${proveedoresOptions}"
-                      th:value="${p.usuarioCodigo}"
-                      th:text="${p.usuario != null ? p.usuario.nombreUsuario : p.usuarioCodigo}">
-              </option>
-            </select>
-          </div>
+    <div class="field-row">
+      <label for="m-fechaDocumento">Fecha documento</label>
+      <input id="m-fechaDocumento"
+             type="date"
+             name="fechaDocumento"
+             required>
+    </div>
 
-          <div class="field-row">
-            <label for="m-valorEgreso">Valor egreso</label>
-            <input id="m-valorEgreso" type="number" step="0.01" min="0" name="valorEgreso" required placeholder="0.00">
-          </div>
+    <div class="field-row">
+      <label for="m-soportes">Soportes</label>
+      <input id="m-soportes"
+             type="file"
+             name="soportes"
+             accept="application/pdf,image/*"
+             multiple>
+      <small>Puedes seleccionar varios archivos PDF o imágenes.</small>
+    </div>
 
-          <div class="field-row">
-            <label for="m-fechaDocumento">Fecha documento</label>
-            <input id="m-fechaDocumento" type="date" name="fechaDocumento" required>
-          </div>
+    <div class="modal-actions">
+      <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" type="submit">Guardar</button>
+    </div>
+  </form>
+</div>
 
-          <div class="field-row">
-            <label for="m-soporte">Soporte de pago</label>
-            <input id="m-soporte" type="file" name="soporte" accept="application/pdf,image/*">
-          </div>
 
-          <div class="modal-actions">
-            <button class="btn" type="button" onclick="closeModal()">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-          </div>
-        </form>
-      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </main>
 

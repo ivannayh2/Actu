@@ -156,7 +156,44 @@ body.intro-skip .logo-intro {
   box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
 }
 
-.card button {
+.input-row {
+  position: relative;
+}
+
+.input-row input {
+  padding-right: 86px;
+}
+
+.toggle-pass {
+  position: absolute;
+  right: 8px;
+  top: 56%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  width: auto;
+  margin-top: 0;
+}
+
+.toggle-pass:hover {
+  background: #eef4ff;
+  color: #1e3a8a;
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+.toggle-pass:active {
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+
+.card .login-submit {
   width: 100%;
   margin-top: 18px;
   padding: 11px;
@@ -171,13 +208,13 @@ body.intro-skip .logo-intro {
   transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.card button:hover {
+.card .login-submit:hover {
   background: #003d7a;
   transform: translateY(-2px);
   box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
 }
 
-.card button:active {
+.card .login-submit:active {
   transform: translateY(0) scale(0.98);
   box-shadow: 0 4px 10px rgba(0, 81, 165, 0.22);
 }

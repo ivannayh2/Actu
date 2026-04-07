@@ -199,6 +199,20 @@ color: #b91c1c;
 	align-items: end;
 }
 
+.egresos-page .field-busqueda-inteligente {
+	min-width: 220px;
+}
+
+.egresos-list-page .filters {
+	margin-top: 0;
+	margin-bottom: 14px;
+	padding: 14px;
+	background: #ffffff;
+	border: 1px solid #E5E5E5;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
 @media (max-width: 1200px) {
 	.egresos-page .filters {
 		grid-template-columns: 1fr 1fr;
@@ -247,6 +261,39 @@ justify-content: flex-end;
 gap: 10px;
 }
 
+.egresos-page .filters-actions-inline {
+	align-items: flex-end;
+	margin-top: 0;
+}
+
+.egresos-list-page .filters-actions .btn-compact {
+	padding: 10px 14px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	border: 1px solid #E5E5E5;
+	background: #ffffff;
+	color: #1f2937;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.egresos-list-page .filters-actions .btn-compact:hover {
+	background: #f6f6f6;
+	border-color: #cad7ed;
+	text-decoration: none;
+}
+
+.egresos-list-page .filters-actions .btn-primary.btn-compact {
+	background: #0051a5;
+	border: 0;
+	color: #ffffff;
+}
+
+.egresos-list-page .filters-actions .btn-primary.btn-compact:hover {
+	background: #003d7a;
+}
+
 .egresos-page .filters-actions .btn {
 display: inline-flex;
 align-items: center;
@@ -263,6 +310,21 @@ gap: 6px;
 .egresos-page .btn-compact:hover,
 .egresos-page .btn-compact:focus {
 	text-decoration: none;
+}
+
+.egresos-list-page .cell-actions .btn-compact {
+	border: none;
+	background: transparent;
+	color: #0051a5;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 0 8px;
+}
+
+.egresos-list-page .cell-actions .btn-compact:hover {
+	color: #003d7a;
+	transform: none;
+	box-shadow: none;
 }
 
 .egresos-page .filters-actions .btn-compact {
@@ -289,6 +351,28 @@ stroke-width: 2.2;
 padding: 12px 0;
 display: flex;
 justify-content: flex-start;
+}
+
+.egresos-page .page-actions-tight {
+	padding-top: 4px;
+	padding-bottom: 12px;
+}
+
+.egresos-list-page .table-wrap {
+	margin-top: 2px;
+}
+
+.egresos-list-page tbody tr:nth-child(even) td {
+	background: #f6f6f6;
+}
+
+.egresos-list-page tbody tr:hover td {
+	background: #f6f6f6;
+}
+
+.egresos-page .empty-state-cell {
+	text-align: center;
+	padding: 20px;
 }
 
 .egresos-page .table-wrap {
@@ -351,6 +435,40 @@ white-space: nowrap;
 	color: #1D1D1F;
 }
 
+.egresos-page .detalle-facturas-table tbody tr.fila-resumen td {
+	background: linear-gradient(180deg, #f8faf8 0%, #f1f5f1 100%);
+}
+
+.egresos-page .detalle-facturas-table tbody tr.fila-resumen td:first-child {
+	box-shadow: inset 4px 0 0 #c9d8cc;
+}
+
+.egresos-page .detalle-facturas-table tbody tr.fila-resumen:first-of-type td {
+	border-top: inherit;
+}
+
+.egresos-page .detalle-facturas-table tbody tr#filaTotales td {
+	background: linear-gradient(180deg, #edf4ef 0%, #e5eee7 100%);
+	font-weight: 700;
+}
+
+.egresos-page .detalle-facturas-table tbody tr#filaTotales td:first-child {
+	box-shadow: inset 4px 0 0 #8ba892;
+}
+
+.egresos-page .detalle-facturas-table tbody tr.fila-resumen:hover td {
+	background: linear-gradient(180deg, #f8faf8 0%, #f1f5f1 100%);
+}
+
+.egresos-page .detalle-facturas-table tbody tr#filaTotales:hover td {
+	background: linear-gradient(180deg, #edf4ef 0%, #e5eee7 100%);
+}
+
+.egresos-page .detalle-facturas-table tbody tr#filaTotales td:nth-child(2) strong {
+	display: inline-block;
+	transform: translateX(12px);
+}
+
 /* Directional indicator: arrow only gets color, number stays #1D1D1F */
 .kpi-arrow {
 	display: inline-block;
@@ -388,10 +506,49 @@ background: #f6f6f6;
 border-bottom: none;
 }
 
+.egresos-page .detalle-facturas-table {
+	table-layout: fixed;
+}
+
+.egresos-page .detalle-facturas-table th:nth-child(1),
+.egresos-page .detalle-facturas-table td:nth-child(1) {
+	width: 220px;
+	white-space: nowrap;
+	padding-right: 6px;
+}
+
+.egresos-page .detalle-facturas-table th:nth-child(2),
+.egresos-page .detalle-facturas-table td:nth-child(2) {
+	width: 130px;
+	white-space: nowrap;
+	padding-left: 2px;
+	padding-right: 8px;
+	text-align: left;
+}
+
+.egresos-page .detalle-facturas-table th:nth-child(3),
+.egresos-page .detalle-facturas-table td:nth-child(3),
+.egresos-page .detalle-facturas-table th:nth-child(4),
+.egresos-page .detalle-facturas-table td:nth-child(4) {
+	width: calc((100% - 350px) / 2);
+}
+
+.egresos-page .detalle-facturas-table th:nth-child(3),
+.egresos-page .detalle-facturas-table td:nth-child(3) {
+	padding-left: 24px;
+}
+
 .egresos-page .cell-actions {
-width: 140px;
-text-align: center;
+width: 1%;
+text-align: left;
 white-space: nowrap;
+padding-left: 4px;
+padding-right: 8px;
+}
+
+.egresos-page .cell-actions .btn.btn-compact {
+padding: 0;
+margin: 0;
 }
 
 .egresos-page .cell-actions .link-detalle {
@@ -598,4 +755,165 @@ width: 100%;
 .egreso-relacionado-content p{
   margin: 0;
 }
+}
+
+/* Igualar visual de comprobante egresos con historial */
+.egresos-page {
+	max-width: 1320px;
+	font-family: "Instrument Sans", "Segoe UI", sans-serif;
+}
+
+.egresos-page .page-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 18px;
+	padding: 0;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.egresos-page .page-head h1 {
+	margin: 0;
+	font-size: 22px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	color: #222222;
+}
+
+.egresos-page .subtitle-main {
+	margin-top: 4px;
+	margin-bottom: 0;
+	font-weight: 400;
+	color: #333333;
+}
+
+.egresos-page .filters,
+.egresos-list-page .filters {
+	margin-top: 0;
+	margin-bottom: 14px;
+	max-width: none;
+	padding: 14px;
+	background: #ffffff;
+	border: 1px solid #E5E5E5;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+	display: grid;
+	grid-template-columns: repeat(3, minmax(210px, 1fr));
+	gap: 12px 14px;
+	align-items: end;
+}
+
+.egresos-page .filters input[type="text"],
+.egresos-page .filters input[type="search"],
+.egresos-page .filters input[type="date"] {
+	width: 100%;
+	height: 40px;
+	border-radius: 8px;
+	border: 1px solid #E5E5E5;
+	background: #ffffff;
+	font-size: 13px;
+	font-weight: 400;
+	color: #333333;
+	padding: 10px 12px;
+}
+
+.egresos-page .filters input:focus {
+	border-color: #9eb8e4;
+	box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.22);
+	outline: none;
+}
+
+.egresos-page .filters-actions {
+	grid-column: 1 / -1;
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.egresos-page .table-wrap,
+.egresos-list-page .table-wrap {
+	max-width: none;
+	margin-top: 0;
+	background: #ffffff;
+	border: 1px solid #E5E5E5;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+	overflow: hidden;
+	padding: 0;
+}
+
+.egresos-page .table-wrap table,
+.egresos-page table {
+	width: 100%;
+	border: none;
+	box-shadow: none;
+	border-collapse: separate;
+	border-spacing: 0;
+	line-height: 1.25;
+}
+
+.egresos-page thead th {
+	background: #f6f6f6;
+	color: #86868B;
+	border-bottom: 1px solid #E5E5E5;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	line-height: 1.2;
+	padding: 12px 14px;
+	white-space: nowrap;
+	text-align: left;
+}
+
+.egresos-page tbody td {
+	border-bottom: 1px solid #E5E5E5;
+	font-weight: 400;
+	color: #1D1D1F;
+	font-size: 14px;
+	line-height: 1.25;
+	padding: 12px 14px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+.egresos-page tbody tr:nth-child(even) td,
+.egresos-list-page tbody tr:nth-child(even) td {
+	background: #ffffff;
+}
+
+.egresos-page tbody tr:hover td,
+.egresos-list-page tbody tr:hover td {
+	background: #f6f6f6;
+}
+
+.egresos-page tbody tr:last-child td {
+	border-bottom: none;
+}
+
+@media (max-width: 1080px) {
+	.egresos-page .filters,
+	.egresos-list-page .filters {
+		grid-template-columns: 1fr;
+	}
+
+	.egresos-page .page-head {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+@media (max-width: 820px) {
+	.egresos-page .table-wrap {
+		overflow-x: auto;
+	}
+
+	.egresos-page .table-wrap table,
+	.egresos-page table {
+		min-width: 720px;
+	}
 }
