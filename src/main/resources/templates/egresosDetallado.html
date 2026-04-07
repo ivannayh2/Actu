@@ -130,18 +130,10 @@
     </form>
 
 
-
-
-
-
     <div class="page-actions" th:if="${puedeCrearEgreso}">
       <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes📎</button>
     </div>
 
-
-
-
-    
 
     <div class="table-wrap">
       <table class="detalle-facturas-table">
@@ -185,7 +177,7 @@
             <td class="cell-actions">
               <a class="btn btn-compact"
                  th:if="${d.doctoCausacion != null}"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion},doctoSa=${d.doctoSa})}">
                 Ver detalle
               </a>
             </td>
@@ -233,11 +225,6 @@
         </tbody>
       </table>
     </div>
-
-
-
-
-
 
     <div id="modal"
      class="modal hidden"
