@@ -61,6 +61,35 @@
       text-decoration: none;
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
+
+    #filtersForm.filters-detallado {
+      grid-template-columns: repeat(4, minmax(165px, 1fr));
+      gap: 8px 10px;
+    }
+
+    #filtersForm.filters-detallado label {
+      font-size: 11px;
+      gap: 4px;
+    }
+
+    #filtersForm.filters-detallado input[type="search"],
+    #filtersForm.filters-detallado input[type="date"] {
+      height: 34px;
+      font-size: 12px;
+      padding: 6px 9px;
+    }
+
+    @media (max-width: 1200px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -78,30 +107,30 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters filters-with-busqueda filters-detallado" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+        <label for="proveedor">Proveedor</label>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+        <label for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+        <label for="doctoSa">Número factura</label>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+        <label for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
@@ -131,7 +160,7 @@
 
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes📎</button>
+      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes</button>
     </div>
 
 

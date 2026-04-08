@@ -316,14 +316,20 @@ document.addEventListener("click", function(e){
   if(kebabBtn){
 
     const menu = kebabBtn.nextElementSibling;
+    const willOpen = !menu.classList.contains("active");
 
     document
       .querySelectorAll(".kebab-dropdown")
       .forEach(m => {
         if(m !== menu) m.classList.remove("active");
+        const btn = m.previousElementSibling;
+        if (btn && btn.classList.contains("kebab-btn")) {
+          btn.setAttribute("aria-expanded", "false");
+        }
       });
 
-    menu.classList.toggle("active");
+    menu.classList.toggle("active", willOpen);
+    kebabBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
 
     return;
   }
@@ -333,7 +339,13 @@ document.addEventListener("click", function(e){
   if(!e.target.closest(".user-menu")){
     document
       .querySelectorAll(".kebab-dropdown")
-      .forEach(m => m.classList.remove("active"));
+      .forEach(m => {
+        m.classList.remove("active");
+        const btn = m.previousElementSibling;
+        if (btn && btn.classList.contains("kebab-btn")) {
+          btn.setAttribute("aria-expanded", "false");
+        }
+      });
   }
 
   function toggleSidebar(){
