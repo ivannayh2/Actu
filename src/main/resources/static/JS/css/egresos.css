@@ -807,6 +807,11 @@ width: 100%;
 	align-items: end;
 }
 
+.egresos-page .filters-with-busqueda,
+.egresos-list-page .filters-with-busqueda {
+	grid-template-columns: repeat(4, minmax(210px, 1fr));
+}
+
 .egresos-page .filters input[type="text"],
 .egresos-page .filters input[type="search"],
 .egresos-page .filters input[type="date"] {

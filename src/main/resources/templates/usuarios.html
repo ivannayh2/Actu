@@ -73,7 +73,7 @@
             <div class="row-actions">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
               <div class="user-menu">
-                <button class="kebab-btn" type="button">⋮</button>
+                <button class="kebab-btn" type="button" aria-label="Abrir acciones de usuario" aria-expanded="false">⋮</button>
                 <ul class="kebab-dropdown">
                   <li>
                     <button type="button" class="menu-item"
@@ -133,7 +133,7 @@
             <div class="row-actions">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
               <div class="user-menu">
-                <button class="kebab-btn" type="button">⋮</button>
+                <button class="kebab-btn" type="button" aria-label="Abrir acciones de usuario" aria-expanded="false">⋮</button>
                 <ul class="kebab-dropdown">
                   <li>
                     <button type="button" class="menu-item"
@@ -196,7 +196,7 @@
             <div class="row-actions" sec:authorize="hasAnyAuthority('ADMINISTRADOR','PUBLICADOR')">
               <button class="icon-btn" type="button" th:attr="data-edit=${u.codigo}">Editar</button>
               <div class="user-menu">
-                <button class="kebab-btn" type="button">⋮</button>
+                <button class="kebab-btn" type="button" aria-label="Abrir acciones de usuario" aria-expanded="false">⋮</button>
                 <ul class="kebab-dropdown">
                   <li>
                     <button type="button" class="menu-item"
