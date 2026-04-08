@@ -31,27 +31,40 @@ public class PlanosUploadService {
 
     public long procesar(MultipartFile egresos, MultipartFile facturas, MultipartFile notas) throws Exception {
 
-        // Si no se envían archivos, solo elimina y retorna -1
-        if ((egresos == null || egresos.isEmpty()) && (facturas == null || facturas.isEmpty()) && (notas == null || notas.isEmpty())) {
-            return -1L;
-        }
-
-        validarTxt(egresos);
-        validarTxt(facturas);
-        validarTxt(notas);
-
-        long uploadId = uploadsRepository.crearUpload(
-                egresos.getOriginalFilename(),
-                facturas.getOriginalFilename(),
-                notas.getOriginalFilename()
-        );
-
-        importarEgresos(uploadId, egresos);
-        importarFacturas(uploadId, facturas);
-        importarNotas(uploadId, notas);
-
-        return uploadId;
+    if ((egresos == null || egresos.isEmpty()) &&
+        (facturas == null || facturas.isEmpty()) &&
+        (notas == null || notas.isEmpty())) {
+        return -1L;
     }
+
+    if (egresos != null && !egresos.isEmpty()) {
+        validarTxt(egresos);
+    }
+    if (facturas != null && !facturas.isEmpty()) {
+        validarTxt(facturas);
+    }
+    if (notas != null && !notas.isEmpty()) {
+        validarTxt(notas);
+    }
+
+    long uploadId = uploadsRepository.crearUpload(
+        egresos != null && !egresos.isEmpty() ? egresos.getOriginalFilename() : null,
+        facturas != null && !facturas.isEmpty() ? facturas.getOriginalFilename() : null,
+        notas != null && !notas.isEmpty() ? notas.getOriginalFilename() : null
+    );
+
+    if (egresos != null && !egresos.isEmpty()) {
+        importarEgresos(uploadId, egresos);
+    }
+    if (facturas != null && !facturas.isEmpty()) {
+        importarFacturas(uploadId, facturas);
+    }
+    if (notas != null && !notas.isEmpty()) {
+        importarNotas(uploadId, notas);
+    }
+
+    return uploadId;
+}
 
     @Transactional
     public int eliminarTodoLoImportado() {

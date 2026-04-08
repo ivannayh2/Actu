@@ -61,6 +61,18 @@
       text-decoration: none;
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
+
+    .nota-relacionada {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nota-relacionada strong {
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -129,19 +141,9 @@
       </div>
     </form>
 
-
-
-
-
-
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtn" class="btn btn-primary" type="button">Adjuntar soportes📎</button>
+      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes📎</button>
     </div>
-
-
-
-
-    
 
     <div class="table-wrap">
       <table>
@@ -174,16 +176,29 @@
                 data-factura=${factura},
                 data-debito=${debitoValor},
                 data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
+                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
               ">
 
             <td class="cell-actions">
-              <span th:text="${factura}"></span>
-              <a class="btn btn-compact"
-                 th:if="${d.doctoCausacion != null}"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                Ver detalle
-              </a>
+              <div>
+                <span th:text="${factura}"></span>
+              </div>
+
+              <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
+                <strong th:text="${d.doctoProveedorRelacionado}"></strong>
+
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
+                  Ver detalle
+                </a>
+              </div>
+
+              <div style="margin-top: 6px;" th:if="${d.doctoCausacion != null}">
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                  Ver detalle
+                </a>
+              </div>
             </td>
 
             <td class="text-right"
@@ -230,70 +245,57 @@
       </table>
     </div>
 
-
-
-
-
-
     <div id="modal"
-     class="modal hidden"
-     th:if="${puedeCrearEgreso}"
-     aria-hidden="true"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="modalTitle">
-  <div class="modal-content" role="document">
-    <div class="modal-head">
-      <h3 id="modalTitle">Adjuntar soportes</h3>
-      <button id="closeModalBtn"
-              class="btn"
-              type="button"
-              aria-label="Cerrar modal">X</button>
+         class="modal hidden"
+         th:if="${puedeCrearEgreso}"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modalTitle">
+      <div class="modal-content" role="document">
+        <div class="modal-head">
+          <h3 id="modalTitle">Adjuntar soportes</h3>
+          <button id="closeModalBtn"
+                  class="btn"
+                  type="button"
+                  aria-label="Cerrar modal">X</button>
+        </div>
+
+        <form class="modal-form"
+              method="post"
+              th:action="@{/egresos}"
+              enctype="multipart/form-data">
+
+          <div class="field-row">
+            <label for="m-fechaDocumento">Fecha documento</label>
+            <input id="m-fechaDocumento"
+                   type="date"
+                   name="fechaDocumento"
+                   required>
+          </div>
+
+          <div class="field-row">
+            <label for="m-soportes">Soportes</label>
+            <input id="m-soportes"
+                   type="file"
+                   name="soportes"
+                   accept="application/pdf,image/*"
+                   multiple>
+            <small>Puedes seleccionar archivos PDF o imágenes</small>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <form class="modal-form"
-          method="post"
-          th:action="@{/egresos}"
-          enctype="multipart/form-data">
-
-      <div class="field-row">
-        <label for="m-fechaDocumento">Fecha documento</label>
-        <input id="m-fechaDocumento"
-               type="date"
-               name="fechaDocumento"
-               required>
-      </div>
-
-      <div class="field-row">
-        <label for="m-soportes">Soportes</label>
-        <input id="m-soportes"
-               type="file"
-               name="soportes"
-               accept="application/pdf,image/*"
-               multiple>
-        <small>Solo puedes seleccionar archivos de tipo PDF</small>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-        <button class="btn btn-primary" type="submit">Guardar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="page-actions" th:if="${puedeCrearEgreso}">
-  <button id="openModalBtn" class="btn btn-primary" type="button">
-    Nuevo egreso
-  </button>
-</div>
-
-
-
-
-
-
-
+    <div class="page-actions" th:if="${puedeCrearEgreso}">
+      <button id="openModalBtnBottom" class="btn btn-primary" type="button">
+        Nuevo egreso
+      </button>
     </div>
   </main>
 
@@ -329,7 +331,8 @@
 
       document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('modal');
-        const openModalBtn = document.getElementById('openModalBtn');
+        const openModalBtnTop = document.getElementById('openModalBtnTop');
+        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -451,8 +454,12 @@
           });
         }
 
-        if (openModalBtn) {
-          openModalBtn.addEventListener('click', openModal);
+        if (openModalBtnTop) {
+          openModalBtnTop.addEventListener('click', openModal);
+        }
+
+        if (openModalBtnBottom) {
+          openModalBtnBottom.addEventListener('click', openModal);
         }
 
         if (closeModalBtn) {

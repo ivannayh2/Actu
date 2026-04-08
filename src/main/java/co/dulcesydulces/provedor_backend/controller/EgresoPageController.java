@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoCreateRequest;
+import co.dulcesydulces.provedor_backend.domain.dto.EgresoDetalleView;
 import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 import co.dulcesydulces.provedor_backend.service.EgresoService;
 import co.dulcesydulces.provedor_backend.service.ProveedoresService;
@@ -85,7 +86,7 @@ public class EgresoPageController {
             return "egresos";
         }
 
-        List<EgresoPlano> detalles = service.buscarDetalleSegunUsuario(
+        List<EgresoPlano> detallesPlano = service.buscarDetalleSegunUsuario(
                 auth,
                 proveedor,
                 numeroEgreso,
@@ -93,26 +94,35 @@ public class EgresoPageController {
                 fechaDocumento
         );
 
-        cargarTotalesDetalle(model, detalles);
+        List<EgresoDetalleView> detalles = service.buscarDetalleVistaSegunUsuario(
+                auth,
+                proveedor,
+                numeroEgreso,
+                null,
+                fechaDocumento
+        );
+
+        cargarTotalesDetalle(model, detallesPlano);
         model.addAttribute("detalles", detalles);
 
         return "egresosDetallado";
     }
 
     @GetMapping("/detallado")
-    public String verDetalleEgreso(
-            @RequestParam("doctoEgreso") String doctoEgreso,
-            Model model
-    ) {
-        List<EgresoPlano> detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+public String verDetalleEgreso(
+        @RequestParam("doctoEgreso") String doctoEgreso,
+        Model model
+) {
+    List<EgresoPlano> detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+    List<EgresoDetalleView> detalles = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
 
-        model.addAttribute("doctoEgreso", doctoEgreso);
-        model.addAttribute("detalles", detalles);
+    model.addAttribute("doctoEgreso", doctoEgreso);
+    model.addAttribute("detalles", detalles);
 
-        cargarTotalesDetalle(model, detalles);
+    cargarTotalesDetalle(model, detallesPlano);
 
-        return "egresosDetallado";
-    }
+    return "egresosDetallado";
+}
 
     @GetMapping("/detalles")
     public String verDetalleFactura(
@@ -122,6 +132,15 @@ public class EgresoPageController {
         model.addAttribute("doctoCausacion", doctoCausacion);
         model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
         return "detalleFactura";
+    }
+
+    @GetMapping("/nota-detalle")
+    public String verDetalleNota(
+            @RequestParam("doctoProveedor") String doctoProveedor,
+            Model model
+    ) {
+        model.addAttribute("nota", service.buscarNotaPorDoctoProveedor(doctoProveedor));
+        return "detalleNotaPlano";
     }
 
     @PostMapping
@@ -182,4 +201,3 @@ public class EgresoPageController {
         return valor != null ? valor : BigDecimal.ZERO;
     }
 }
-/*johan */
