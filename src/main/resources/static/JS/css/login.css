@@ -81,8 +81,8 @@ body.intro-active .card {
 
 body.intro-exit .logo-intro-btn {
   opacity: 0;
-  transform: scale(1.45);
-  filter: blur(2px);
+  transform: scale(1.12);
+  filter: blur(0.8px);
 }
 
 body.intro-exit .logo-intro {
