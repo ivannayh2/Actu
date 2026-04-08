@@ -20,9 +20,6 @@
     <div class="page-head">
       <div class="page-head-left">
         <h1>Notas relacionadas</h1>
-        <p class="subtitle-main">
-          Documento: <strong th:text="${doctoSa}"></strong>
-        </p>
       </div>
       <div class="actions">
         <button class="btn" onclick="history.back()">Volver</button>
@@ -33,16 +30,18 @@
       <table>
         <thead>
           <tr>
-            <th>Información</th>
+            <th>Documento</th>
+            <th>Nota</th>
           </tr>
         </thead>
         <tbody>
   <tr th:each="info : ${infoNotas}">
+    <td th:text="${doctoSa}"></td>
     <td th:text="${info}"></td>
   </tr>
 
   <tr th:if="${#lists.isEmpty(infoNotas)}">
-    <td colspan="1">No se encontró información en notas para este documento.</td>
+    <td colspan="2">No se encontró información en notas para este documento.</td>
   </tr>
 </tbody>
       </table>

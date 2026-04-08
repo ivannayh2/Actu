@@ -151,7 +151,18 @@ public class EgresoService {
                 agregarNotasDesdePlano(ndNormalizadoBase, notas);
             }
 
-            return notas.stream().toList();
+            if (!notas.isEmpty()) {
+                return notas.stream().toList();
+            }
+
+            LinkedHashSet<String> notasEgreso = new LinkedHashSet<>();
+            agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoExacto, notasEgreso);
+
+            if (!ndNormalizadoBase.equals(ndNormalizadoExacto)) {
+                agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoBase, notasEgreso);
+            }
+
+            return notasEgreso.stream().toList();
         }
 
         List<String> infoEgreso = egresoPlanoRepository
@@ -191,6 +202,21 @@ public class EgresoService {
                 .buscarPorNdNormalizado(ndNormalizado)
                 .stream()
                 .map(NotaPlano::getNotas)
+                .filter(this::tieneTexto)
+                .toList();
+
+        acumulado.addAll(notas);
+    }
+
+    private void agregarNotasDesdeEgresosPorDoctoSa(String doctoSaNormalizado, LinkedHashSet<String> acumulado) {
+        if (doctoSaNormalizado == null || doctoSaNormalizado.isBlank()) {
+            return;
+        }
+
+        List<String> notas = egresoPlanoRepository
+                .buscarNotasPorDoctoSaNormalizado(doctoSaNormalizado)
+                .stream()
+                .map(EgresoPlano::getNotas)
                 .filter(this::tieneTexto)
                 .toList();
 
