@@ -163,6 +163,8 @@ public class EgresoService {
             }
 
             return notasEgreso.stream().toList();
+            // Fallback: no se encontraron notas en notas_plano, buscar en egresos_plano
+        
         }
 
         List<String> infoEgreso = egresoPlanoRepository
