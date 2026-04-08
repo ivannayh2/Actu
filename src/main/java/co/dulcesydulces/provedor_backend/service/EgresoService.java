@@ -2,10 +2,12 @@ package co.dulcesydulces.provedor_backend.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -18,9 +20,11 @@ import co.dulcesydulces.provedor_backend.domain.entidades.Egreso;
 import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 import co.dulcesydulces.provedor_backend.domain.entidades.EgresoSoportePF;
 import co.dulcesydulces.provedor_backend.domain.entidades.FacturaPlano;
+import co.dulcesydulces.provedor_backend.domain.entidades.NotaPlano;
 import co.dulcesydulces.provedor_backend.repository.EgresoPlanoRepository;
 import co.dulcesydulces.provedor_backend.repository.EgresoRepository;
 import co.dulcesydulces.provedor_backend.repository.FacturaPlanoRepository;
+import co.dulcesydulces.provedor_backend.repository.NotaPlanoRepository;
 
 @Service
 public class EgresoService {
@@ -28,17 +32,20 @@ public class EgresoService {
     private final EgresoRepository egresoRepository;
     private final EgresoPlanoRepository egresoPlanoRepository;
     private final FacturaPlanoRepository facturaPlanoRepository;
+    private final NotaPlanoRepository notaPlanoRepository;
     private final S3StorageService s3StorageService;
 
     public EgresoService(
             EgresoRepository egresoRepository,
             EgresoPlanoRepository egresoPlanoRepository,
             FacturaPlanoRepository facturaPlanoRepository,
+            NotaPlanoRepository notaPlanoRepository,
             S3StorageService s3StorageService
     ) {
         this.egresoRepository = egresoRepository;
         this.egresoPlanoRepository = egresoPlanoRepository;
         this.facturaPlanoRepository = facturaPlanoRepository;
+        this.notaPlanoRepository = notaPlanoRepository;
         this.s3StorageService = s3StorageService;
     }
 
@@ -124,6 +131,120 @@ public class EgresoService {
 
     public List<FacturaPlano> buscarFacturasPorDoctoCausacion(String doctoCausacion) {
         return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion);
+    }
+
+    public List<String> buscarNotasPorDocumento(String documento, String doctoCausacion) {
+        String docNormalizado = normalizarDocumento(documento);
+        String causacionNormalizada = normalizarDocumento(doctoCausacion);
+
+        String claveNd = extraerClaveNd(documento);
+        boolean esNd = !claveNd.isBlank();
+
+        if (esNd) {
+            String ndNormalizadoExacto = normalizarDocumento(claveNd);
+            String ndNormalizadoBase = normalizarDocumento(removerSufijoCeros(claveNd));
+
+            LinkedHashSet<String> notas = new LinkedHashSet<>();
+            agregarNotasDesdePlano(ndNormalizadoExacto, notas);
+
+            if (!ndNormalizadoBase.equals(ndNormalizadoExacto)) {
+                agregarNotasDesdePlano(ndNormalizadoBase, notas);
+            }
+
+            if (!notas.isEmpty()) {
+                return notas.stream().toList();
+            }
+
+            LinkedHashSet<String> notasEgreso = new LinkedHashSet<>();
+            agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoExacto, notasEgreso);
+
+            if (!ndNormalizadoBase.equals(ndNormalizadoExacto)) {
+                agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoBase, notasEgreso);
+            }
+
+            return notasEgreso.stream().toList();
+        }
+
+        List<String> infoEgreso = egresoPlanoRepository
+                .buscarNotasParaDetalle(docNormalizado, causacionNormalizada)
+                .stream()
+                .map(EgresoPlano::getNotas)
+                .filter(this::tieneTexto)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .stream()
+                .toList();
+
+        return infoEgreso;
+    }
+
+    private boolean tieneTexto(String valor) {
+        return valor != null && !valor.trim().isEmpty();
+    }
+
+    private String normalizarDocumento(String valor) {
+        if (valor == null) {
+            return "";
+        }
+
+        return valor.trim()
+                .toUpperCase()
+                .replace("-", "")
+                .replace(" ", "")
+                .replace(".", "");
+    }
+
+    private void agregarNotasDesdePlano(String ndNormalizado, LinkedHashSet<String> acumulado) {
+        if (ndNormalizado == null || ndNormalizado.isBlank()) {
+            return;
+        }
+
+        List<String> notas = notaPlanoRepository
+                .buscarPorNdNormalizado(ndNormalizado)
+                .stream()
+                .map(NotaPlano::getNotas)
+                .filter(this::tieneTexto)
+                .toList();
+
+        acumulado.addAll(notas);
+    }
+
+    private void agregarNotasDesdeEgresosPorDoctoSa(String doctoSaNormalizado, LinkedHashSet<String> acumulado) {
+        if (doctoSaNormalizado == null || doctoSaNormalizado.isBlank()) {
+            return;
+        }
+
+        List<String> notas = egresoPlanoRepository
+                .buscarNotasPorDoctoSaNormalizado(doctoSaNormalizado)
+                .stream()
+                .map(EgresoPlano::getNotas)
+                .filter(this::tieneTexto)
+                .toList();
+
+        acumulado.addAll(notas);
+    }
+
+    private String extraerClaveNd(String documento) {
+        if (documento == null || documento.isBlank()) {
+            return "";
+        }
+
+        Matcher matcher = Pattern
+                .compile("(ND\\d+-\\d+(?:-\\d+)?)", Pattern.CASE_INSENSITIVE)
+                .matcher(documento.trim().toUpperCase());
+
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        return "";
+    }
+
+    private String removerSufijoCeros(String claveNd) {
+        if (claveNd == null || claveNd.isBlank()) {
+            return "";
+        }
+
+        return claveNd.toUpperCase().replaceFirst("-0+$", "");
     }
 
     @Transactional
