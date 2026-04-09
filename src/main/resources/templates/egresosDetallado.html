@@ -79,6 +79,16 @@
       padding: 6px 9px;
     }
 
+    #filtersForm.filters-detallado .filters-actions .btn-compact {
+      font-size: 13px;
+      padding: 8px 11px;
+      border-radius: 14px;
+    }
+
+    #filtersForm.filters-detallado .filters-actions .btn {
+      min-height: 35px;
+    }
+
     @media (max-width: 1200px) {
       #filtersForm.filters-detallado {
         grid-template-columns: 1fr 1fr;
@@ -147,12 +157,10 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <button id="clearAllBtn" class="btn btn-compact" type="button">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
       </div>
