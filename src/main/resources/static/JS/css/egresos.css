@@ -508,6 +508,8 @@ border-bottom: none;
 
 .egresos-page .detalle-facturas-table {
 	table-layout: fixed;
+	width: 99%;
+	margin: 0 auto;
 }
 
 .egresos-page .detalle-facturas-table th:nth-child(1),
