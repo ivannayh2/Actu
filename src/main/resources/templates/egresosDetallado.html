@@ -68,14 +68,14 @@
     }
 
     #filtersForm.filters-detallado label {
-      font-size: 11px;
+      font-size: 13px;
       gap: 4px;
     }
 
     #filtersForm.filters-detallado input[type="search"],
     #filtersForm.filters-detallado input[type="date"] {
       height: 34px;
-      font-size: 12px;
+      font-size: 14px;
       padding: 6px 9px;
     }
 
@@ -225,30 +225,30 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2"><strong>Valor documento</strong></td>
+            <td colspan="2">Valor documento</td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2"><strong>Pronto pago</strong></td>
+            <td colspan="2">Pronto pago</td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="2"><strong>Total</strong></td>
+            <td colspan="2"><span class="total-label">Total</span></td>
             <td class="text-right">
-              <strong id="totalDebitosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalDebitosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
             <td class="text-right">
-              <strong id="totalCreditosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalCreditosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
         </tbody>

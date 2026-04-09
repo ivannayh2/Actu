@@ -228,7 +228,7 @@ color: #b91c1c;
 .egresos-page .filters label {
 display: grid;
 gap: 6px;
-font-size: 12px;
+font-size: 14px;
 font-weight: 400;
 color: #333333;
 }
@@ -242,7 +242,7 @@ padding: 8px 12px;
 border-radius: 8px;
 border: 1px solid #E5E5E5;
 background: #ffffff;
-font-size: 13px;
+font-size: 15px;
 font-weight: 400;
 color: #333333;
 transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -431,7 +431,7 @@ white-space: nowrap;
 }
 
 .egresos-page .fila-resumen td {
-	font-weight: 600;
+	font-weight: inherit;
 	color: #1D1D1F;
 }
 
@@ -449,7 +449,7 @@ white-space: nowrap;
 
 .egresos-page .detalle-facturas-table tbody tr#filaTotales td {
 	background: linear-gradient(180deg, #edf4ef 0%, #e5eee7 100%);
-	font-weight: 700;
+	font-weight: inherit;
 }
 
 .egresos-page .detalle-facturas-table tbody tr#filaTotales td:first-child {
@@ -464,7 +464,7 @@ white-space: nowrap;
 	background: linear-gradient(180deg, #edf4ef 0%, #e5eee7 100%);
 }
 
-.egresos-page .detalle-facturas-table tbody tr#filaTotales td:nth-child(2) strong {
+.egresos-page .detalle-facturas-table tbody tr#filaTotales td:nth-child(2) .total-label {
 	display: inline-block;
 	transform: translateX(12px);
 }
@@ -820,7 +820,7 @@ width: 100%;
 	border-radius: 8px;
 	border: 1px solid #E5E5E5;
 	background: #ffffff;
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 400;
 	color: #333333;
 	padding: 10px 12px;
