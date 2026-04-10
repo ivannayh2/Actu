@@ -24,9 +24,16 @@
     <span class="egresos-header-proveedor-nombre" th:text="${nombreUsuario}"></span>
   </div>
 
-  <main class="container egresos-page">
+  <main class="container egresos-page egresos-list-page">
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Comprobante egreso</h1>
+        <p class="subtitle-main">Listado general de egresos según filtros y permisos del usuario</p>
+      </div>
+    </div>
 
 
     <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
@@ -51,7 +58,7 @@
         </div>
       </div>
 
-      <div class="field" style="min-width:220px;">
+      <div class="field field-busqueda-inteligente">
         <label for="busquedaInteligente">Búsqueda inteligente</label>
         <div class="control">
           <input id="busquedaInteligente" type="search" name="busquedaInteligente" placeholder="Buscar por descripción, valor, etc." th:value="${busquedaInteligente}">
@@ -59,7 +66,7 @@
       </div>
 
 
-      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
+      <div class="filters-actions filters-actions-inline">
         <button class="btn btn-primary btn-compact" type="submit">
           Filtrar
         </button>
@@ -70,14 +77,10 @@
     </form>
 
 
-
-
-
-    <div class="filters-actions"
-     th:if="${puedeCrearEgreso}"
-     style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
+    <div class="page-actions page-actions-tight"
+     th:if="${puedeCrearEgreso}">
       <button class="btn btn-primary" type="button" onclick="openModal()">
-       Adjuntar soportes📎
+       Adjuntar soportes
       </button>
     </div>
 
@@ -92,8 +95,7 @@
         <thead>
           <tr>
             <th>Numero egreso</th>
-            <th></th>
-            <th>Detalles</th>
+            <th>Acciones</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -102,7 +104,6 @@
         </thead>
         <tbody>
           <tr th:if="${!#lists.isEmpty(detalle)}">
-            <td></td>
             <td></td>
             <td></td>
             <td colspan="3"><strong>Total</strong></td>
@@ -117,7 +118,6 @@
             <td class="cell-actions">
               <a class="btn btn-compact btn-ver-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
-            <td></td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
             <td th:text="${d.razonSocial}"></td>
@@ -125,7 +125,7 @@
           </tr>
 
           <tr th:if="${#lists.isEmpty(detalle)}">
-            <td colspan="6" style="text-align: center; padding: 20px;">No se encontraron registros en egresos_plano.</td>
+            <td colspan="7" class="empty-state-cell">No se encontraron registros en egresos_plano.</td>
           </tr>
         </tbody>
       </table>
