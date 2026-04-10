@@ -43,6 +43,6 @@ public class UploadsController {
         } catch (Exception e) {
             model.addAttribute("msg", "Error eliminando registros importados: " + e.getMessage());
         }
-        return "home";
+        return "home";//ggh
     }
 }
