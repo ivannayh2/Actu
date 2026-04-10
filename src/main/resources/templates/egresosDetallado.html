@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -62,71 +62,48 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    .cell-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      min-width: 280px;
+    #filtersForm.filters-detallado {
+      grid-template-columns: repeat(4, minmax(165px, 1fr));
+      gap: 8px 10px;
     }
 
-    .factura-linea {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      line-height: 1.2;
+    #filtersForm.filters-detallado label {
+      font-size: 13px;
+      gap: 4px;
     }
 
-    .factura-principal {
-      font-weight: 700;
-      color: #2f3640;
+    #filtersForm.filters-detallado input[type="search"],
+    #filtersForm.filters-detallado input[type="date"] {
+      height: 34px;
+      font-size: 14px;
+      padding: 6px 9px;
     }
 
-    .nota-relacionada {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-left: 22px;
-      line-height: 1.2;
+    #filtersForm.filters-detallado .filters-actions .btn-compact {
+      font-size: 13px;
+      padding: 8px 11px;
+      border-radius: 14px;
     }
 
-    .nota-relacionada strong {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #d98500;
-      letter-spacing: 0.2px;
+    #filtersForm.filters-detallado .filters-actions .btn {
+      min-height: 35px;
     }
 
-    .acciones-factura,
-    .acciones-nota {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .egresos-page .table-wrap {
+      width: 97.5%;
+      margin: 0 auto;
     }
 
-    .cell-actions .btn.btn-compact {
-      padding: 0;
-      min-height: auto;
-      font-size: 0.9rem;
-      font-weight: 600;
-      background: transparent;
-      border: 0;
+    @media (max-width: 1200px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
-    .cell-actions .btn.btn-compact:hover {
-      box-shadow: none;
-      background: transparent;
-    }
-
-    .nota-relacionada .btn.btn-compact,
-    .acciones-factura .btn.btn-compact {
-      color: #0b57d0;
-    }
-
-    .fila-resumen td {
-      background: #fafafa;
+    @media (max-width: 700px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -145,30 +122,30 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters filters-with-busqueda filters-detallado" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+        <label for="proveedor">Proveedor</label>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+        <label for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+        <label for="doctoSa">Número factura</label>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+        <label for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
@@ -185,32 +162,25 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <button id="clearAllBtn" class="btn btn-compact" type="button">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
-
-        <div class="actions">
-        <button class="btn" type="button" onclick="history.back()">Volver</button>
-       </div>
-           
       </div>
-      
     </form>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes📎</button>
+      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes</button>
     </div>
 
     <div class="table-wrap">
-      <table>
+      <table class="detalle-facturas-table">
         <thead>
           <tr>
             <th>Número factura</th>
+            <th>Acciones</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -218,11 +188,11 @@
 
         <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="3">No se encontraron facturas relacionadas.</td>
+            <td colspan="4">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -237,33 +207,19 @@
                 data-factura=${factura},
                 data-debito=${debitoValor},
                 data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
+                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
               ">
 
+            <td>
+              <span th:text="${factura}"></span>
+            </td>
+
             <td class="cell-actions">
-              <div class="factura-linea">
-                <div class="factura-principal">
-                  <span th:text="${factura}"></span>
-                </div>
-
-                <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
-                  <a class="btn btn-compact"
-                     th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                    Ver factura
-                  </a>
-                </div>
-              </div>
-
-              <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
-                <strong th:text="${d.doctoProveedorRelacionado}"></strong>
-
-                <div class="acciones-nota">
-                  <a class="btn btn-compact"
-                     th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
-                    Ver nota
-                  </a>
-                </div>
-              </div>
+              <a class="btn btn-compact"
+                 th:if="${d.doctoCausacion != null}"
+                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion},doctoSa=${d.doctoSa})}">
+                Ver detalle
+              </a>
             </td>
 
             <td class="text-right"
@@ -280,30 +236,30 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Valor documento</strong></td>
+            <td colspan="2">Valor documento</td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Pronto pago</strong></td>
+            <td colspan="2">Pronto pago</td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td><strong>Total</strong></td>
+            <td colspan="2"><span class="total-label">Total</span></td>
             <td class="text-right">
-              <strong id="totalDebitosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalDebitosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
             <td class="text-right">
-              <strong id="totalCreditosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalCreditosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
         </tbody>
@@ -311,49 +267,47 @@
     </div>
 
     <div id="modal"
-         class="modal hidden"
-         th:if="${puedeCrearEgreso}"
-         aria-hidden="true"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="modalTitle">
-      <div class="modal-content" role="document">
-        <div class="modal-head">
-          <h3 id="modalTitle">Adjuntar soportes</h3>
-          <button id="closeModalBtn"
-                  class="btn"
-                  type="button"
-                  aria-label="Cerrar modal">X</button>
-        </div>
+     class="modal hidden"
+     th:if="${puedeCrearEgreso}"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle">
+  <div class="modal-content" role="document">
+    <div class="modal-head">
+      <h3 id="modalTitle">Adjuntar soportes</h3>
+      <button id="closeModalBtn"
+              class="btn"
+              type="button"
+              aria-label="Cerrar modal">X</button>
+    </div>
 
-        <form class="modal-form"
-              method="post"
-              th:action="@{/egresos}"
-              enctype="multipart/form-data">
+    <form class="modal-form"
+          method="post"
+          th:action="@{/egresos}"
+          enctype="multipart/form-data">
 
-          <div class="field-row">
-            <label for="m-fechaDocumento">Fecha documento</label>
-            <input id="m-fechaDocumento"
-                   type="date"
-                   name="fechaDocumento"
-                   required>
-          </div>
+      <div class="field-row">
+        <label for="m-fechaDocumento">Fecha documento</label>
+        <input id="m-fechaDocumento"
+               type="date"
+               name="fechaDocumento"
+               required>
+      </div>
 
-          <div class="field-row">
-            <label for="m-soportes">Soportes</label>
-            <input id="m-soportes"
-                   type="file"
-                   name="soportes"
-                   accept="application/pdf,image/*"
-                   multiple>
-            <small>Puedes seleccionar archivos PDF o imágenes</small>
-          </div>
+      <div class="field-row">
+        <label for="m-soportes">Soportes</label>
+        <input id="m-soportes"
+               type="file"
+               name="soportes"
+               accept="application/pdf,image/*"
+               multiple>
+        <small>Solo puedes seleccionar archivos de tipo PDF</small>
+      </div>
 
-          <div class="modal-actions">
-            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-          </div>
-        </form>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Guardar</button>
       </div>
     </form>
   </div>
@@ -399,8 +353,7 @@
 
       document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('modal');
-        const openModalBtnTop = document.getElementById('openModalBtnTop');
-        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -522,13 +475,9 @@
           });
         }
 
-        if (openModalBtnTop) {
-          openModalBtnTop.addEventListener('click', openModal);
-        }
-
-        if (openModalBtnBottom) {
-          openModalBtnBottom.addEventListener('click', openModal);
-        }
+        openModalButtons.forEach(function (button) {
+          button.addEventListener('click', openModal);
+        });
 
         if (closeModalBtn) {
           closeModalBtn.addEventListener('click', closeModal);
