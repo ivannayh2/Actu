@@ -62,16 +62,71 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    .nota-relacionada {
-      margin-top: 6px;
+    .cell-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      min-width: 280px;
+    }
+
+    .factura-linea {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
+      line-height: 1.2;
+    }
+
+    .factura-principal {
+      font-weight: 700;
+      color: #2f3640;
+    }
+
+    .nota-relacionada {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-left: 22px;
+      line-height: 1.2;
     }
 
     .nota-relacionada strong {
       font-size: 0.95rem;
+      font-weight: 700;
+      color: #d98500;
+      letter-spacing: 0.2px;
+    }
+
+    .acciones-factura,
+    .acciones-nota {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cell-actions .btn.btn-compact {
+      padding: 0;
+      min-height: auto;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: transparent;
+      border: 0;
+    }
+
+    .cell-actions .btn.btn-compact:hover {
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .nota-relacionada .btn.btn-compact,
+    .acciones-factura .btn.btn-compact {
+      color: #0b57d0;
+    }
+
+    .fila-resumen td {
+      background: #fafafa;
     }
   </style>
 </head>
@@ -138,7 +193,13 @@
           <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
+
+        <div class="actions">
+        <button class="btn" type="button" onclick="history.back()">Volver</button>
+       </div>
+           
       </div>
+      
     </form>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
@@ -180,24 +241,28 @@
               ">
 
             <td class="cell-actions">
-              <div>
-                <span th:text="${factura}"></span>
+              <div class="factura-linea">
+                <div class="factura-principal">
+                  <span th:text="${factura}"></span>
+                </div>
+
+                <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
+                  <a class="btn btn-compact"
+                     th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                    Ver factura
+                  </a>
+                </div>
               </div>
 
               <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
                 <strong th:text="${d.doctoProveedorRelacionado}"></strong>
 
-                <a class="btn btn-compact"
-                   th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
-                  Ver detalle
-                </a>
-              </div>
-
-              <div style="margin-top: 6px;" th:if="${d.doctoCausacion != null}">
-                <a class="btn btn-compact"
-                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                  Ver detalle
-                </a>
+                <div class="acciones-nota">
+                  <a class="btn btn-compact"
+                     th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
+                    Ver nota
+                  </a>
+                </div>
               </div>
             </td>
 

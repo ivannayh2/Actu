@@ -217,7 +217,6 @@ public class EgresoService {
                 .orElseThrow(() -> new RuntimeException("No existe el egreso con id: " + id));
     }
 
-    
     public List<EgresoDetalleView> buscarDetalleVistaPorDoctoEgreso(String doctoEgreso) {
     List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoEgreso(doctoEgreso);
 
@@ -229,74 +228,80 @@ public class EgresoService {
 }
 
     private Map<String, NotaPlano> construirMapaNotasRelacionadas(List<EgresoPlano> detalles) {
-        List<String> doctosProveedor = detalles.stream()
-                .filter(detalle -> debeBuscarNotaRelacionada(detalle.getNotas()))
-                .map(EgresoPlano::getDoctoSa)
-                .map(this::extraerDoctoSaBase)
-                .filter(this::tieneTexto)
-                .distinct()
-                .collect(Collectors.toList());
+    List<String> doctosProveedor = detalles.stream()
+            .filter(detalle -> debeBuscarNotaRelacionada(detalle.getNotas()))
+            .map(EgresoPlano::getDoctoSa)
+            .map(this::extraerDoctoSaBase)
+            .filter(this::tieneTexto)
+            .distinct()
+            .collect(Collectors.toList());
 
-        if (doctosProveedor.isEmpty()) {
-            return Map.of();
-        }
-
-        return notaPlanoRepository.findByDoctoProveedorIn(doctosProveedor).stream()
-                .filter(nota -> tieneTexto(nota.getDoctoProveedor()))
-                .collect(Collectors.toMap(
-                        NotaPlano::getDoctoProveedor,
-                        Function.identity(),
-                        (primero, segundo) -> primero
-                ));
+    if (doctosProveedor.isEmpty()) {
+        return Map.of();
     }
 
-    private EgresoDetalleView mapearDetalleVista(EgresoPlano egreso, Map<String, NotaPlano> notasPorDoctoProveedor) {
-        EgresoDetalleView view = new EgresoDetalleView(egreso);
+    return notaPlanoRepository.findByDoctoProveedorIn(doctosProveedor).stream()
+            .filter(nota -> tieneTexto(nota.getDoctoProveedor()))
+            .filter(nota -> esDocumentoFP(nota.getNroDocumento()))
+            .collect(Collectors.toMap(
+                    NotaPlano::getDoctoProveedor,
+                    Function.identity(),
+                    (primero, segundo) -> primero
+            ));
+}
 
-        if (!debeBuscarNotaRelacionada(egreso.getNotas())) {
-            return view;
-        }
+private EgresoDetalleView mapearDetalleVista(EgresoPlano egreso, Map<String, NotaPlano> notasPorDoctoProveedor) {
+    EgresoDetalleView view = new EgresoDetalleView(egreso);
 
-        String doctoSaBase = extraerDoctoSaBase(egreso.getDoctoSa());
-        view.setDoctoSaBase(doctoSaBase);
-
-        if (!tieneTexto(doctoSaBase)) {
-            return view;
-        }
-
-        NotaPlano nota = notasPorDoctoProveedor.get(doctoSaBase);
-        if (nota == null) {
-            return view;
-        }
-
-        view.setMostrarNotaRelacionada(true);
-        view.setDoctoProveedorRelacionado(nota.getDoctoProveedor());
-        view.setNotaPlanoRelacionada(nota.getNotas());
-
+    if (!debeBuscarNotaRelacionada(egreso.getNotas())) {
         return view;
     }
 
-    private boolean debeBuscarNotaRelacionada(String notas) {
-        if (notas == null) {
-            return false;
-        }
+    String doctoSaBase = extraerDoctoSaBase(egreso.getDoctoSa());
+    view.setDoctoSaBase(doctoSaBase);
 
-        String valor = notas.trim();
-        return !valor.isEmpty() && !valor.equalsIgnoreCase("SN");
+    if (!tieneTexto(doctoSaBase)) {
+        return view;
     }
 
+    NotaPlano nota = notasPorDoctoProveedor.get(doctoSaBase);
+    if (nota == null) {
+        return view;
+    }
+
+    view.setMostrarNotaRelacionada(true);
+    view.setDoctoProveedorRelacionado(nota.getDoctoProveedor());
+    view.setNotaPlanoRelacionada(nota.getNotas());
+
+    return view;
+}
+
+private boolean debeBuscarNotaRelacionada(String notas) {
+    if (notas == null) {
+        return false;
+    }
+
+    String valor = notas.trim();
+    return !valor.isEmpty() && !valor.equalsIgnoreCase("SN");
+}
+
+private boolean esDocumentoFP(String nroDocumento) {
+    return nroDocumento != null && nroDocumento.trim().toUpperCase().startsWith("FP");
+}
     private String extraerDoctoSaBase(String doctoSa) {
-        if (!tieneTexto(doctoSa)) {
-            return null;
-        }
-
-        int ultimoGuion = doctoSa.lastIndexOf('-');
-        if (ultimoGuion <= 0) {
-            return doctoSa.trim();
-        }
-
-        return doctoSa.substring(0, ultimoGuion).trim();
+    if (!tieneTexto(doctoSa)) {
+        return null;
     }
+
+    String valor = doctoSa.trim();
+
+    String[] partes = valor.split("-");
+    if (partes.length >= 3) {
+        return partes[1].trim();
+    }
+
+    return valor;
+}
 
     private boolean tieneTexto(String valor) {
         return valor != null && !valor.trim().isEmpty();

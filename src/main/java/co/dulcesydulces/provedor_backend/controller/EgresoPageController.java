@@ -123,7 +123,6 @@ public String verDetalleEgreso(
 
     return "egresosDetallado";
 }
-
     @GetMapping("/detalles")
     public String verDetalleFactura(
             @RequestParam("doctoCausacion") String doctoCausacion,
