@@ -355,13 +355,16 @@
           </div>
         </form>
       </div>
-    </div>
+    </form>
+  </div>
+</div>
 
-    <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtnBottom" class="btn btn-primary" type="button">
-        Nuevo egreso
-      </button>
-    </div>
+<div class="page-actions" th:if="${puedeCrearEgreso}">
+  <button class="btn btn-primary open-modal-btn" type="button">
+    Nuevo egreso
+  </button>
+</div>
+
   </main>
 
   <script>

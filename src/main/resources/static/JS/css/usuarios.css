@@ -846,12 +846,18 @@ align-items: stretch;
 }
 
 .users-toolbar {
-display: grid;
-grid-template-columns: 1fr 1fr;
+display: flex;
+flex-wrap: nowrap;
+overflow-x: auto;
+gap: 8px;
+padding: 6px;
+scrollbar-width: thin;
 }
 
 .users-tab {
 justify-content: center;
+flex: 0 0 auto;
+white-space: nowrap;
 }
 
 .actions {
@@ -906,5 +912,161 @@ padding: 18px;
 
 .roles-grid {
 grid-template-columns: 1fr;
+}
+}
+
+@media (max-width: 640px) {
+.container {
+padding: 0 10px;
+}
+
+.page-head {
+padding: 14px;
+gap: 10px;
+}
+
+h1 {
+font-size: 20px;
+}
+
+.subtitle-main {
+font-size: 13px;
+}
+
+.users-toolbar {
+margin-bottom: 12px;
+}
+
+.roles-grid {
+padding: 10px;
+gap: 12px;
+}
+
+.role-title {
+padding: 10px 12px;
+font-size: 12px;
+flex-wrap: wrap;
+row-gap: 6px;
+}
+
+.role-body {
+padding: 8px;
+}
+
+.user-item {
+flex-direction: column;
+align-items: stretch;
+padding: 10px;
+gap: 10px;
+margin-bottom: 12px;
+}
+
+.user-main {
+width: 100%;
+}
+
+.user-meta {
+max-width: 100%;
+margin-left: 6px;
+}
+
+.user-item strong {
+max-width: 100%;
+}
+
+.user-item small {
+max-width: 100%;
+}
+
+.row-actions {
+width: 100%;
+margin-left: 0;
+justify-content: flex-end;
+}
+
+.icon-btn,
+.kebab-btn {
+min-height: 34px;
+}
+
+.modal {
+padding: 10px;
+}
+
+.modal-card {
+width: 100%;
+max-height: calc(100vh - 20px);
+padding: 14px;
+border-radius: 12px;
+}
+
+.modal-head {
+padding: 8px 10px;
+margin-bottom: 10px;
+}
+
+.modal-head h2,
+.permisos-title {
+font-size: 17px;
+}
+
+.user-data-shell,
+.permisos-shell {
+padding: 12px;
+}
+}
+
+@media (max-width: 420px) {
+.container {
+padding: 0 8px;
+}
+
+.page-head {
+padding: 12px;
+}
+
+#btnNuevo {
+padding: 10px 14px;
+font-size: 12px;
+}
+
+.users-toolbar {
+padding: 5px;
+border-radius: 14px;
+}
+
+.users-tab {
+padding: 8px 12px;
+font-size: 11px;
+}
+
+.tab-count {
+min-width: 16px;
+height: 16px;
+padding: 0 5px;
+font-size: 9px;
+}
+
+.role-title {
+font-size: 11px;
+}
+
+.user-count {
+font-size: 10px;
+padding: 2px 6px;
+}
+
+.icon-btn {
+padding: 5px 8px;
+font-size: 11px;
+}
+
+.kebab-btn {
+padding: 4px 8px;
+}
+
+.menu-item {
+padding: 9px 10px;
+font-size: 11px;
 }
 }
