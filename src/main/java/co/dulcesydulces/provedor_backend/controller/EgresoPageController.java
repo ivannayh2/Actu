@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -127,15 +126,8 @@ public String verDetalleEgreso(
     @GetMapping("/detalles")
     public String verDetalleFactura(
             @RequestParam("doctoCausacion") String doctoCausacion,
-            @RequestParam(required = false) String doctoSa,
             Model model
     ) {
-        if (esDocumentoNota(doctoSa)) {
-            model.addAttribute("doctoSa", doctoSa);
-            model.addAttribute("infoNotas", service.buscarNotasPorDocumento(doctoSa, doctoCausacion));
-            return "detalleNota";
-        }
-
         model.addAttribute("doctoCausacion", doctoCausacion);
         model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
         return "detalleFactura";

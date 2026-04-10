@@ -29,7 +29,7 @@ public class SecurityConfig {
     http
       .csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(auth -> auth
-    .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/icons/**", "/favicon.ico").permitAll()
+    .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/favicon.ico").permitAll()
     .requestMatchers("/login", "/error").permitAll()
     .requestMatchers("/usuarios/**", "/api/usuarios/**")
       .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permUsuariosView')"))

@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -145,30 +145,30 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters filters-with-busqueda filters-detallado" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <label for="proveedor">Proveedor</label>
+        <h1><label for="proveedor">Proveedor</label></h1>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <label for="fechaDocumento">Fecha</label>
+        <h1><label for="fechaDocumento">Fecha</label></h1>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <label for="doctoSa">Número factura</label>
+        <h1><label for="doctoSa">Número factura</label></h1>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <label for="smartSearch">Búsqueda inteligente</label>
+        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
         <div class="control">
           <input
             id="smartSearch"
@@ -185,10 +185,12 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
+          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <button id="clearAllBtn" class="btn btn-compact" type="button">
+          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
 
@@ -205,11 +207,10 @@
     </div>
 
     <div class="table-wrap">
-      <table class="detalle-facturas-table">
+      <table>
         <thead>
           <tr>
             <th>Número factura</th>
-            <th>Acciones</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -217,11 +218,11 @@
 
         <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="4">No se encontraron facturas relacionadas.</td>
+            <td colspan="3">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -279,30 +280,30 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2">Valor documento</td>
+            <td><strong>Valor documento</strong></td>
             <td></td>
             <td class="text-right">
-              <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
+              <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
             </td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2">Pronto pago</td>
+            <td><strong>Pronto pago</strong></td>
             <td></td>
             <td class="text-right">
-              <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
+              <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
             </td>
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="2"><span class="total-label">Total</span></td>
+            <td><strong>Total</strong></td>
             <td class="text-right">
-              <span id="totalDebitosView"
-                    th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
+              <strong id="totalDebitosView"
+                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
             </td>
             <td class="text-right">
-              <span id="totalCreditosView"
-                    th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
+              <strong id="totalCreditosView"
+                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
             </td>
           </tr>
         </tbody>
