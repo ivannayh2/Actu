@@ -186,11 +186,59 @@
 	gap: 10px;
 }
 
+.egresos-page .filters-actions-inline {
+	align-items: flex-end;
+	margin-top: 0;
+}
+
+.egresos-list-page .filters-actions .btn-compact {
+	padding: 10px 14px;
+	border-radius: 10px;
+	font-size: 13px;
+	font-weight: 600;
+	border: 1px solid #E5E5E5;
+	background: #ffffff;
+	color: #1f2937;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.egresos-list-page .filters-actions .btn-compact:hover {
+	background: #f6f6f6;
+	border-color: #cad7ed;
+	text-decoration: none;
+}
+
+.egresos-list-page .filters-actions .btn-primary.btn-compact {
+	background: #0051a5;
+	border: 0;
+	color: #ffffff;
+}
+
+.egresos-list-page .filters-actions .btn-primary.btn-compact:hover {
+	background: #003d7a;
+}
+
 .egresos-page .filters-actions .btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
+}
+
+.egresos-list-page .cell-actions .btn-compact {
+	border: none;
+	background: transparent;
+	color: #0051a5;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 0 8px;
+}
+
+.egresos-list-page .cell-actions .btn-compact:hover {
+	color: #003d7a;
+	transform: none;
+	box-shadow: none;
 }
 
 .egresos-page .filters-actions .btn-compact {

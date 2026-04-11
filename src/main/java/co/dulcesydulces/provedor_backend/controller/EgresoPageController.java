@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
@@ -96,7 +97,7 @@ public class EgresoPageController {
             return "egresos";
         }
 
-        List<EgresoPlano> detallesPlano = service.buscarDetalleSegunUsuario(
+        List<EgresoPlano> detalles = service.buscarDetalleSegunUsuario(
                 auth,
                 proveedor,
                 numeroEgreso,
@@ -104,52 +105,52 @@ public class EgresoPageController {
                 fechaDocumento
         );
 
-        List<EgresoDetalleView> detalles = service.buscarDetalleVistaSegunUsuario(
-                auth,
-                proveedor,
-                numeroEgreso,
-                null,
-                fechaDocumento
-        );
-
-        cargarTotalesDetalle(model, detallesPlano);
+        cargarTotalesDetalle(model, detalles);
         model.addAttribute("detalles", detalles);
 
         return "egresosDetallado";
     }
 
     @GetMapping("/detallado")
-public String verDetalleEgreso(
-        @RequestParam("doctoEgreso") String doctoEgreso,
-        Model model
-) {
-    List<EgresoPlano> detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
-    List<EgresoDetalleView> detalles = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
+    public String verDetalleEgreso(
+            @RequestParam("doctoEgreso") String doctoEgreso,
+            Model model
+    ) {
+        List<EgresoPlano> detalles = service.buscarDetallePorDoctoEgreso(doctoEgreso);
 
-    model.addAttribute("doctoEgreso", doctoEgreso);
-    model.addAttribute("detalles", detalles);
+        model.addAttribute("doctoEgreso", doctoEgreso);
+        model.addAttribute("detalles", detalles);
 
-    cargarTotalesDetalle(model, detallesPlano);
+        cargarTotalesDetalle(model, detalles);
 
-    return "egresosDetallado";
-}
+        return "egresosDetallado";
+    }
+
     @GetMapping("/detalles")
     public String verDetalleFactura(
             @RequestParam("doctoCausacion") String doctoCausacion,
+            @RequestParam(required = false) String doctoSa,
             Model model
     ) {
+        if (esDocumentoNota(doctoSa)) {
+            model.addAttribute("doctoSa", doctoSa);
+            model.addAttribute("infoNotas", service.buscarNotasPorDocumento(doctoSa, doctoCausacion));
+            return "detalleNota";
+        }
+
         model.addAttribute("doctoCausacion", doctoCausacion);
         model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
         return "detalleFactura";
     }
 
-    @GetMapping("/nota-detalle")
-    public String verDetalleNota(
-            @RequestParam("doctoProveedor") String doctoProveedor,
-            Model model
-    ) {
-        model.addAttribute("nota", service.buscarNotaPorDoctoProveedor(doctoProveedor));
-        return "detalleNotaPlano";
+    private boolean esDocumentoNota(String doctoSa) {
+        if (doctoSa == null || doctoSa.isBlank()) {
+            return false;
+        }
+
+        return Pattern.compile("ND\\d+-\\d+(?:-\\d+)?", Pattern.CASE_INSENSITIVE)
+                .matcher(doctoSa)
+                .find();
     }
 
         @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)

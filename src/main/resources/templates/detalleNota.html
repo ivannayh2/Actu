@@ -19,10 +19,7 @@
   <main class="container egresos-page">
     <div class="page-head">
       <div class="page-head-left">
-        <h1>Facturas relacionadas</h1>
-        <p class="subtitle-main">
-          Docto causación: <strong th:text="${doctoCausacion}"></strong>
-        </p>
+        <h1>Notas relacionadas</h1>
       </div>
       <div class="actions">
         <button class="btn" onclick="history.back()">Volver</button>
@@ -33,28 +30,18 @@
       <table>
         <thead>
           <tr>
-            <th>Documento referencia</th>
-            <th>Descripcion item</th>
-            <th>Codigo de barras</th>
-            <th>Cantidad</th>
-            <th>Valor subtotal</th>
-            <th>Valor impuestos locales</th>
-            <th>Valor neto</th>
+            <th>Documento</th>
+            <th>Nota</th>
           </tr>
         </thead>
         <tbody>
-  <tr th:each="f : ${facturas}">
-    <td th:text="${f.doctoReferencia != null ? f.doctoReferencia : '-'}"></td>
-    <td th:text="${f.descItem != null ? f.descItem : '-'}"></td>
-    <td th:text="${f.codigoBarraPrincipal != null ? f.codigoBarraPrincipal : '-'}"></td>
-    <td th:text="${f.cantidad != null ? f.cantidad : '-'}"></td>
-    <td th:text="${f.valorSubtotal != null ? '$ ' + #numbers.formatDecimal(f.valorSubtotal, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-    <td th:text="${f.valorImptos != null ? '$ ' + #numbers.formatDecimal(f.valorImptos, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-    <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+  <tr th:each="info : ${infoNotas}">
+    <td th:text="${doctoSa}"></td>
+    <td th:text="${info}"></td>
   </tr>
 
-  <tr th:if="${#lists.isEmpty(facturas)}">
-    <td colspan="7">No se encontraron facturas relacionadas.</td>
+  <tr th:if="${#lists.isEmpty(infoNotas)}">
+    <td colspan="2">No se encontró información en notas para este documento.</td>
   </tr>
 </tbody>
       </table>

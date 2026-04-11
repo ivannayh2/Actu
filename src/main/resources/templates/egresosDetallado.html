@@ -155,13 +155,16 @@
       background: transparent;
     }
 
-    .nota-relacionada .btn.btn-compact,
-    .acciones-factura .btn.btn-compact {
-      color: #0b57d0;
+    @media (max-width: 1200px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr 1fr;
+      }
     }
 
-    .fila-resumen td {
-      background: #fafafa;
+    @media (max-width: 700px) {
+      #filtersForm.filters-detallado {
+        grid-template-columns: 1fr;
+      }
     }
 
     .fila-resumen td:first-child {
@@ -326,30 +329,30 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters filters-with-busqueda filters-detallado" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+        <label for="proveedor">Proveedor</label>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+        <label for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+        <label for="doctoSa">Número factura</label>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+        <label for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
@@ -366,21 +369,13 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <button id="clearAllBtn" class="btn btn-compact" type="button">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
-
-        <div class="actions">
-        <button class="btn" type="button" onclick="history.back()">Volver</button>
-       </div>
-           
       </div>
-      
     </form>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
@@ -428,7 +423,7 @@
                 data-factura=${factura},
                 data-debito=${debitoValor},
                 data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
+                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
               ">
 
             <td class="factura-cell">
@@ -517,49 +512,47 @@
     </div>
 
     <div id="modal"
-         class="modal hidden"
-         th:if="${puedeCrearEgreso}"
-         aria-hidden="true"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="modalTitle">
-      <div class="modal-content" role="document">
-        <div class="modal-head">
-          <h3 id="modalTitle">Adjuntar soportes</h3>
-          <button id="closeModalBtn"
-                  class="btn"
-                  type="button"
-                  aria-label="Cerrar modal">X</button>
-        </div>
+     class="modal hidden"
+     th:if="${puedeCrearEgreso}"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="modalTitle">
+  <div class="modal-content" role="document">
+    <div class="modal-head">
+      <h3 id="modalTitle">Adjuntar soportes</h3>
+      <button id="closeModalBtn"
+              class="btn"
+              type="button"
+              aria-label="Cerrar modal">X</button>
+    </div>
 
-        <form class="modal-form"
-              method="post"
-              th:action="@{/egresos}"
-              enctype="multipart/form-data">
+    <form class="modal-form"
+          method="post"
+          th:action="@{/egresos}"
+          enctype="multipart/form-data">
 
-          <div class="field-row">
-            <label for="m-fechaDocumento">Fecha documento</label>
-            <input id="m-fechaDocumento"
-                   type="date"
-                   name="fechaDocumento"
-                   required>
-          </div>
+      <div class="field-row">
+        <label for="m-fechaDocumento">Fecha documento</label>
+        <input id="m-fechaDocumento"
+               type="date"
+               name="fechaDocumento"
+               required>
+      </div>
 
-          <div class="field-row">
-            <label for="m-soportes">Soportes</label>
-            <input id="m-soportes"
-                   type="file"
-                   name="soportes"
-                   accept="application/pdf,image/*"
-                   multiple>
-            <small>Puedes seleccionar archivos PDF o imágenes</small>
-          </div>
+      <div class="field-row">
+        <label for="m-soportes">Soportes</label>
+        <input id="m-soportes"
+               type="file"
+               name="soportes"
+               accept="application/pdf,image/*"
+               multiple>
+        <small>Solo puedes seleccionar archivos de tipo PDF</small>
+      </div>
 
-          <div class="modal-actions">
-            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-            <button class="btn btn-primary" type="submit">Guardar</button>
-          </div>
-        </form>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+        <button class="btn btn-primary" type="submit">Guardar</button>
       </div>
     </form>
   </div>
@@ -605,8 +598,7 @@
 
       document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('modal');
-        const openModalBtnTop = document.getElementById('openModalBtnTop');
-        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
+        const openModalButtons = document.querySelectorAll('.open-modal-btn');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -728,13 +720,9 @@
           });
         }
 
-        if (openModalBtnTop) {
-          openModalBtnTop.addEventListener('click', openModal);
-        }
-
-        if (openModalBtnBottom) {
-          openModalBtnBottom.addEventListener('click', openModal);
-        }
+        openModalButtons.forEach(function (button) {
+          button.addEventListener('click', openModal);
+        });
 
         if (closeModalBtn) {
           closeModalBtn.addEventListener('click', closeModal);

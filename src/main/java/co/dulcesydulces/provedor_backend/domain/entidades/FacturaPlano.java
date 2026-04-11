@@ -26,9 +26,6 @@ public class FacturaPlano {
     @JoinColumn(name = "upload_id", nullable = false)
     private Uploads uploads;
 
-    @Column(name = "tipo_docto", length = 50)
-    private String tipoDocto;
-
     @Column(name = "docto_causacion", length = 50)
     private String doctoCausacion;
 
@@ -93,14 +90,6 @@ public class FacturaPlano {
         this.uploads = uploads;
     }
 
-    public String getTipoDocto() {
-        return tipoDocto;
-    }
-
-    public void setTipoDocto(String tipoDocto) {
-        this.tipoDocto = tipoDocto;
-    }
-    
     public String getDoctoCausacion() {
         return doctoCausacion;
     }
