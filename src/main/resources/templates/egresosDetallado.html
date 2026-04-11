@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
@@ -62,34 +62,42 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    .cell-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      min-width: 280px;
+    .factura-cell {
+      min-width: 0;
+    }
+
+    .detalle-cell {
+      min-width: 0;
+      white-space: nowrap;
     }
 
     .factura-linea {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
       line-height: 1.2;
     }
 
     .factura-principal {
-      font-weight: 700;
+      font-family: "Instrument Sans", "Segoe UI", sans-serif;
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
       color: #2f3640;
     }
 
     .nota-relacionada {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-left: 22px;
-      line-height: 1.2;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      margin-left: 0;
+      line-height: 1;
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      flex-wrap: nowrap;
     }
 
     .nota-relacionada strong {
@@ -97,16 +105,43 @@
       font-weight: 700;
       color: #d98500;
       letter-spacing: 0.2px;
+      display: block;
+      width: auto;
+      white-space: nowrap;
+      line-height: 1;
+      text-align: left;
     }
 
     .acciones-factura,
     .acciones-nota {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
     }
 
-    .cell-actions .btn.btn-compact {
+    .acciones-nota {
+      margin-top: 2px;
+      justify-content: flex-start;
+      width: auto;
+    }
+
+    .detalle-row-con-nota td {
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    .detalle-row-con-nota .nota-relacionada {
+      line-height: 0.95;
+    }
+
+    .detalle-row-con-nota .acciones-nota .btn.btn-compact {
+      font-size: 0.84rem;
+      line-height: 1;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .detalle-cell .btn.btn-compact {
       padding: 0;
       min-height: auto;
       font-size: 0.9rem;
@@ -115,7 +150,7 @@
       border: 0;
     }
 
-    .cell-actions .btn.btn-compact:hover {
+    .detalle-cell .btn.btn-compact:hover {
       box-shadow: none;
       background: transparent;
     }
@@ -128,6 +163,152 @@
     .fila-resumen td {
       background: #fafafa;
     }
+
+    .fila-resumen td:first-child {
+      box-shadow: inset 3px 0 0 #cfd8e6;
+    }
+
+    .fila-resumen:hover td {
+      background: #f1f5fb;
+    }
+
+    .fila-resumen:hover td:first-child {
+      box-shadow: inset 3px 0 0 #b7c6df;
+    }
+
+    #filaTotales td {
+      background: #f3f6fb;
+    }
+
+    #filaTotales td:first-child {
+      box-shadow: inset 3px 0 0 #8aa2c6;
+    }
+
+    #filaTotales:hover td {
+      background: #e8eff9;
+    }
+
+    #filaTotales:hover td:first-child {
+      box-shadow: inset 3px 0 0 #6f8fb9;
+    }
+
+    .egresos-page .table-wrap table th:first-child,
+    .egresos-page .table-wrap table td:first-child {
+      padding-left: 16px;
+    }
+
+    .egresos-page .table-wrap {
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      width: min(99%, 1240px);
+      max-width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .egresos-page .table-wrap table {
+      width: 100%;
+      margin: 0 auto;
+      table-layout: auto;
+    }
+
+    .egresos-page .table-wrap table th,
+    .egresos-page .table-wrap table td {
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(1),
+    .egresos-page .table-wrap table thead th:nth-child(2),
+    .egresos-page .table-wrap table thead th:nth-child(3),
+    .egresos-page .table-wrap table tbody td:nth-child(1),
+    .egresos-page .table-wrap table tbody td:nth-child(2),
+    .egresos-page .table-wrap table tbody td:nth-child(3) {
+      text-align: left;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(4),
+    .egresos-page .table-wrap table thead th:nth-child(5),
+    .egresos-page .table-wrap table tbody td:nth-child(4),
+    .egresos-page .table-wrap table tbody td:nth-child(5) {
+      text-align: right;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(5),
+    .egresos-page .table-wrap table tbody td:nth-child(5) {
+      padding-right: 22px;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(1),
+    .egresos-page .table-wrap table tbody td:nth-child(1) {
+      padding-right: 10px;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(2),
+    .egresos-page .table-wrap table tbody td:nth-child(2) {
+      padding-left: 8px;
+    }
+
+    .egresos-page .table-wrap table col.col-factura {
+      width: 270px;
+    }
+
+    .egresos-page .table-wrap table col.col-nota {
+      width: 220px;
+    }
+
+    .egresos-page .table-wrap table col.col-detalle {
+      width: auto;
+    }
+
+    .egresos-page .table-wrap table col.col-debito,
+    .egresos-page .table-wrap table col.col-credito {
+      width: auto;
+    }
+
+    .nota-cell {
+      min-width: 0;
+    }
+
+    .nota-cell .nota-relacionada,
+    .nota-cell .acciones-nota {
+      width: auto;
+      min-width: 0;
+    }
+
+    .egresos-page #filtersForm.filters {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .egresos-page #filtersForm.filters .field {
+      flex: 0 0 180px;
+      min-width: 160px;
+    }
+
+    .egresos-page #filtersForm.filters .smart-search-actions {
+      flex: 0 0 auto;
+      padding-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    .egresos-page #filtersForm.filters .filters-actions {
+      grid-column: auto;
+      flex: 0 0 auto;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
   </style>
 </head>
 <body>
@@ -203,14 +384,23 @@
     </form>
 
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes📎</button>
+      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
     </div>
 
     <div class="table-wrap">
       <table>
+        <colgroup>
+          <col class="col-factura">
+          <col class="col-nota">
+          <col class="col-detalle">
+          <col class="col-debito">
+          <col class="col-credito">
+        </colgroup>
         <thead>
           <tr>
             <th>Número factura</th>
+            <th></th>
+            <th>Detalle</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -218,11 +408,11 @@
 
         <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="3">No se encontraron facturas relacionadas.</td>
+            <td colspan="5">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="3">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="5">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -233,6 +423,7 @@
                 creditoValor=${valorAjustado < 0 ? valorAjustado.abs() : 0}
               "
               class="detalle-row"
+              th:classappend="${d.mostrarNotaRelacionada} ? ' detalle-row-con-nota' : ''"
               th:attr="
                 data-factura=${factura},
                 data-debito=${debitoValor},
@@ -240,20 +431,16 @@
                 data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
               ">
 
-            <td class="cell-actions">
+            <td class="factura-cell">
               <div class="factura-linea">
                 <div class="factura-principal">
                   <span th:text="${factura}"></span>
                 </div>
-
-                <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
-                  <a class="btn btn-compact"
-                     th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                    Ver factura
-                  </a>
-                </div>
               </div>
 
+            </td>
+
+            <td class="nota-cell">
               <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
                 <strong th:text="${d.doctoProveedorRelacionado}"></strong>
 
@@ -264,6 +451,19 @@
                   </a>
                 </div>
               </div>
+
+              <span th:if="${!d.mostrarNotaRelacionada}">&nbsp;</span>
+            </td>
+
+            <td class="detalle-cell">
+              <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                  Ver detalle
+                </a>
+              </div>
+
+              <span th:if="${d.doctoCausacion == null}">-</span>
             </td>
 
             <td class="text-right"
@@ -280,30 +480,36 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Valor documento</strong></td>
+            <td>Valor documento</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td><strong>Pronto pago</strong></td>
+            <td>Pronto pago</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td><strong>Total</strong></td>
+            <td>Total</td>
+            <td></td>
+            <td></td>
             <td class="text-right">
-              <strong id="totalDebitosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalDebitosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
             <td class="text-right">
-              <strong id="totalCreditosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalCreditosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
         </tbody>

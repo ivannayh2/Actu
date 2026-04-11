@@ -134,7 +134,7 @@
 
 .egresos-page .filters-with-busqueda,
 .egresos-list-page .filters-with-busqueda {
-	grid-template-columns: repeat(4, minmax(210px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
 
 .egresos-page .filters .field-proveedor {
@@ -227,12 +227,19 @@
 
 .egresos-page .table-wrap table,
 .egresos-page table {
-	width: 100%;
+	width: min(84%, 980px);
+	margin: 0 auto;
 	border: none;
 	box-shadow: none;
-	border-collapse: separate;
+	border-collapse: collapse;
 	border-spacing: 0;
 	line-height: 1.25;
+	table-layout: auto;
+}
+
+.egresos-page thead th:nth-child(2),
+.egresos-page tbody td:nth-child(2) {
+	width: 140px;
 }
 
 .egresos-page thead th {
@@ -244,7 +251,7 @@
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
 	line-height: 1.2;
-	padding: 12px 14px;
+	padding: 10px 12px;
 	white-space: nowrap;
 	text-align: left;
 }
@@ -255,9 +262,14 @@
 	color: #1D1D1F;
 	font-size: 14px;
 	line-height: 1.25;
-	padding: 12px 14px;
+	padding: 10px 12px;
 	vertical-align: middle;
 	text-align: left;
+}
+
+.egresos-page thead th:last-child,
+.egresos-page tbody td:last-child {
+	padding-right: 36px;
 }
 
 .egresos-page tbody tr:nth-child(even) td,
@@ -275,9 +287,9 @@
 }
 
 .egresos-page .cell-actions {
-	width: 100px;
+	width: auto;
 	text-align: left;
-	white-space: nowrap;
+	white-space: normal;
 	padding: 11px 4px;
 }
 
@@ -394,6 +406,11 @@
 	font-family: "Instrument Sans", "Segoe UI", sans-serif;
 	font-variant-numeric: tabular-nums;
 	font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.egresos-page thead th:first-child,
+.egresos-page tbody td:first-child {
+	padding-left: 20px;
 }
 
 .egresos-page tbody td:first-child {
