@@ -77,6 +77,17 @@
       </button>
     </div>
 
+    <div class="page-actions page-actions-tight">
+      <a class="btn"
+         th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
+        Descargar PDF
+      </a>
+      <a class="btn"
+         th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
+        Descargar Excel
+      </a>
+    </div>
+
     <div class="table-wrap">
       <table>
         <thead>

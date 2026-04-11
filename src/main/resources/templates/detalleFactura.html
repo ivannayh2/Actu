@@ -11,6 +11,73 @@
   <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
   <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
   <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+
+  <style>
+    .egresos-page .table-wrap.detalle-wrap {
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      width: min(99%, 1240px);
+      max-width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap table {
+      width: 100%;
+      margin: 0 auto;
+      table-layout: auto;
+      border-collapse: collapse;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap th,
+    .egresos-page .table-wrap.detalle-wrap td {
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:first-child,
+    .egresos-page .table-wrap.detalle-wrap tbody td:first-child {
+      padding-left: 16px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:last-child,
+    .egresos-page .table-wrap.detalle-wrap tbody td:last-child {
+      padding-right: 16px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(4),
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(5),
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(6),
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(7),
+    .egresos-page .table-wrap.detalle-wrap tbody td:nth-child(4),
+    .egresos-page .table-wrap.detalle-wrap tbody td:nth-child(5),
+    .egresos-page .table-wrap.detalle-wrap tbody td:nth-child(6),
+    .egresos-page .table-wrap.detalle-wrap tbody td:nth-child(7) {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(1) {
+      width: 170px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(2) {
+      width: 320px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(3) {
+      width: 210px;
+    }
+
+    .egresos-page .table-wrap.detalle-wrap thead th:nth-child(4) {
+      width: 110px;
+    }
+  </style>
 </head>
 <body>
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
@@ -29,7 +96,7 @@
       </div>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap detalle-wrap">
       <table>
         <thead>
           <tr>
