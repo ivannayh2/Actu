@@ -287,12 +287,32 @@
           <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
+
+        <div class="actions">
+        <button class="btn" type="button" onclick="history.back()">Volver</button>
+       </div>
+           
       </div>
+      
     </form>
 
+    <div class="actions-bar page-actions-tight">
+      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
+        <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
+      </div>
 
-    <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes📎</button>
+      <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="file-text"></i>
+          Descargar PDF
+        </a>
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="sheet"></i>
+          Descargar Excel
+        </a>
+      </div>
     </div>
 
 
@@ -308,7 +328,8 @@
         <thead>
           <tr>
             <th>Número factura</th>
-            <th>Acciones</th>
+            <th></th>
+            <th>Detalle</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -316,11 +337,11 @@
 
         <tbody id="tablaDetallesBody" data-page="0" data-items-per-page="10">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="4">No se encontraron facturas relacionadas.</td>
+            <td colspan="5">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="5">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -331,23 +352,47 @@
                 creditoValor=${valorAjustado < 0 ? valorAjustado.abs() : 0}
               "
               class="detalle-row"
+              th:classappend="${d.mostrarNotaRelacionada} ? ' detalle-row-con-nota' : ''"
               th:attr="
                 data-factura=${factura},
                 data-debito=${debitoValor},
                 data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
+                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
               ">
 
-            <td>
-              <span th:text="${factura}"></span>
+            <td class="factura-cell">
+              <div class="factura-linea">
+                <div class="factura-principal">
+                  <span th:text="${factura}"></span>
+                </div>
+              </div>
+
             </td>
 
-            <td class="cell-actions">
-              <a class="btn btn-compact"
-                 th:if="${d.doctoCausacion != null}"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion},doctoSa=${d.doctoSa})}">
-                Ver detalle
-              </a>
+            <td class="nota-cell">
+              <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
+                <strong th:text="${d.doctoProveedorRelacionado}"></strong>
+
+                <div class="acciones-nota">
+                  <a class="btn btn-compact"
+                     th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
+                    Ver nota
+                  </a>
+                </div>
+              </div>
+
+              <span th:if="${!d.mostrarNotaRelacionada}">&nbsp;</span>
+            </td>
+
+            <td class="detalle-cell">
+              <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                  Ver detalle
+                </a>
+              </div>
+
+              <span th:if="${d.doctoCausacion == null}">-</span>
             </td>
 
             <td class="text-right"
@@ -364,30 +409,36 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2"><strong>Valor documento</strong></td>
+            <td>Valor documento</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2"><strong>Pronto pago</strong></td>
+            <td>Pronto pago</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
-              <strong th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="2"><strong>Total</strong></td>
+            <td>Total</td>
+            <td></td>
+            <td></td>
             <td class="text-right">
-              <strong id="totalDebitosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalDebitosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
             <td class="text-right">
-              <strong id="totalCreditosView"
-                      th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></strong>
+              <span id="totalCreditosView"
+                    th:text="${'$ ' + #numbers.formatDecimal(totalCreditos + totalProntoPago + totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
             </td>
           </tr>
         </tbody>
@@ -416,47 +467,49 @@
     </div>
 
     <div id="modal"
-     class="modal hidden"
-     th:if="${puedeCrearEgreso}"
-     aria-hidden="true"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="modalTitle">
-  <div class="modal-content" role="document">
-    <div class="modal-head">
-      <h3 id="modalTitle">Adjuntar soportes</h3>
-      <button id="closeModalBtn"
-              class="btn"
-              type="button"
-              aria-label="Cerrar modal">X</button>
-    </div>
+         class="modal hidden"
+         th:if="${puedeCrearEgreso}"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modalTitle">
+      <div class="modal-content" role="document">
+        <div class="modal-head">
+          <h3 id="modalTitle">Adjuntar soportes</h3>
+          <button id="closeModalBtn"
+                  class="btn"
+                  type="button"
+                  aria-label="Cerrar modal">X</button>
+        </div>
 
-    <form class="modal-form"
-          method="post"
-          th:action="@{/egresos}"
-          enctype="multipart/form-data">
+        <form class="modal-form"
+              method="post"
+              th:action="@{/egresos}"
+              enctype="multipart/form-data">
 
-      <div class="field-row">
-        <label for="m-fechaDocumento">Fecha documento</label>
-        <input id="m-fechaDocumento"
-               type="date"
-               name="fechaDocumento"
-               required>
-      </div>
+          <div class="field-row">
+            <label for="m-fechaDocumento">Fecha documento</label>
+            <input id="m-fechaDocumento"
+                   type="date"
+                   name="fechaDocumento"
+                   required>
+          </div>
 
-      <div class="field-row">
-        <label for="m-soportes">Soportes</label>
-        <input id="m-soportes"
-               type="file"
-               name="soportes"
-               accept="application/pdf,image/*"
-               multiple>
-        <small>Solo puedes seleccionar archivos de tipo PDF</small>
-      </div>
+          <div class="field-row">
+            <label for="m-soportes">Soportes</label>
+            <input id="m-soportes"
+                   type="file"
+                   name="soportes"
+                   accept="application/pdf,image/*"
+                   multiple>
+            <small>Puedes seleccionar archivos PDF o imágenes</small>
+          </div>
 
-      <div class="modal-actions">
-        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-        <button class="btn btn-primary" type="submit">Guardar</button>
+          <div class="modal-actions">
+            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+          </div>
+        </form>
       </div>
     </form>
   </div>
@@ -468,13 +521,6 @@
   </button>
 </div>
 
-
-
-
-
-
-
-    </div>
   </main>
 
   <script>
@@ -510,7 +556,8 @@
       document.addEventListener('DOMContentLoaded', function () {
         // ========== ELEMENTOS DEL DOM ==========
         const modal = document.getElementById('modal');
-        const openModalButtons = document.querySelectorAll('.open-modal-btn');
+        const openModalBtnTop = document.getElementById('openModalBtnTop');
+        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 

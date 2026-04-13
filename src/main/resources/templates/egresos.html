@@ -24,16 +24,9 @@
     <span class="egresos-header-proveedor-nombre" th:text="${nombreUsuario}"></span>
   </div>
 
-  <main class="container egresos-page egresos-list-page">
+  <main class="container egresos-page">
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
-
-    <div class="page-head">
-      <div class="page-head-left">
-        <h1>Comprobante egreso</h1>
-        <p class="subtitle-main">Listado general de egresos según filtros y permisos del usuario</p>
-      </div>
-    </div>
 
 
     <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
@@ -58,15 +51,15 @@
         </div>
       </div>
 
-      <div class="field field-busqueda-inteligente">
+      <div class="field" style="min-width:220px;">
         <label for="busquedaInteligente">Búsqueda inteligente</label>
         <div class="control">
-          <input id="busquedaInteligente" type="search" name="busquedaInteligente" placeholder="Buscar por descripción, valor, etc." th:value="${busquedaInteligente}">
+          <input id="busquedaInteligente" type="search" name="doctoSa" placeholder="Buscar por descripción, valor, etc." th:value="${doctoSa}">
         </div>
       </div>
 
 
-      <div class="filters-actions filters-actions-inline">
+      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
         <button class="btn btn-primary btn-compact" type="submit">
           Filtrar
         </button>
@@ -76,26 +69,33 @@
       </div>
     </form>
 
+    <div class="actions-bar page-actions-tight">
+      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
+        <button class="btn btn-primary" type="button" onclick="openModal()">
+         Adjuntar soportes
+        </button>
+      </div>
 
-    <div class="page-actions page-actions-tight"
-     th:if="${puedeCrearEgreso}">
-      <button class="btn btn-primary" type="button" onclick="openModal()">
-       Adjuntar soportes
-      </button>
+      <div class="page-actions actions-bar-right">
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="file-text"></i>
+          Descargar PDF
+        </a>
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="sheet"></i>
+          Descargar Excel
+        </a>
+      </div>
     </div>
-
-
-
-
-
-
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Numero egreso</th>
-            <th>Acciones</th>
+            <th>Detalle</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -125,21 +125,13 @@
           </tr>
 
           <tr th:if="${#lists.isEmpty(detalle)}">
-            <td colspan="7" class="empty-state-cell">No se encontraron registros en egresos_plano.</td>
+            <td colspan="6" style="text-align: center; padding: 20px;">No se encontraron registros en egresos_plano.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div id="modal" class="modal hidden" onclick="closeModal()">
-
-
-
-
-
-
-
-
 
       <div class="modal-content" onclick="event.stopPropagation()">
   <div class="modal-head">
@@ -176,32 +168,6 @@
     </div>
   </form>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </div>
   </main>
