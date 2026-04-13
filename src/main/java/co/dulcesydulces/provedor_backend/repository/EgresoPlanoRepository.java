@@ -106,5 +106,34 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("fecha") LocalDate fecha
     );
 
-    boolean existsByDoctoEgreso(String doctoEgreso);
+    @Query("""
+        SELECT e
+        FROM EgresoPlano e
+        WHERE (:documento IS NULL OR :documento = '' OR
+               UPPER(REPLACE(REPLACE(REPLACE(e.doctoEgreso, '-', ''), ' ', ''), '.', '')) LIKE CONCAT('%', UPPER(:documento), '%'))
+          AND (:doctoCausacion IS NULL OR :doctoCausacion = '' OR
+               UPPER(REPLACE(REPLACE(REPLACE(e.doctoCausacion, '-', ''), ' ', ''), '.', '')) LIKE CONCAT('%', UPPER(:doctoCausacion), '%'))
+    """)
+    List<EgresoPlano> buscarNotasParaDetalle(
+        @Param("documento") String documento,
+        @Param("doctoCausacion") String doctoCausacion
+    );
+
+    @Query("""
+        SELECT e
+        FROM EgresoPlano e
+        WHERE UPPER(REPLACE(REPLACE(REPLACE(e.doctoSa, '-', ''), ' ', ''), '.', '')) = UPPER(:doctoSaNormalizado)
+    """)
+    List<EgresoPlano> buscarNotasPorDoctoSaNormalizado(
+        @Param("doctoSaNormalizado") String doctoSaNormalizado
+    );
+
+    @Query("""
+    SELECT e
+    FROM EgresoPlano e
+    WHERE UPPER(TRIM(e.doctoCausacion)) = UPPER(TRIM(:doctoCausacion))
+""")
+List<EgresoPlano> buscarDetallePorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
+
+    boolean existsByDoctoCausacion(String doctoCausacion);
 }
