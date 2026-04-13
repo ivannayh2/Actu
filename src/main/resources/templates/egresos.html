@@ -77,12 +77,12 @@
       </div>
 
       <div class="page-actions actions-bar-right">
-        <a class="btn btn-export"
+        <a class="btn btn-export btn-export-pdf"
            th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
           <i data-lucide="file-text"></i>
           Descargar PDF
         </a>
-        <a class="btn btn-export"
+        <a class="btn btn-export btn-export-excel"
            th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
           <i data-lucide="sheet"></i>
           Descargar Excel
