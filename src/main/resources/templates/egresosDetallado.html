@@ -62,81 +62,6 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    .pagination-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 16px;
-      padding: 12px 14px;
-      background: #ffffff;
-      border: 1px solid #E5E5E5;
-      border-radius: 10px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .pagination-info {
-      font-size: 13px;
-      color: #666;
-      font-weight: 500;
-    }
-
-    .pagination-controls {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .pagination-btn {
-      padding: 6px 10px;
-      border: 1px solid #E5E5E5;
-      background: #ffffff;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      color: #1f2937;
-      transition: all 0.2s ease;
-    }
-
-    .pagination-btn:hover:not(:disabled) {
-      background: #f6f6f6;
-      border-color: #cad7ed;
-      color: #0051a5;
-    }
-
-    .pagination-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .pagination-btn.active {
-      background: #0051a5;
-      color: #ffffff;
-      border-color: #0051a5;
-    }
-
-    .items-per-page {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-    }
-
-    .items-per-page select {
-      padding: 6px 8px;
-      border: 1px solid #E5E5E5;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      background: #ffffff;
-      color: #1f2937;
-    }
-
-    .items-per-page select:hover {
-      border-color: #cad7ed;
-    }
-
     /* ========== LOADER/SPINNER ========== */
     .loader-overlay {
       position: fixed;
@@ -302,12 +227,12 @@
       </div>
 
       <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
-        <a class="btn btn-export"
+        <a class="btn btn-export btn-export-pdf"
            th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
           <i data-lucide="file-text"></i>
           Descargar PDF
         </a>
-        <a class="btn btn-export"
+        <a class="btn btn-export btn-export-excel"
            th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
           <i data-lucide="sheet"></i>
           Descargar Excel
@@ -335,7 +260,7 @@
           </tr>
         </thead>
 
-        <tbody id="tablaDetallesBody" data-page="0" data-items-per-page="10">
+        <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
             <td colspan="5">No se encontraron facturas relacionadas.</td>
           </tr>
@@ -374,7 +299,7 @@
                 <strong th:text="${d.doctoProveedorRelacionado}"></strong>
 
                 <div class="acciones-nota">
-                  <a class="btn btn-compact"
+                  <a class="btn btn-compact btn-ver-nota"
                      th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
                     Ver nota
                   </a>
@@ -386,7 +311,7 @@
 
             <td class="detalle-cell">
               <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
-                <a class="btn btn-compact"
+                <a class="btn btn-compact btn-ver-detalle"
                    th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
                   Ver detalle
                 </a>
@@ -443,27 +368,6 @@
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <div id="paginationContainer" class="pagination-container" style="display: none;">
-      <div class="pagination-info">
-        <span id="paginationInfo">Mostrando 0 de 0 registros</span>
-      </div>
-      <div class="pagination-controls" id="paginationControls">
-        <button id="prevPageBtn" class="pagination-btn" type="button" title="Página anterior">← Anterior</button>
-        <div id="pageNumbersContainer" style="display: flex; gap: 2px;"></div>
-        <button id="nextPageBtn" class="pagination-btn" type="button" title="Página siguiente">Siguiente →</button>
-      </div>
-      <div class="items-per-page">
-        <label for="itemsPerPageSelect">Mostrar:</label>
-        <select id="itemsPerPageSelect">
-          <option value="5">5 por página</option>
-          <option value="10">10 por página</option>
-          <option value="20">20 por página</option>
-          <option value="50">50 por página</option>
-          <option value="100" selected>100 por página</option>
-        </select>
-      </div>
     </div>
 
     <div id="modal"
@@ -558,6 +462,7 @@
         const modal = document.getElementById('modal');
         const openModalBtnTop = document.getElementById('openModalBtnTop');
         const openModalBtnBottom = document.getElementById('openModalBtnBottom');
+        const openModalButtons = [openModalBtnTop, openModalBtnBottom].filter(Boolean);
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -580,17 +485,6 @@
         const tableWrap = document.getElementById('tableWrap');
         let filterTimeout;
 
-        // ========== PAGINACIÓN ==========
-        const tablaDetallesBody = document.getElementById('tablaDetallesBody');
-        const paginationContainer = document.getElementById('paginationContainer');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-        const itemsPerPageSelect = document.getElementById('itemsPerPageSelect');
-        const paginationInfo = document.getElementById('paginationInfo');
-        const pageNumbersContainer = document.getElementById('pageNumbersContainer');
-
-        let currentPage = 0;
-        let itemsPerPage = parseInt(itemsPerPageSelect.value);
         let filteredRows = [];
         let allTotals = { debitos: 0, creditos: 0 };
 
@@ -603,47 +497,7 @@
           };
         });
 
-        // ========== FUNCIONES DE PAGINACIÓN ==========
-        function updatePaginationControls() {
-          if (filteredRows.length === 0) {
-            paginationContainer.style.display = 'none';
-            return;
-          }
-
-          paginationContainer.style.display = 'flex';
-
-          const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-          const startIndex = currentPage * itemsPerPage;
-          const endIndex = Math.min(startIndex + itemsPerPage, filteredRows.length);
-
-          // Actualizar info de paginación
-          paginationInfo.textContent = 'Mostrando ' + (startIndex + 1) + ' a ' + endIndex + ' de ' + filteredRows.length + ' registros';
-
-          // Habilitar/deshabilitar botones
-          prevPageBtn.disabled = currentPage === 0;
-          nextPageBtn.disabled = currentPage >= totalPages - 1;
-
-          // Generar números de página
-          pageNumbersContainer.innerHTML = '';
-          const maxButtons = 5;
-          let startPage = Math.max(0, currentPage - Math.floor(maxButtons / 2));
-          let endPage = Math.min(totalPages - 1, startPage + maxButtons - 1);
-          startPage = Math.max(0, endPage - maxButtons + 1);
-
-          for (let i = startPage; i <= endPage; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
-            btn.type = 'button';
-            btn.textContent = (i + 1);
-            btn.addEventListener('click', function () {
-              currentPage = i;
-              renderPage();
-            });
-            pageNumbersContainer.appendChild(btn);
-          }
-        }
-
-        function renderPage() {
+        function renderVisibleRows() {
           // Ocultar todas las filas
           rows.forEach(function (row) {
             row.classList.add('table-hidden');
@@ -651,26 +505,14 @@
 
           if (filteredRows.length === 0) {
             noResultsRow.classList.remove('table-hidden');
-            paginationContainer.style.display = 'none';
             return;
           }
 
           noResultsRow.classList.add('table-hidden');
 
-          // Mostrar filas de la página actual
-          const startIndex = currentPage * itemsPerPage;
-          const endIndex = Math.min(startIndex + itemsPerPage, filteredRows.length);
-
-          for (let i = startIndex; i < endIndex; i++) {
-            filteredRows[i].element.classList.remove('table-hidden');
-          }
-
-          // Actualizar controles de paginación
-          updatePaginationControls();
-        }
-
-        function resetPagination() {
-          currentPage = 0;
+          filteredRows.forEach(function (row) {
+            row.element.classList.remove('table-hidden');
+          });
         }
 
         function showLoader() {
@@ -731,9 +573,6 @@
             // Guardar totales de búsqueda
             allTotals = { debitos: totalDebitos, creditos: totalCreditos };
 
-            // Resetear paginación cuando se filtra
-            resetPagination();
-
             if (totalsRow) {
               totalsRow.classList.toggle('table-hidden', filteredRows.length === 0);
             }
@@ -747,7 +586,7 @@
             }
 
             updateSearchStatus(filteredRows.length, rowData.length, !!term);
-            renderPage();
+            renderVisibleRows();
             
             hideLoader();
           }, 300);
@@ -763,7 +602,7 @@
         // ========== INICIALIZACIÓN ==========
         // Inicializar con todos los registros
         filteredRows = rowData.slice();
-        renderPage();
+        renderVisibleRows();
 
         if (clearAllBtn) {
           clearAllBtn.addEventListener('click', function () {
@@ -790,28 +629,6 @@
             }
           });
         }
-
-        // ========== EVENT LISTENERS DE PAGINACIÓN ==========
-        prevPageBtn.addEventListener('click', function () {
-          if (currentPage > 0) {
-            currentPage--;
-            renderPage();
-          }
-        });
-
-        nextPageBtn.addEventListener('click', function () {
-          const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-          if (currentPage < totalPages - 1) {
-            currentPage++;
-            renderPage();
-          }
-        });
-
-        itemsPerPageSelect.addEventListener('change', function () {
-          itemsPerPage = parseInt(this.value);
-          currentPage = 0;
-          renderPage();
-        });
 
         openModalButtons.forEach(function (button) {
           button.addEventListener('click', openModal);

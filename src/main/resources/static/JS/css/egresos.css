@@ -311,6 +311,22 @@
 	color: #003d7a;
 }
 
+.egresos-page .btn-ver-detalle {
+	color: #0051a5;
+}
+
+.egresos-page .btn-ver-detalle:hover {
+	color: #003d7a;
+}
+
+.egresos-page .btn-ver-nota {
+	color: #d97706;
+}
+
+.egresos-page .btn-ver-nota:hover {
+	color: #b45309;
+}
+
 .egresos-page .link-detalle {
 	display: inline-block;
 	color: #0051a5;
@@ -705,6 +721,42 @@
 
 .egresos-page .page-actions .btn-export:active {
 	box-shadow: none;
+}
+
+.egresos-page .page-actions .btn-export-pdf {
+	background: #fee2e2;
+	border-color: #fca5a5;
+	color: #b91c1c;
+}
+
+.egresos-page .page-actions .btn-export-pdf:hover {
+	background: #fecaca;
+	border-color: #f87171;
+	color: #991b1b;
+}
+
+.egresos-page .page-actions .btn-export-pdf:active {
+	background: #fca5a5;
+	border-color: #ef4444;
+	color: #7f1d1d;
+}
+
+.egresos-page .page-actions .btn-export-excel {
+	background: #dcfce7;
+	border-color: #86efac;
+	color: #166534;
+}
+
+.egresos-page .page-actions .btn-export-excel:hover {
+	background: #bbf7d0;
+	border-color: #4ade80;
+	color: #14532d;
+}
+
+.egresos-page .page-actions .btn-export-excel:active {
+	background: #86efac;
+	border-color: #22c55e;
+	color: #052e16;
 }
 
 .egresos-page .page-actions .btn i {
