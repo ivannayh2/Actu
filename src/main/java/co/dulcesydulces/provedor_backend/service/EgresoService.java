@@ -194,7 +194,7 @@ public class EgresoService {
                     );
                 }
 
-                boolean existeDocto = egresoPlanoRepository.existsByDoctoEgreso(doctoEgreso);
+                boolean existeDocto = egresoPlanoRepository.existsByDoctoCausacion(doctoEgreso);
                 if (!existeDocto) {
                     throw new RuntimeException(
                             "El docto_egreso " + doctoEgreso + " no existe en egresos_plano"
