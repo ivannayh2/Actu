@@ -81,8 +81,8 @@ body.intro-active .card {
 
 body.intro-exit .logo-intro-btn {
   opacity: 0;
-  transform: scale(1.12);
-  filter: blur(0.8px);
+  transform: scale(1.45);
+  filter: blur(2px);
 }
 
 body.intro-exit .logo-intro {
@@ -102,11 +102,12 @@ body.intro-skip .logo-intro {
 .logo-box {
   display: flex;
   justify-content: center;
+  margin-top: 6px;
   margin-bottom: 8px;
 }
 
 .logo-box img {
-  width: 190px;
+  width: 208px;
   max-width: 100%;
   height: auto;
   display: block;
@@ -177,25 +178,13 @@ body.intro-skip .logo-intro {
   cursor: pointer;
   padding: 4px;
   border-radius: 8px;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: auto;
   margin-top: 0;
-  z-index: 2;
-}
-
-.toggle-pass-icon {
-  width: 14px;
-  height: 14px;
-  display: block;
-  object-fit: contain;
 }
 
 .toggle-pass:hover {
-  background: transparent;
-  color: #64748b;
+  background: #eef4ff;
+  color: #1e3a8a;
   transform: translateY(-50%);
   box-shadow: none;
 }
@@ -268,6 +257,6 @@ body.intro-skip .logo-intro {
   }
 
   .logo-box img {
-    width: 132px;
+    width: 142px;
   }
 }

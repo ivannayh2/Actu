@@ -2,9 +2,10 @@ package co.dulcesydulces.provedor_backend.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoCreateRequest;
+import co.dulcesydulces.provedor_backend.domain.dto.EgresoDetalleView;
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoPlanoResumen;
 import co.dulcesydulces.provedor_backend.domain.entidades.Egreso;
 import co.dulcesydulces.provedor_backend.domain.entidades.EgresoPlano;
 import co.dulcesydulces.provedor_backend.domain.entidades.EgresoSoportePF;
 import co.dulcesydulces.provedor_backend.domain.entidades.FacturaPlano;
+import co.dulcesydulces.provedor_backend.domain.entidades.MapasNotasRelacionadas;
 import co.dulcesydulces.provedor_backend.domain.entidades.NotaPlano;
 import co.dulcesydulces.provedor_backend.repository.EgresoPlanoRepository;
 import co.dulcesydulces.provedor_backend.repository.EgresoRepository;
@@ -125,128 +128,45 @@ public class EgresoService {
         return List.of();
     }
 
+    public List<EgresoDetalleView> buscarDetalleVistaSegunUsuario(
+            Authentication auth,
+            String proveedor,
+            String numeroEgreso,
+            String doctoSa,
+            LocalDate fechaDocumento
+    ) {
+        List<EgresoPlano> detalles = buscarDetalleSegunUsuario(
+                auth,
+                proveedor,
+                numeroEgreso,
+                doctoSa,
+                fechaDocumento
+        );
+
+        MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+
+        return detalles.stream()
+                .map(detalle -> mapearDetalleVista(detalle, mapas))
+                .collect(Collectors.toList());
+    }
+
     public List<EgresoPlano> buscarDetallePorDoctoEgreso(String doctoEgreso) {
         return egresoPlanoRepository.buscarDetallePorDoctoEgreso(doctoEgreso);
     }
 
     public List<FacturaPlano> buscarFacturasPorDoctoCausacion(String doctoCausacion) {
-        return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion);
+    if (doctoCausacion == null || doctoCausacion.trim().isEmpty()) {
+        return List.of();
     }
 
-    public List<String> buscarNotasPorDocumento(String documento, String doctoCausacion) {
-        String docNormalizado = normalizarDocumento(documento);
-        String causacionNormalizada = normalizarDocumento(doctoCausacion);
+    return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion.trim());
+}
 
-        String claveNd = extraerClaveNd(documento);
-        boolean esNd = !claveNd.isBlank();
-
-        if (esNd) {
-            String ndNormalizadoExacto = normalizarDocumento(claveNd);
-            String ndNormalizadoBase = normalizarDocumento(removerSufijoCeros(claveNd));
-
-            LinkedHashSet<String> notas = new LinkedHashSet<>();
-            agregarNotasDesdePlano(ndNormalizadoExacto, notas);
-
-            if (!ndNormalizadoBase.equals(ndNormalizadoExacto)) {
-                agregarNotasDesdePlano(ndNormalizadoBase, notas);
-            }
-
-            if (!notas.isEmpty()) {
-                return notas.stream().toList();
-            }
-
-            LinkedHashSet<String> notasEgreso = new LinkedHashSet<>();
-            agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoExacto, notasEgreso);
-
-            if (!ndNormalizadoBase.equals(ndNormalizadoExacto)) {
-                agregarNotasDesdeEgresosPorDoctoSa(ndNormalizadoBase, notasEgreso);
-            }
-
-            return notasEgreso.stream().toList();
-            // Fallback: no se encontraron notas en notas_plano, buscar en egresos_plano
-        
-        }
-
-        List<String> infoEgreso = egresoPlanoRepository
-                .buscarNotasParaDetalle(docNormalizado, causacionNormalizada)
-                .stream()
-                .map(EgresoPlano::getNotas)
-                .filter(this::tieneTexto)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
-                .stream()
-                .toList();
-
-        return infoEgreso;
-    }
-
-    private boolean tieneTexto(String valor) {
-        return valor != null && !valor.trim().isEmpty();
-    }
-
-    private String normalizarDocumento(String valor) {
-        if (valor == null) {
-            return "";
-        }
-
-        return valor.trim()
-                .toUpperCase()
-                .replace("-", "")
-                .replace(" ", "")
-                .replace(".", "");
-    }
-
-    private void agregarNotasDesdePlano(String ndNormalizado, LinkedHashSet<String> acumulado) {
-        if (ndNormalizado == null || ndNormalizado.isBlank()) {
-            return;
-        }
-
-        List<String> notas = notaPlanoRepository
-                .buscarPorNdNormalizado(ndNormalizado)
-                .stream()
-                .map(NotaPlano::getNotas)
-                .filter(this::tieneTexto)
-                .toList();
-
-        acumulado.addAll(notas);
-    }
-
-    private void agregarNotasDesdeEgresosPorDoctoSa(String doctoSaNormalizado, LinkedHashSet<String> acumulado) {
-        if (doctoSaNormalizado == null || doctoSaNormalizado.isBlank()) {
-            return;
-        }
-
-        List<String> notas = egresoPlanoRepository
-                .buscarNotasPorDoctoSaNormalizado(doctoSaNormalizado)
-                .stream()
-                .map(EgresoPlano::getNotas)
-                .filter(this::tieneTexto)
-                .toList();
-
-        acumulado.addAll(notas);
-    }
-
-    private String extraerClaveNd(String documento) {
-        if (documento == null || documento.isBlank()) {
-            return "";
-        }
-
-        Matcher matcher = Pattern
-                .compile("(ND\\d+-\\d+(?:-\\d+)?)", Pattern.CASE_INSENSITIVE)
-                .matcher(documento.trim().toUpperCase());
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return "";
-    }
-
-    private String removerSufijoCeros(String claveNd) {
-        if (claveNd == null || claveNd.isBlank()) {
-            return "";
-        }
-
-        return claveNd.toUpperCase().replaceFirst("-0+$", "");
+    public NotaPlano buscarNotaPorDoctoProveedor(String doctoProveedor) {
+        return notaPlanoRepository.findFirstByDoctoProveedor(doctoProveedor)
+                .orElseThrow(() -> new RuntimeException(
+                        "No se encontró nota en notas_plano para el docto_proveedor: " + doctoProveedor
+                ));
     }
 
     @Transactional
@@ -300,6 +220,174 @@ public class EgresoService {
     public Egreso obtenerPorId(Long id) {
         return egresoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe el egreso con id: " + id));
+    }
+
+    public List<EgresoDetalleView> buscarDetalleVistaPorDoctoEgreso(String doctoEgreso) {
+        List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoEgreso(doctoEgreso);
+
+        MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+
+        return detalles.stream()
+                .map(detalle -> mapearDetalleVista(detalle, mapas))
+                .collect(Collectors.toList());
+    }
+
+    public List<EgresoDetalleView> buscarDetalleVistaPorDoctoCausacion(String doctoCausacion) {
+    List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoCausacion(doctoCausacion);
+
+    MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+
+    return detalles.stream()
+            .map(detalle -> mapearDetalleVista(detalle, mapas))
+            .collect(Collectors.toList());
+}
+
+    private MapasNotasRelacionadas construirMapasNotasRelacionadas(List<EgresoPlano> detalles) {
+        List<String> doctosSaBase = detalles.stream()
+                .filter(detalle -> debeBuscarNotaRelacionada(detalle.getNotas()))
+                .map(EgresoPlano::getDoctoSa)
+                .map(this::extraerDoctoSaBase)
+                .filter(this::tieneTexto)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (doctosSaBase.isEmpty()) {
+            return new MapasNotasRelacionadas(Map.of(), Map.of(), Map.of());
+        }
+
+        List<String> valoresNormalizados = doctosSaBase.stream()
+                .map(this::normalizarTextoComparacion)
+                .filter(this::tieneTexto)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<String, NotaPlano> porDoctoProveedor = notaPlanoRepository.findByDoctoProveedorIn(doctosSaBase).stream()
+                .filter(nota -> tieneTexto(nota.getDoctoProveedor()))
+                .filter(nota -> esDocumentoFP(nota.getNroDocumento()))
+                .collect(Collectors.toMap(
+                        nota -> normalizarTextoComparacion(nota.getDoctoProveedor()),
+                        Function.identity(),
+                        (primero, segundo) -> primero
+                ));
+
+        Map<String, NotaPlano> porNroDocumento = notaPlanoRepository.buscarPorNroDocumentoNormalizadoIn(valoresNormalizados).stream()
+                .filter(nota -> tieneTexto(nota.getNroDocumento()))
+                .filter(nota -> esDocumentoFP(nota.getNroDocumento()))
+                .collect(Collectors.toMap(
+                        nota -> normalizarTextoComparacion(nota.getNroDocumento()),
+                        Function.identity(),
+                        (primero, segundo) -> primero
+                ));
+
+        Map<String, NotaPlano> porReferencia1 = notaPlanoRepository.buscarPorReferencia1NormalizadaIn(valoresNormalizados).stream()
+                .filter(nota -> tieneTexto(nota.getReferencia1()))
+                .filter(nota -> esDocumentoFP(nota.getNroDocumento()))
+                .collect(Collectors.toMap(
+                        nota -> normalizarTextoComparacion(nota.getReferencia1()),
+                        Function.identity(),
+                        (primero, segundo) -> primero
+                ));
+
+        return new MapasNotasRelacionadas(porDoctoProveedor, porNroDocumento, porReferencia1);
+    }
+
+    private EgresoDetalleView mapearDetalleVista(EgresoPlano egreso, MapasNotasRelacionadas mapas) {
+    EgresoDetalleView view = new EgresoDetalleView(egreso);
+
+    // fallback por defecto
+    view.setNotaMostrada(egreso.getNotas());
+
+    if (!debeBuscarNotaRelacionada(egreso.getNotas())) {
+        return view;
+    }
+
+    String doctoSaBase = extraerDoctoSaBase(egreso.getDoctoSa());
+    view.setDoctoSaBase(doctoSaBase);
+
+    if (!tieneTexto(doctoSaBase)) {
+        return view;
+    }
+
+    String clave = normalizarTextoComparacion(doctoSaBase);
+
+    NotaPlano notaPorDoctoProveedor = mapas.getPorDoctoProveedor().get(clave);
+    if (notaPorDoctoProveedor != null) {
+        llenarNotaRelacionada(view, notaPorDoctoProveedor, "docto_proveedor", notaPorDoctoProveedor.getDoctoProveedor());
+        return view;
+    }
+
+    NotaPlano notaPorNroDocumento = mapas.getPorNroDocumento().get(clave);
+    if (notaPorNroDocumento != null) {
+        llenarNotaRelacionada(view, notaPorNroDocumento, "nro_documento", notaPorNroDocumento.getNroDocumento());
+        return view;
+    }
+
+    NotaPlano notaPorReferencia1 = mapas.getPorReferencia1().get(clave);
+    if (notaPorReferencia1 != null) {
+        llenarNotaRelacionada(view, notaPorReferencia1, "referencia_1", notaPorReferencia1.getReferencia1());
+        return view;
+    }
+
+    // si no encontró nada, se queda con egresos_plano.notas
+    return view;
+}
+
+    private void llenarNotaRelacionada(
+        EgresoDetalleView view,
+        NotaPlano nota,
+        String campoCoincidencia,
+        String valorCoincidencia
+) {
+    view.setMostrarNotaRelacionada(true);
+    view.setDoctoProveedorRelacionado(nota.getDoctoProveedor());
+    view.setNotaPlanoRelacionada(nota.getNotas());
+    view.setCampoCoincidenciaNota(campoCoincidencia);
+    view.setValorCoincidenciaNota(valorCoincidencia);
+    view.setNotaMostrada(nota.getNotas());
+}
+
+    private boolean debeBuscarNotaRelacionada(String notas) {
+        if (notas == null) {
+            return false;
+        }
+
+        String valor = notas.trim();
+        return !valor.isEmpty() && !valor.equalsIgnoreCase("SN");
+    }
+
+    private boolean esDocumentoFP(String nroDocumento) {
+        return nroDocumento != null && nroDocumento.trim().toUpperCase().startsWith("FP");
+    }
+
+    private String extraerDoctoSaBase(String doctoSa) {
+        if (!tieneTexto(doctoSa)) {
+            return null;
+        }
+
+        String valor = doctoSa.trim();
+
+        String[] partes = valor.split("-");
+        if (partes.length >= 3) {
+            return partes[1].trim();
+        }
+
+        return valor;
+    }
+
+    private String normalizarTextoComparacion(String valor) {
+        if (!tieneTexto(valor)) {
+            return null;
+        }
+
+        return valor.replace("-", "")
+                .replace(" ", "")
+                .replace(".", "")
+                .trim()
+                .toUpperCase();
+    }
+
+    private boolean tieneTexto(String valor) {
+        return valor != null && !valor.trim().isEmpty();
     }
 
     private void validarArchivo(MultipartFile file) {

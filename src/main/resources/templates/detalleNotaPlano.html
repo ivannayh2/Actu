@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Detalle nota relacionada</title>
+
+  <link rel="icon" type="image/x-icon" th:href="@{/img/logo.ico}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/JS/css/layout.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/usuarios.css}">
+  <link rel="stylesheet" th:href="@{/JS/css/egresos.css}">
+</head>
+<body>
+  <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
+  <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
+
+  <main class="container egresos-page">
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Detalle nota relacionada</h1>
+        <p class="subtitle-main">Información tomada de la tabla notas_plano</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr>
+            <th style="width: 240px; text-align: left;">Docto proveedor</th>
+            <td th:text="${nota.doctoProveedor}"></td>
+          </tr>
+          <tr>
+            <th style="text-align: left;">Notas</th>
+            <td style="white-space: pre-wrap;" th:text="${nota.notas}"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="history.back()">Volver</button>
+    </div>
+  </main>
+</body>
+</html>

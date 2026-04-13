@@ -62,49 +62,253 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    #filtersForm.filters-detallado {
-      grid-template-columns: repeat(4, minmax(165px, 1fr));
-      gap: 8px 10px;
+    .factura-cell {
+      min-width: 0;
     }
 
-    #filtersForm.filters-detallado label {
-      font-size: 13px;
+    .detalle-cell {
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .factura-linea {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      line-height: 1.2;
+    }
+
+    .factura-principal {
+      font-family: "Instrument Sans", "Segoe UI", sans-serif;
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "lnum" 1;
+      color: #2f3640;
+    }
+
+    .nota-relacionada {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      margin-left: 0;
+      line-height: 1;
+      width: fit-content;
+      max-width: 100%;
+      min-width: 0;
+      flex-wrap: nowrap;
+    }
+
+    .nota-relacionada strong {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #d98500;
+      letter-spacing: 0.2px;
+      display: block;
+      width: auto;
+      white-space: nowrap;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .acciones-factura,
+    .acciones-nota {
+      display: flex;
+      align-items: center;
       gap: 4px;
     }
 
-    #filtersForm.filters-detallado input[type="search"],
-    #filtersForm.filters-detallado input[type="date"] {
-      height: 34px;
-      font-size: 14px;
-      padding: 6px 9px;
+    .acciones-nota {
+      margin-top: 2px;
+      justify-content: flex-start;
+      width: auto;
     }
 
-    #filtersForm.filters-detallado .filters-actions .btn-compact {
-      font-size: 13px;
-      padding: 8px 11px;
-      border-radius: 14px;
+    .detalle-row-con-nota td {
+      padding-top: 5px;
+      padding-bottom: 5px;
     }
 
-    #filtersForm.filters-detallado .filters-actions .btn {
-      min-height: 35px;
+    .detalle-row-con-nota .nota-relacionada {
+      line-height: 0.95;
+    }
+
+    .detalle-row-con-nota .acciones-nota .btn.btn-compact {
+      font-size: 0.84rem;
+      line-height: 1;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .detalle-cell .btn.btn-compact {
+      padding: 0;
+      min-height: auto;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: transparent;
+      border: 0;
+    }
+
+    .detalle-cell .btn.btn-compact:hover {
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .nota-relacionada .btn.btn-compact,
+    .acciones-factura .btn.btn-compact {
+      color: #0b57d0;
+    }
+
+    .fila-resumen td {
+      background: #fafafa;
+    }
+
+    .fila-resumen td:first-child {
+      box-shadow: inset 3px 0 0 #cfd8e6;
+    }
+
+    .fila-resumen:hover td {
+      background: #f1f5fb;
+    }
+
+    .fila-resumen:hover td:first-child {
+      box-shadow: inset 3px 0 0 #b7c6df;
+    }
+
+    #filaTotales td {
+      background: #f3f6fb;
+    }
+
+    #filaTotales td:first-child {
+      box-shadow: inset 3px 0 0 #8aa2c6;
+    }
+
+    #filaTotales:hover td {
+      background: #e8eff9;
+    }
+
+    #filaTotales:hover td:first-child {
+      box-shadow: inset 3px 0 0 #6f8fb9;
+    }
+
+    .egresos-page .table-wrap table th:first-child,
+    .egresos-page .table-wrap table td:first-child {
+      padding-left: 16px;
     }
 
     .egresos-page .table-wrap {
-      width: 97.5%;
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      width: min(99%, 1240px);
+      max-width: 100%;
       margin: 0 auto;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
-    @media (max-width: 1200px) {
-      #filtersForm.filters-detallado {
-        grid-template-columns: 1fr 1fr;
-      }
+    .egresos-page .table-wrap table {
+      width: 100%;
+      margin: 0 auto;
+      table-layout: auto;
     }
 
-    @media (max-width: 700px) {
-      #filtersForm.filters-detallado {
-        grid-template-columns: 1fr;
-      }
+    .egresos-page .table-wrap table th,
+    .egresos-page .table-wrap table td {
+      box-sizing: border-box;
+      min-width: 0;
+      overflow: hidden;
+      padding-left: 10px;
+      padding-right: 10px;
     }
+
+    .egresos-page .table-wrap table thead th:nth-child(1),
+    .egresos-page .table-wrap table thead th:nth-child(2),
+    .egresos-page .table-wrap table thead th:nth-child(3),
+    .egresos-page .table-wrap table tbody td:nth-child(1),
+    .egresos-page .table-wrap table tbody td:nth-child(2),
+    .egresos-page .table-wrap table tbody td:nth-child(3) {
+      text-align: left;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(4),
+    .egresos-page .table-wrap table thead th:nth-child(5),
+    .egresos-page .table-wrap table tbody td:nth-child(4),
+    .egresos-page .table-wrap table tbody td:nth-child(5) {
+      text-align: right;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(5),
+    .egresos-page .table-wrap table tbody td:nth-child(5) {
+      padding-right: 22px;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(1),
+    .egresos-page .table-wrap table tbody td:nth-child(1) {
+      padding-right: 10px;
+    }
+
+    .egresos-page .table-wrap table thead th:nth-child(2),
+    .egresos-page .table-wrap table tbody td:nth-child(2) {
+      padding-left: 8px;
+    }
+
+    .egresos-page .table-wrap table col.col-factura {
+      width: 270px;
+    }
+
+    .egresos-page .table-wrap table col.col-nota {
+      width: 220px;
+    }
+
+    .egresos-page .table-wrap table col.col-detalle {
+      width: auto;
+    }
+
+    .egresos-page .table-wrap table col.col-debito,
+    .egresos-page .table-wrap table col.col-credito {
+      width: auto;
+    }
+
+    .nota-cell {
+      min-width: 0;
+    }
+
+    .nota-cell .nota-relacionada,
+    .nota-cell .acciones-nota {
+      width: auto;
+      min-width: 0;
+    }
+
+    .egresos-page #filtersForm.filters {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .egresos-page #filtersForm.filters .field {
+      flex: 0 0 180px;
+      min-width: 160px;
+    }
+
+    .egresos-page #filtersForm.filters .smart-search-actions {
+      flex: 0 0 auto;
+      padding-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    .egresos-page #filtersForm.filters .filters-actions {
+      grid-column: auto;
+      flex: 0 0 auto;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
   </style>
 </head>
 <body>
@@ -122,30 +326,30 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters filters-with-busqueda filters-detallado" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
-        <label for="proveedor">Proveedor</label>
+        <h1><label for="proveedor">Proveedor</label></h1>
         <div class="control">
           <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
         </div>
       </div>
 
       <div class="field">
-        <label for="fechaDocumento">Fecha</label>
+        <h1><label for="fechaDocumento">Fecha</label></h1>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
       <div class="field">
-        <label for="doctoSa">Número factura</label>
+        <h1><label for="doctoSa">Número factura</label></h1>
         <div class="control">
           <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
         </div>
       </div>
 
       <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <label for="smartSearch">Búsqueda inteligente</label>
+        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
         <div class="control">
           <input
             id="smartSearch"
@@ -162,27 +366,41 @@
 
       <div class="filters-actions">
         <button class="btn btn-primary btn-compact" type="submit">
+          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
           Filtrar
         </button>
 
         <button id="clearAllBtn" class="btn btn-compact" type="button">
+          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
           Limpiar
         </button>
+
+        <div class="actions">
+        <button class="btn" type="button" onclick="history.back()">Volver</button>
+       </div>
+           
       </div>
+      
     </form>
 
-
     <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button class="btn btn-primary open-modal-btn" type="button">Adjuntar soportes</button>
+      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
     </div>
 
-
     <div class="table-wrap">
-      <table class="detalle-facturas-table">
+      <table>
+        <colgroup>
+          <col class="col-factura">
+          <col class="col-nota">
+          <col class="col-detalle">
+          <col class="col-debito">
+          <col class="col-credito">
+        </colgroup>
         <thead>
           <tr>
             <th>Número factura</th>
-            <th>Acciones</th>
+            <th></th>
+            <th>Detalle</th>
             <th class="text-right">Débitos</th>
             <th class="text-right">Créditos</th>
           </tr>
@@ -190,11 +408,11 @@
 
         <tbody id="tablaDetallesBody">
           <tr th:if="${#lists.isEmpty(detalles)}">
-            <td colspan="4">No se encontraron facturas relacionadas.</td>
+            <td colspan="5">No se encontraron facturas relacionadas.</td>
           </tr>
 
           <tr id="sinCoincidenciasRow" class="table-hidden">
-            <td colspan="4">No se encontraron coincidencias con la búsqueda.</td>
+            <td colspan="5">No se encontraron coincidencias con la búsqueda.</td>
           </tr>
 
           <tr th:each="d : ${detalles}"
@@ -205,23 +423,47 @@
                 creditoValor=${valorAjustado < 0 ? valorAjustado.abs() : 0}
               "
               class="detalle-row"
+              th:classappend="${d.mostrarNotaRelacionada} ? ' detalle-row-con-nota' : ''"
               th:attr="
                 data-factura=${factura},
                 data-debito=${debitoValor},
                 data-credito=${creditoValor},
-                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor}
+                data-search=${factura + ' ' + debitoValor + ' ' + creditoValor + ' ' + (d.doctoProveedorRelacionado != null ? d.doctoProveedorRelacionado : '')}
               ">
 
-            <td>
-              <span th:text="${factura}"></span>
+            <td class="factura-cell">
+              <div class="factura-linea">
+                <div class="factura-principal">
+                  <span th:text="${factura}"></span>
+                </div>
+              </div>
+
             </td>
 
-            <td class="cell-actions">
-              <a class="btn btn-compact"
-                 th:if="${d.doctoCausacion != null}"
-                 th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion},doctoSa=${d.doctoSa})}">
-                Ver detalle
-              </a>
+            <td class="nota-cell">
+              <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
+                <strong th:text="${d.doctoProveedorRelacionado}"></strong>
+
+                <div class="acciones-nota">
+                  <a class="btn btn-compact"
+                     th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
+                    Ver nota
+                  </a>
+                </div>
+              </div>
+
+              <span th:if="${!d.mostrarNotaRelacionada}">&nbsp;</span>
+            </td>
+
+            <td class="detalle-cell">
+              <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                  Ver detalle
+                </a>
+              </div>
+
+              <span th:if="${d.doctoCausacion == null}">-</span>
             </td>
 
             <td class="text-right"
@@ -238,7 +480,9 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2">Valor documento</td>
+            <td>Valor documento</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
               <span th:text="${'$ ' + #numbers.formatDecimal(totalValorDocto, 1, 'POINT', 2, 'COMMA')}"></span>
@@ -246,7 +490,9 @@
           </tr>
 
           <tr th:if="${!#lists.isEmpty(detalles)}" class="fila-resumen">
-            <td colspan="2">Pronto pago</td>
+            <td>Pronto pago</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td class="text-right">
               <span th:text="${'$ ' + #numbers.formatDecimal(totalProntoPago, 1, 'POINT', 2, 'COMMA')}"></span>
@@ -254,7 +500,9 @@
           </tr>
 
           <tr id="filaTotales" th:if="${!#lists.isEmpty(detalles)}">
-            <td colspan="2"><span class="total-label">Total</span></td>
+            <td>Total</td>
+            <td></td>
+            <td></td>
             <td class="text-right">
               <span id="totalDebitosView"
                     th:text="${'$ ' + #numbers.formatDecimal(totalDebitos, 1, 'POINT', 2, 'COMMA')}"></span>
@@ -269,47 +517,49 @@
     </div>
 
     <div id="modal"
-     class="modal hidden"
-     th:if="${puedeCrearEgreso}"
-     aria-hidden="true"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="modalTitle">
-  <div class="modal-content" role="document">
-    <div class="modal-head">
-      <h3 id="modalTitle">Adjuntar soportes</h3>
-      <button id="closeModalBtn"
-              class="btn"
-              type="button"
-              aria-label="Cerrar modal">X</button>
-    </div>
+         class="modal hidden"
+         th:if="${puedeCrearEgreso}"
+         aria-hidden="true"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="modalTitle">
+      <div class="modal-content" role="document">
+        <div class="modal-head">
+          <h3 id="modalTitle">Adjuntar soportes</h3>
+          <button id="closeModalBtn"
+                  class="btn"
+                  type="button"
+                  aria-label="Cerrar modal">X</button>
+        </div>
 
-    <form class="modal-form"
-          method="post"
-          th:action="@{/egresos}"
-          enctype="multipart/form-data">
+        <form class="modal-form"
+              method="post"
+              th:action="@{/egresos}"
+              enctype="multipart/form-data">
 
-      <div class="field-row">
-        <label for="m-fechaDocumento">Fecha documento</label>
-        <input id="m-fechaDocumento"
-               type="date"
-               name="fechaDocumento"
-               required>
-      </div>
+          <div class="field-row">
+            <label for="m-fechaDocumento">Fecha documento</label>
+            <input id="m-fechaDocumento"
+                   type="date"
+                   name="fechaDocumento"
+                   required>
+          </div>
 
-      <div class="field-row">
-        <label for="m-soportes">Soportes</label>
-        <input id="m-soportes"
-               type="file"
-               name="soportes"
-               accept="application/pdf,image/*"
-               multiple>
-        <small>Solo puedes seleccionar archivos de tipo PDF</small>
-      </div>
+          <div class="field-row">
+            <label for="m-soportes">Soportes</label>
+            <input id="m-soportes"
+                   type="file"
+                   name="soportes"
+                   accept="application/pdf,image/*"
+                   multiple>
+            <small>Puedes seleccionar archivos PDF o imágenes</small>
+          </div>
 
-      <div class="modal-actions">
-        <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
-        <button class="btn btn-primary" type="submit">Guardar</button>
+          <div class="modal-actions">
+            <button class="btn" type="button" id="cancelModalBtn">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Guardar</button>
+          </div>
+        </form>
       </div>
     </form>
   </div>
@@ -321,13 +571,6 @@
   </button>
 </div>
 
-
-
-
-
-
-
-    </div>
   </main>
 
   <script>
@@ -362,7 +605,8 @@
 
       document.addEventListener('DOMContentLoaded', function () {
         const modal = document.getElementById('modal');
-        const openModalButtons = document.querySelectorAll('.open-modal-btn');
+        const openModalBtnTop = document.getElementById('openModalBtnTop');
+        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -484,9 +728,13 @@
           });
         }
 
-        openModalButtons.forEach(function (button) {
-          button.addEventListener('click', openModal);
-        });
+        if (openModalBtnTop) {
+          openModalBtnTop.addEventListener('click', openModal);
+        }
+
+        if (openModalBtnBottom) {
+          openModalBtnBottom.addEventListener('click', openModal);
+        }
 
         if (closeModalBtn) {
           closeModalBtn.addEventListener('click', closeModal);

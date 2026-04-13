@@ -106,42 +106,34 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
         @Param("fecha") LocalDate fecha
     );
 
-    @Query(value = """
-        SELECT e.*
-        FROM egresos_plano e
-        WHERE e.notas IS NOT NULL
-          AND TRIM(e.notas) <> ''
-          AND (
-            (:docNormalizado IS NOT NULL AND :docNormalizado <> '' AND (
-                UPPER(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(e.docto_sa, '')), '-', ''), ' ', ''), '.', '')) = :docNormalizado
-                OR UPPER(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(e.docto_causacion, '')), '-', ''), ' ', ''), '.', '')) = :docNormalizado
-            ))
-            OR
-            (:causacionNormalizada IS NOT NULL AND :causacionNormalizada <> '' AND (
-                UPPER(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(e.docto_sa, '')), '-', ''), ' ', ''), '.', '')) = :causacionNormalizada
-                OR UPPER(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(e.docto_causacion, '')), '-', ''), ' ', ''), '.', '')) = :causacionNormalizada
-            ))
-          )
-        ORDER BY e.fecha_egreso DESC, e.id DESC
-    """, nativeQuery = true)
+    @Query("""
+        SELECT e
+        FROM EgresoPlano e
+        WHERE (:documento IS NULL OR :documento = '' OR
+               UPPER(REPLACE(REPLACE(REPLACE(e.doctoEgreso, '-', ''), ' ', ''), '.', '')) LIKE CONCAT('%', UPPER(:documento), '%'))
+          AND (:doctoCausacion IS NULL OR :doctoCausacion = '' OR
+               UPPER(REPLACE(REPLACE(REPLACE(e.doctoCausacion, '-', ''), ' ', ''), '.', '')) LIKE CONCAT('%', UPPER(:doctoCausacion), '%'))
+    """)
     List<EgresoPlano> buscarNotasParaDetalle(
-        @Param("docNormalizado") String docNormalizado,
-        @Param("causacionNormalizada") String causacionNormalizada
+        @Param("documento") String documento,
+        @Param("doctoCausacion") String doctoCausacion
     );
 
-    @Query(value = """
-        SELECT e.*
-        FROM egresos_plano e
-        WHERE :doctoSaNormalizado IS NOT NULL
-          AND :doctoSaNormalizado <> ''
-          AND e.notas IS NOT NULL
-          AND TRIM(e.notas) <> ''
-          AND UPPER(REPLACE(REPLACE(REPLACE(TRIM(COALESCE(e.docto_sa, '')), '-', ''), ' ', ''), '.', '')) = :doctoSaNormalizado
-        ORDER BY e.fecha_egreso DESC, e.id DESC
-    """, nativeQuery = true)
+    @Query("""
+        SELECT e
+        FROM EgresoPlano e
+        WHERE UPPER(REPLACE(REPLACE(REPLACE(e.doctoSa, '-', ''), ' ', ''), '.', '')) = UPPER(:doctoSaNormalizado)
+    """)
     List<EgresoPlano> buscarNotasPorDoctoSaNormalizado(
         @Param("doctoSaNormalizado") String doctoSaNormalizado
     );
+
+    @Query("""
+    SELECT e
+    FROM EgresoPlano e
+    WHERE UPPER(TRIM(e.doctoCausacion)) = UPPER(TRIM(:doctoCausacion))
+""")
+List<EgresoPlano> buscarDetallePorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
 
     boolean existsByDoctoEgreso(String doctoEgreso);
 }

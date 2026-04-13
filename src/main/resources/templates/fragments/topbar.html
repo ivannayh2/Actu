@@ -24,6 +24,30 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<script src="/JS/sidebar-toggle.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('sidebarToggle');
+    var overlay = document.getElementById('sidebarOverlay');
+    if (!toggle || !overlay) return;
+
+    function closeSidebar() {
+      document.body.classList.remove('sidebar-open');
+      document.querySelectorAll('#sidebar details[open]').forEach(function (item) {
+        item.open = false;
+      });
+    }
+
+    toggle.addEventListener('click', function () {
+      if (document.body.classList.contains('sidebar-open')) {
+        closeSidebar();
+        return;
+      }
+      document.body.classList.add('sidebar-open');
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+  });
+</script>
 <script src="/JS/topbar-scroll.js"></script>
+</script>
 </th:block>
