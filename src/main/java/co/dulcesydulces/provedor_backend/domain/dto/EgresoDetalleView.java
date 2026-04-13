@@ -11,13 +11,19 @@ public class EgresoDetalleView {
     private boolean mostrarNotaRelacionada;
     private String doctoProveedorRelacionado;
     private String notaPlanoRelacionada;
+    private String campoCoincidenciaNota;
+    private String valorCoincidenciaNota;
+    private String notaMostrada;
 
     public EgresoDetalleView() {
     }
 
+    
+
     public EgresoDetalleView(EgresoPlano egreso) {
-        this.egreso = egreso;
-    }
+    this.egreso = egreso;
+    this.notaMostrada = egreso != null ? egreso.getNotas() : null;
+}
 
     public EgresoPlano getEgreso() {
         return egreso;
@@ -59,6 +65,22 @@ public class EgresoDetalleView {
         this.notaPlanoRelacionada = notaPlanoRelacionada;
     }
 
+    public String getCampoCoincidenciaNota() {
+        return campoCoincidenciaNota;
+    }
+
+    public void setCampoCoincidenciaNota(String campoCoincidenciaNota) {
+        this.campoCoincidenciaNota = campoCoincidenciaNota;
+    }
+
+    public String getValorCoincidenciaNota() {
+        return valorCoincidenciaNota;
+    }
+
+    public void setValorCoincidenciaNota(String valorCoincidenciaNota) {
+        this.valorCoincidenciaNota = valorCoincidenciaNota;
+    }
+
     public String getDoctoSa() {
         return egreso != null ? egreso.getDoctoSa() : null;
     }
@@ -94,4 +116,16 @@ public class EgresoDetalleView {
     public String getNotas() {
         return egreso != null ? egreso.getNotas() : null;
     }
+
+    public String getNotaMostrada() {
+    return notaMostrada;
+}
+
+    public void setNotaMostrada(String notaMostrada) {
+    this.notaMostrada = notaMostrada;
+}
+
+public String getDoctoEgreso() {
+    return egreso != null ? egreso.getDoctoEgreso() : null;
+}
 }

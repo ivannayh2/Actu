@@ -2,8 +2,8 @@ package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -133,15 +133,16 @@ public String verDetalleEgreso(
 
     return "egresosDetallado";
 }
-    @GetMapping("/detalles")
-    public String verDetalleFactura(
-            @RequestParam("doctoCausacion") String doctoCausacion,
-            Model model
-    ) {
-        model.addAttribute("doctoCausacion", doctoCausacion);
-        model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
-        return "detalleFactura";
-    }
+   @GetMapping("/detalles")
+public String verDetalleFactura(
+        @RequestParam("doctoCausacion") String doctoCausacion,
+        Model model
+) {
+    model.addAttribute("doctoCausacion", doctoCausacion);
+    model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
+    model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoCausacion(doctoCausacion));
+    return "detalleFactura";
+}
 
     @GetMapping("/nota-detalle")
     public String verDetalleNota(

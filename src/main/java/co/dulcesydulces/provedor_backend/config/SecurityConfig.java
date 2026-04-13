@@ -3,14 +3,14 @@ package co.dulcesydulces.provedor_backend.config;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 import co.dulcesydulces.provedor_backend.domain.entidades.Usuarios;
 import co.dulcesydulces.provedor_backend.repository.UsuarioRepository;
