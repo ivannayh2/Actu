@@ -125,7 +125,4 @@ public class EgresoDetalleView {
     this.notaMostrada = notaMostrada;
 }
 
-public String getDoctoEgreso() {
-    return egreso != null ? egreso.getDoctoEgreso() : null;
-}
 }
