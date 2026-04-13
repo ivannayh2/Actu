@@ -18,8 +18,6 @@ public class EgresoDetalleView {
     public EgresoDetalleView() {
     }
 
-    
-
     public EgresoDetalleView(EgresoPlano egreso) {
     this.egreso = egreso;
     this.notaMostrada = egreso != null ? egreso.getNotas() : null;
