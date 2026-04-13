@@ -147,6 +147,22 @@
     #filaTotales {
       animation: fadeIn 0.4s ease-out 0.2s both;
     }
+
+    .egresos-page .filters.filters-with-busqueda {
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+    }
+
+    @media (max-width: 1200px) {
+      .egresos-page .filters.filters-with-busqueda {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .egresos-page .filters.filters-with-busqueda {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -164,7 +180,7 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
+    <form id="filtersForm" class="filters" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
       <div class="field" th:if="${puedeFiltrarProveedor}">
         <h1><label for="proveedor">Proveedor</label></h1>
         <div class="control">
@@ -461,8 +477,10 @@
         // ========== ELEMENTOS DEL DOM ==========
         const modal = document.getElementById('modal');
         const openModalBtnTop = document.getElementById('openModalBtnTop');
-        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
-        const openModalButtons = [openModalBtnTop, openModalBtnBottom].filter(Boolean);
+        const openModalButtons = [
+          openModalBtnTop,
+          ...Array.from(document.querySelectorAll('.open-modal-btn'))
+        ].filter(Boolean);
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
