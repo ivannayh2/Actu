@@ -102,11 +102,12 @@ body.intro-skip .logo-intro {
 .logo-box {
   display: flex;
   justify-content: center;
+  margin-top: 6px;
   margin-bottom: 8px;
 }
 
 .logo-box img {
-  width: 190px;
+  width: 208px;
   max-width: 100%;
   height: auto;
   display: block;
@@ -256,6 +257,6 @@ body.intro-skip .logo-intro {
   }
 
   .logo-box img {
-    width: 132px;
+    width: 142px;
   }
 }

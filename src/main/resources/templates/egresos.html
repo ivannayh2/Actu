@@ -69,31 +69,31 @@
       </div>
     </form>
 
-
-
-
-
     <div class="filters-actions"
      th:if="${puedeCrearEgreso}"
      style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
       <button class="btn btn-primary" type="button" onclick="openModal()">
-       Adjuntar soportes📎
+       Adjuntar soportes
       </button>
     </div>
 
-
-
-
-
-
+    <div class="page-actions page-actions-tight">
+      <a class="btn"
+         th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
+        Descargar PDF
+      </a>
+      <a class="btn"
+         th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
+        Descargar Excel
+      </a>
+    </div>
 
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Numero egreso</th>
-            <th></th>
-            <th>Detalles</th>
+            <th>Detalle</th>
             <th>Fecha egreso</th>
             <th>Nit proveedor</th>
             <th>Razon social</th>
@@ -102,7 +102,6 @@
         </thead>
         <tbody>
           <tr th:if="${!#lists.isEmpty(detalle)}">
-            <td></td>
             <td></td>
             <td></td>
             <td colspan="3"><strong>Total</strong></td>
@@ -117,7 +116,6 @@
             <td class="cell-actions">
               <a class="btn btn-compact btn-ver-detalle" th:href="@{/egresos/detallado(doctoEgreso=${d.doctoEgreso})}">Ver detalle</a>
             </td>
-            <td></td>
             <td th:text="${d.fechaEgreso != null ? #temporals.format(d.fechaEgreso, 'dd/MM/yyyy') : '-'}"></td>
             <td th:text="${d.tercero}"></td>
             <td th:text="${d.razonSocial}"></td>
@@ -132,14 +130,6 @@
     </div>
 
     <div id="modal" class="modal hidden" onclick="closeModal()">
-
-
-
-
-
-
-
-
 
       <div class="modal-content" onclick="event.stopPropagation()">
   <div class="modal-head">
@@ -176,32 +166,6 @@
     </div>
   </form>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </div>
   </main>
