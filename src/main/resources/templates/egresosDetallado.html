@@ -242,17 +242,17 @@
 
             <td class="cell-actions">
               <div class="factura-linea">
-                <div class="factura-principal">
-                  <span th:text="${factura}"></span>
-                </div>
+  <div class="factura-principal">
+    <span th:text="${factura}"></span>
+  </div>
 
-                <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
-                  <a class="btn btn-compact"
-                     th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
-                    Ver factura
-                  </a>
-                </div>
-              </div>
+  <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
+    <a class="btn btn-compact"
+       th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+      Ver factura
+    </a>
+  </div>
+</div>
 
               <div class="nota-relacionada" th:if="${d.mostrarNotaRelacionada}">
                 <strong th:text="${d.doctoProveedorRelacionado}"></strong>

@@ -25,7 +25,7 @@
         </p>
       </div>
       <div class="actions">
-        <button class="btn" onclick="history.back()">Volver</button>
+        <button class="btn" type="button" onclick="history.back()">Volver</button>
       </div>
     </div>
 
@@ -43,20 +43,41 @@
           </tr>
         </thead>
         <tbody>
-  <tr th:each="f : ${facturas}">
-    <td th:text="${f.doctoReferencia != null ? f.doctoReferencia : '-'}"></td>
-    <td th:text="${f.descItem != null ? f.descItem : '-'}"></td>
-    <td th:text="${f.codigoBarraPrincipal != null ? f.codigoBarraPrincipal : '-'}"></td>
-    <td th:text="${f.cantidad != null ? f.cantidad : '-'}"></td>
-    <td th:text="${f.valorSubtotal != null ? '$ ' + #numbers.formatDecimal(f.valorSubtotal, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-    <td th:text="${f.valorImptos != null ? '$ ' + #numbers.formatDecimal(f.valorImptos, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-    <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
-  </tr>
+          <tr th:each="f : ${facturas}">
+            <td th:text="${f.doctoReferencia != null ? f.doctoReferencia : '-'}"></td>
+            <td th:text="${f.descItem != null ? f.descItem : '-'}"></td>
+            <td th:text="${f.codigoBarraPrincipal != null ? f.codigoBarraPrincipal : '-'}"></td>
+            <td th:text="${f.cantidad != null ? f.cantidad : '-'}"></td>
+            <td th:text="${f.valorSubtotal != null ? '$ ' + #numbers.formatDecimal(f.valorSubtotal, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+            <td th:text="${f.valorImptos != null ? '$ ' + #numbers.formatDecimal(f.valorImptos, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+            <td th:text="${f.valorNeto != null ? '$ ' + #numbers.formatDecimal(f.valorNeto, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
+          </tr>
 
-  <tr th:if="${#lists.isEmpty(facturas)}">
-    <td colspan="7">No se encontraron facturas relacionadas.</td>
-  </tr>
-</tbody>
+          <tr th:if="${#lists.isEmpty(facturas)}">
+            <td colspan="7">No se encontraron facturas relacionadas.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap" th:if="${!#lists.isEmpty(detallesEgreso)}">
+      <table>
+        <thead>
+          <tr>
+            <th>Número factura</th>
+            <th>Campo coincidencia</th>
+            <th>Valor coincidencia</th>
+            <th>Nota mostrada</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="d : ${detallesEgreso}">
+            <td th:text="${d.doctoSa != null ? d.doctoSa : '-'}"></td>
+            <td th:text="${d.campoCoincidenciaNota != null ? d.campoCoincidenciaNota : '-'}"></td>
+            <td th:text="${d.valorCoincidenciaNota != null ? d.valorCoincidenciaNota : '-'}"></td>
+            <td th:text="${d.notaMostrada != null ? d.notaMostrada : '-'}"></td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </main>
