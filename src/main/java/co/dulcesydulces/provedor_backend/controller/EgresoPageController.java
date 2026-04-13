@@ -159,11 +159,12 @@ public String verDetalleFactura(
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
             @RequestParam(required = false) String doctoSa,
+            @RequestParam(required = false) String doctoEgreso,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
         ) {
-        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
+        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, doctoEgreso, fechaDocumento);
 
         byte[] archivo = payload.resumen()
             ? egresoExportService.generarPdfResumen(payload.resumenData(), payload.totalVlrEgreso())
@@ -188,11 +189,12 @@ public String verDetalleFactura(
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
             @RequestParam(required = false) String doctoSa,
+            @RequestParam(required = false) String doctoEgreso,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
         ) {
-        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
+        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, doctoEgreso, fechaDocumento);
 
         byte[] archivo = payload.resumen()
             ? egresoExportService.generarExcelResumen(payload.resumenData(), payload.totalVlrEgreso())
@@ -248,6 +250,7 @@ public String verDetalleFactura(
             String proveedor,
             String numeroEgreso,
             String doctoSa,
+            String doctoEgreso,
             LocalDate fechaDocumento
         ) {
         boolean esResumen = "resumen".equalsIgnoreCase(vista);
@@ -277,10 +280,23 @@ public String verDetalleFactura(
             fechaDocumento
         );
 
+        List<EgresoDetalleView> detallesVista = service.buscarDetalleVistaSegunUsuario(
+            auth,
+            proveedor,
+            numeroEgreso,
+            doctoSa,
+            fechaDocumento
+        );
+
+        if (doctoEgreso != null && !doctoEgreso.isBlank()) {
+            detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+            detallesVista = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
+        }
+
         return new ExportPayload(
             false,
             List.of(),
-            service.buscarDetalleVistaSegunUsuario(auth, proveedor, numeroEgreso, doctoSa, fechaDocumento),
+            detallesVista,
             BigDecimal.ZERO,
             calcularTotalesDetalle(detallesPlano)
         );
