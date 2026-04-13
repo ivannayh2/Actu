@@ -23,28 +23,40 @@ public class HomeController {
     @GetMapping("/home")
     public String home(HttpSession session) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if (auth != null && auth.isAuthenticated() && !auth.getPrincipal().equals("anonymousUser")) {
             String codigo = auth.getName();
             Usuarios user = usuarioRepository.findByCodigo(codigo).orElse(null);
+
             if (user != null) {
                 session.setAttribute("usuario", user.getCodigo());
                 session.setAttribute("rol", user.getRol());
+
                 boolean isAdmin = "ADMINISTRADOR".equalsIgnoreCase(user.getRol());
                 List<String> permisos = user.getPermisos() != null ? user.getPermisos() : List.of();
+
                 boolean canImportFiles = permisos.stream()
                     .anyMatch(p -> "permImportarArchivosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+
                 boolean canComprobanteEgresos = permisos.stream()
                     .anyMatch(p -> "permComprobanteEgresosView".equalsIgnoreCase(p != null ? p.trim() : ""));
+
+                boolean canPerfil = permisos.stream()
+                    .anyMatch(p -> "permPerfilView".equalsIgnoreCase(p != null ? p.trim() : ""));
 
                 if (!isAdmin && !canImportFiles) {
                     if (canComprobanteEgresos) {
                         return "redirect:/egresos";
                     }
-                    return "redirect:/configuracion/perfil";
+                    if (canPerfil) {
+                        return "redirect:/configuracion/perfil";
+                    }
+                    return "redirect:/login?sinpermisos";
                 }
             }
         }
-        return "home"; // home.html
+
+        return "home";
     }
 
     @GetMapping("/")

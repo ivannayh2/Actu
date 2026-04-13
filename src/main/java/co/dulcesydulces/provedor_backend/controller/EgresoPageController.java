@@ -133,15 +133,16 @@ public String verDetalleEgreso(
 
     return "egresosDetallado";
 }
-    @GetMapping("/detalles")
-    public String verDetalleFactura(
-            @RequestParam("doctoCausacion") String doctoCausacion,
-            Model model
-    ) {
-        model.addAttribute("doctoCausacion", doctoCausacion);
-        model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
-        return "detalleFactura";
-    }
+   @GetMapping("/detalles")
+public String verDetalleFactura(
+        @RequestParam("doctoCausacion") String doctoCausacion,
+        Model model
+) {
+    model.addAttribute("doctoCausacion", doctoCausacion);
+    model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
+    model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoCausacion(doctoCausacion));
+    return "detalleFactura";
+}
 
     @GetMapping("/nota-detalle")
     public String verDetalleNota(
