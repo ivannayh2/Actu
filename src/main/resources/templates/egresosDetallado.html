@@ -383,8 +383,23 @@
       
     </form>
 
-    <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
+    <div class="actions-bar page-actions-tight">
+      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
+        <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
+      </div>
+
+      <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="file-text"></i>
+          Descargar PDF
+        </a>
+        <a class="btn btn-export"
+           th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="sheet"></i>
+          Descargar Excel
+        </a>
+      </div>
     </div>
 
     <div class="table-wrap">

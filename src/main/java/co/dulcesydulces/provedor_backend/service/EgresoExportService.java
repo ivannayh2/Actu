@@ -177,6 +177,18 @@ public class EgresoExportService {
         List<String> lineas = new ArrayList<>();
         lineas.add("DETALLE DE EGRESOS");
         lineas.add("");
+
+        if (!registros.isEmpty()) {
+            EgresoDetalleView encabezado = registros.get(0);
+            agregarTablaTituloPdf(
+                lineas,
+                encabezado.getTercero(),
+                encabezado.getRazonSocial(),
+                encabezado.getDoctoEgreso()
+            );
+            lineas.add("");
+        }
+
         lineas.add(formatearLineaDetalle("Numero factura", "Nota", "Detalle", "Debitos", "Creditos"));
         lineas.add(repetir('-', 98));
 
@@ -197,6 +209,14 @@ public class EgresoExportService {
         lineas.add("Total debitos:  " + formatearMoneda(totalDebitos));
         lineas.add("Total creditos: " + formatearMoneda(totalCreditosFinal));
         return renderizarPdf(lineas);
+    }
+
+    private void agregarTablaTituloPdf(List<String> lineas, String tercero, String razonSocial, String doctoEgreso) {
+        lineas.add(repetir('=', 72));
+        lineas.add(formatearLineaTituloPdf("NIT - tercero", tercero));
+        lineas.add(formatearLineaTituloPdf("Razon social", razonSocial));
+        lineas.add(formatearLineaTituloPdf("Dct egresos", doctoEgreso));
+        lineas.add(repetir('=', 72));
     }
 
     private int escribirTitulo(XSSFSheet sheet, int rowIndex, String titulo) {
@@ -325,6 +345,14 @@ public class EgresoExportService {
                 truncar(detalle, 20),
                 truncar(debitos, 16),
                 truncar(creditos, 16)
+        );
+    }
+
+    private String formatearLineaTituloPdf(String etiqueta, String valor) {
+        return String.format(
+                "| %-18s | %-47s |",
+                truncar(etiqueta, 18),
+                truncar(valor, 47)
         );
     }
 
