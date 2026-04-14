@@ -18,8 +18,6 @@ public class EgresoDetalleView {
     public EgresoDetalleView() {
     }
 
-    
-
     public EgresoDetalleView(EgresoPlano egreso) {
     this.egreso = egreso;
     this.notaMostrada = egreso != null ? egreso.getNotas() : null;
@@ -85,6 +83,18 @@ public class EgresoDetalleView {
         return egreso != null ? egreso.getDoctoSa() : null;
     }
 
+    public String getDoctoEgreso() {
+        return egreso != null ? egreso.getDoctoEgreso() : null;
+    }
+
+    public String getTercero() {
+        return egreso != null ? egreso.getTercero() : null;
+    }
+
+    public String getRazonSocial() {
+        return egreso != null ? egreso.getRazonSocial() : null;
+    }
+
     public String getDoctoCausacion() {
         return egreso != null ? egreso.getDoctoCausacion() : null;
     }
@@ -113,7 +123,4 @@ public class EgresoDetalleView {
     this.notaMostrada = notaMostrada;
 }
 
-public String getDoctoEgreso() {
-    return egreso != null ? egreso.getDoctoEgreso() : null;
-}
 }

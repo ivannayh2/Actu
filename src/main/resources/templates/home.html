@@ -83,50 +83,6 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Inicio siempre arranca colapsado
-    document.body.classList.remove('sidebar-open');
-
-    // Limpia botón legacy si quedó en una versión previa del template
-    document.querySelectorAll('.toggle-sidebar-trigger').forEach(function (el) {
-      el.remove();
-    });
-
-    // Si por cache/render hay duplicados, conserva solo el primero
-    document.querySelectorAll('.topbar').forEach(function (el, idx) {
-      if (idx > 0) el.remove();
-    });
-    document.querySelectorAll('#sidebar').forEach(function (el, idx) {
-      if (idx > 0) el.remove();
-    });
-
-    var toggle = document.getElementById('sidebarToggle');
-    var overlay = document.getElementById('sidebarOverlay');
-    if (!toggle || !overlay) return;
-
-    // Reemplaza nodos para evitar listeners duplicados en esta vista
-    var cleanToggle = toggle.cloneNode(true);
-    toggle.parentNode.replaceChild(cleanToggle, toggle);
-
-    var cleanOverlay = overlay.cloneNode(true);
-    overlay.parentNode.replaceChild(cleanOverlay, overlay);
-
-    function closeSidebar() {
-      document.body.classList.remove('sidebar-open');
-      document.querySelectorAll('#sidebar details[open]').forEach(function (item) {
-        item.open = false;
-      });
-    }
-
-    cleanToggle.addEventListener('click', function () {
-      if (document.body.classList.contains('sidebar-open')) {
-        closeSidebar();
-        return;
-      }
-      document.body.classList.add('sidebar-open');
-    });
-
-    cleanOverlay.addEventListener('click', closeSidebar);
-
     document.querySelectorAll('input[type="file"]').forEach(function (input) {
       input.addEventListener('change', function () {
         if (!this.files || !this.files[0]) {

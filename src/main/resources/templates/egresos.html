@@ -54,7 +54,7 @@
       <div class="field" style="min-width:220px;">
         <label for="busquedaInteligente">Búsqueda inteligente</label>
         <div class="control">
-          <input id="busquedaInteligente" type="search" name="busquedaInteligente" placeholder="Buscar por descripción, valor, etc." th:value="${busquedaInteligente}">
+          <input id="busquedaInteligente" type="search" name="doctoSa" placeholder="Buscar por descripción, valor, etc." th:value="${doctoSa}">
         </div>
       </div>
 
@@ -69,23 +69,25 @@
       </div>
     </form>
 
-    <div class="filters-actions"
-     th:if="${puedeCrearEgreso}"
-     style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0; margin-bottom: 8px;">
-      <button class="btn btn-primary" type="button" onclick="openModal()">
-       Adjuntar soportes
-      </button>
-    </div>
+    <div class="actions-bar page-actions-tight">
+      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
+        <button class="btn btn-primary" type="button" onclick="openModal()">
+         Adjuntar soportes
+        </button>
+      </div>
 
-    <div class="page-actions page-actions-tight">
-      <a class="btn"
-         th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
-        Descargar PDF
-      </a>
-      <a class="btn"
-         th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, fechaDocumento=${fechaDocumento})}">
-        Descargar Excel
-      </a>
+      <div class="page-actions actions-bar-right">
+        <a class="btn btn-export btn-export-pdf"
+           th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="file-text"></i>
+          Descargar PDF
+        </a>
+        <a class="btn btn-export btn-export-excel"
+           th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
+          <i data-lucide="sheet"></i>
+          Descargar Excel
+        </a>
+      </div>
     </div>
 
     <div class="table-wrap">
