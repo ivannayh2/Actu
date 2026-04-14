@@ -58,8 +58,8 @@
 .egresos-page .btn:hover {
 	background: #f6f6f6;
 	border-color: #cad7ed;
-	transform: translateY(-2px);
-	box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+	transform: scale(1.02);
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
 .egresos-page .btn:active {
@@ -78,8 +78,8 @@
 
 .egresos-page .btn.btn-primary:hover {
 	background: #003d7a;
-	transform: translateY(-2px);
-	box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
+	transform: scale(1.02);
+	box-shadow: 0 4px 12px rgba(0, 81, 165, 0.12);
 }
 
 .egresos-page .btn-compact {
@@ -183,7 +183,22 @@
 	grid-column: 1 / -1;
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
 	gap: 10px;
+	padding-top: 10px;
+	margin-top: 2px;
+	border-top: 1px solid #eef2f7;
+}
+
+.egresos-page .action-group {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.egresos-page .form-action-group {
+	justify-content: flex-end;
 }
 
 .egresos-page .filters-actions .btn {
@@ -191,13 +206,15 @@
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
+	min-height: 40px;
 }
 
 .egresos-page .filters-actions .btn-compact {
-	padding: 8px 12px;
+	padding: 10px 16px;
 	border-radius: 14px;
-	font-size: 12px;
-	font-weight: 700;
+	font-size: 13px;
+	font-weight: 600;
+	text-decoration: none;
 }
 
 .egresos-page .filters-actions .btn-icon {
@@ -217,17 +234,31 @@
 .egresos-list-page .table-wrap {
 	max-width: none;
 	margin-top: 0;
+	margin-bottom: 20px;
 	background: #ffffff;
 	border: 1px solid #E5E5E5;
 	border-radius: 12px;
 	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 	overflow: hidden;
 	padding: 0;
+	width: 100%;
+	animation: tableReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tableReveal {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .egresos-page .table-wrap table,
 .egresos-page table {
-	width: min(84%, 980px);
+	width: 100%;
 	margin: 0 auto;
 	border: none;
 	box-shadow: none;
@@ -237,31 +268,67 @@
 	table-layout: auto;
 }
 
+.egresos-page .table-wrap th,
+.egresos-page .table-wrap td {
+	box-sizing: border-box;
+	min-width: 0;
+	overflow: hidden;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.egresos-page .table-wrap thead th:first-child,
+.egresos-page .table-wrap tbody td:first-child {
+	padding-left: 16px;
+}
+
+.egresos-page .table-wrap thead th:last-child,
+.egresos-page .table-wrap tbody td:last-child {
+	padding-right: 16px;
+}
+
+.egresos-page .table-wrap thead th:nth-child(4),
+.egresos-page .table-wrap thead th:nth-child(5),
+.egresos-page .table-wrap thead th:nth-child(6),
+.egresos-page .table-wrap thead th:nth-child(7),
+.egresos-page .table-wrap tbody td:nth-child(4),
+.egresos-page .table-wrap tbody td:nth-child(5),
+.egresos-page .table-wrap tbody td:nth-child(6),
+.egresos-page .table-wrap tbody td:nth-child(7) {
+	text-align: right;
+	white-space: nowrap;
+}
+
 .egresos-page thead th:nth-child(2),
 .egresos-page tbody td:nth-child(2) {
 	width: 140px;
 }
 
 .egresos-page thead th {
-	background: #f6f6f6;
-	color: #86868B;
-	border-bottom: 1px solid #E5E5E5;
-	font-size: 12px;
-	font-weight: 600;
+	background: #e8eef6;
+	color: #374151;
+	border-bottom: 2px solid #c5d4e8;
+	font-size: 11px;
+	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.08em;
 	line-height: 1.2;
-	padding: 10px 12px;
+	padding: 14px 12px;
 	white-space: nowrap;
 	text-align: left;
 }
 
+.egresos-page thead th:first-child {
+	padding-left: 20px;
+	border-radius: 0;
+}
+
 .egresos-page tbody td {
-	border-bottom: 1px solid #E5E5E5;
+	border-bottom: 1px solid #f0f1f3;
 	font-weight: 400;
-	color: #1D1D1F;
-	font-size: 14px;
-	line-height: 1.25;
+	color: #374151;
+	font-size: 13px;
+	line-height: 1.5;
 	padding: 10px 12px;
 	vertical-align: middle;
 	text-align: left;
@@ -269,21 +336,42 @@
 
 .egresos-page thead th:last-child,
 .egresos-page tbody td:last-child {
-	padding-right: 36px;
+	padding-right: 20px;
 }
 
 .egresos-page tbody tr:nth-child(even) td,
 .egresos-list-page tbody tr:nth-child(even) td {
-	background: #ffffff;
+	background: #fafafa;
 }
 
 .egresos-page tbody tr:hover td,
 .egresos-list-page tbody tr:hover td {
-	background: #f6f6f6;
+	background: #f0f6ff;
 }
 
 .egresos-page tbody tr:last-child td {
 	border-bottom: none;
+}
+
+.egresos-page .nota-plano-table {
+	background: #ffffff;
+	table-layout: fixed;
+	width: 100%;
+}
+
+.egresos-page .nota-plano-table th:nth-child(1),
+.egresos-page .nota-plano-table td:nth-child(1) {
+	width: 22%;
+}
+
+.egresos-page .nota-plano-table th:nth-child(2),
+.egresos-page .nota-plano-table td:nth-child(2) {
+	width: 78%;
+}
+
+.egresos-page .nota-plano-table td:nth-child(2) {
+	white-space: pre-wrap;
+	word-break: break-word;
 }
 
 .egresos-page .cell-actions {
@@ -627,31 +715,6 @@
 	margin: 0;
 }
 
-.egresos-header-proveedor {
-	margin: 18px 0 0 0;
-	padding-left: 110px;
-	padding-bottom: 8px;
-	width: 100%;
-	box-sizing: border-box;
-}
-
-.egresos-header-proveedor-nombre {
-	font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
-	font-weight: 800;
-	font-size: 2.1em;
-	color: rgba(24,28,50,0.09);
-	letter-spacing: 0.01em;
-	display: block;
-}
-
-.egresos-header-proveedor-label {
-	font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
-	font-weight: 400;
-	font-size: 0.97em;
-	color: #a3aab5;
-	letter-spacing: 0.01em;
-}
-
 .egresos-page .empty-state-cell {
 	text-align: center;
 	padding: 20px;
@@ -664,6 +727,66 @@
 	justify-content: space-between;
 	gap: 12px;
 	flex-wrap: wrap;
+}
+
+.egresos-page .action-toolbar {
+	margin-bottom: 12px;
+	padding: 12px 14px;
+	background: #ffffff;
+	border: 1px solid #e5e5e5;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.egresos-page .action-toolbar-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 40px;
+	flex: 1 1 220px;
+}
+
+.egresos-page .context-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	border-radius: 999px;
+	background: #eff6ff;
+	border: 1px solid #bfdbfe;
+	color: #1e3a8a;
+	font-size: 13px;
+	line-height: 1;
+	max-width: 100%;
+}
+
+.egresos-page .context-badge-label {
+	font-weight: 600;
+	color: #46638d;
+}
+
+.egresos-page .context-badge strong {
+	font-weight: 700;
+	color: #0f172a;
+}
+
+.egresos-page .action-toolbar-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-left: auto;
+}
+
+.egresos-page .action-toolbar .btn,
+.egresos-page .action-toolbar .export-toggle-text {
+	min-height: 40px;
 }
 
 .egresos-page .actions-bar-left,
@@ -712,10 +835,106 @@
 	white-space: nowrap;
 }
 
+.egresos-page .page-actions .export-collapse {
+	position: relative;
+}
+
+.egresos-page .page-actions .export-collapse summary {
+	list-style: none;
+	cursor: pointer;
+}
+
+.egresos-page .page-actions .export-collapse summary::-webkit-details-marker {
+	display: none;
+}
+
+.egresos-page .page-actions .export-toggle-text {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 16px;
+	border-radius: 14px;
+	border: 0;
+	background: #0051a5;
+	color: #ffffff;
+	font-family: "Instrument Sans", "Segoe UI", sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1;
+	user-select: none;
+	cursor: pointer;
+	transition: background 0.2s ease, box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.egresos-page .page-actions .export-toggle-text:hover {
+	background: #003d7a;
+	transform: translate3d(2px, -2px, 0);
+	box-shadow: 0 12px 24px rgba(0, 81, 165, 0.32);
+}
+
+.egresos-page .page-actions .export-collapse[open] .export-toggle-text {
+	background: #003d7a;
+}
+
+.egresos-page .page-actions .export-toggle-arrow {
+	width: 14px;
+	height: 14px;
+	object-fit: contain;
+	filter: brightness(0) invert(1);
+	transition: transform 0.2s ease;
+}
+
+.egresos-page .page-actions .export-toggle-icon {
+	width: 14px;
+	height: 14px;
+	object-fit: contain;
+	filter: brightness(0) invert(1);
+}
+
+.egresos-page .page-actions .export-collapse[open] .export-toggle-arrow {
+	transform: rotate(180deg);
+}
+
+.egresos-page .page-actions .export-menu {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	min-width: 198px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 12px;
+	background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+	backdrop-filter: blur(6px);
+	border: 1px solid #dbe6f4;
+	border-radius: 16px;
+	box-shadow: 0 20px 36px rgba(15, 23, 42, 0.16);
+	z-index: 10;
+}
+
+.egresos-page .page-actions .export-collapse[open] .export-menu {
+	animation: export-menu-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.egresos-page .page-actions .export-menu .btn-export {
+	width: 100%;
+	grid-template-columns: 16px auto;
+	justify-items: start;
+	text-align: left;
+	padding: 10px 12px;
+	border-radius: 12px;
+	transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.egresos-page .page-actions .export-menu .btn-export::after {
+	display: none;
+}
+
 .egresos-page .page-actions .btn-export:hover {
 	background: #f1f5f9;
 	border-color: #cbd5e1;
 	color: #334155;
+	transform: translate3d(2px, -2px, 0);
 	box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
 }
 
@@ -773,6 +992,95 @@
 	grid-column: 1;
 }
 
+.egresos-page .page-actions .btn .export-icon {
+	width: 16px;
+	height: 16px;
+	grid-column: 1;
+	object-fit: contain;
+}
+
+.egresos-page .page-actions .export-inline {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px;
+	background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+	border: 1px solid #dbe6f4;
+	border-radius: 16px;
+	box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.egresos-page .page-actions .export-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 0 8px;
+	font-size: 12px;
+	font-weight: 700;
+	color: #355070;
+	user-select: none;
+}
+
+.egresos-page .page-actions .export-indicator-icon {
+	width: 14px;
+	height: 14px;
+	object-fit: contain;
+	opacity: 0.82;
+}
+
+.egresos-page .page-actions .export-icon-btn {
+	width: 38px;
+	height: 38px;
+	min-width: 38px;
+	padding: 0;
+	border-radius: 12px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.egresos-page .page-actions .export-icon-btn .export-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.egresos-page .page-actions .export-icon-btn-pdf {
+	background: #fee2e2;
+	border: 1px solid #fca5a5;
+}
+
+.egresos-page .page-actions .export-icon-btn-pdf:hover {
+	background: #fecaca;
+	border-color: #f87171;
+	transform: translate3d(2px, -2px, 0);
+	box-shadow: 0 8px 16px rgba(185, 28, 28, 0.18);
+}
+
+.egresos-page .page-actions .export-icon-btn-excel {
+	background: #dcfce7;
+	border: 1px solid #86efac;
+}
+
+.egresos-page .page-actions .export-icon-btn-excel:hover {
+	background: #bbf7d0;
+	border-color: #4ade80;
+	transform: translate3d(2px, -2px, 0);
+	box-shadow: 0 8px 16px rgba(22, 101, 52, 0.18);
+}
+
+@keyframes export-menu-in {
+	from {
+		opacity: 0;
+		transform: translateY(-4px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
 .egresos-page .page-actions .btn-export::after {
 	content: "";
 	width: 16px;
@@ -780,9 +1088,11 @@
 	grid-column: 3;
 }
 
-.egresos-page .page-actions-tight {
-	padding-top: 4px;
-	padding-bottom: 12px;
+.egresos-page .search-status {
+	font-size: 13px;
+	font-weight: 600;
+	color: #6b7280;
+	line-height: 1.2;
 }
 
 /* Media Queries */
@@ -814,9 +1124,25 @@
 		justify-content: flex-start;
 	}
 
+	.egresos-page .action-toolbar {
+		align-items: stretch;
+	}
+
+	.egresos-page .action-toolbar-meta,
+	.egresos-page .action-toolbar-actions,
+	.egresos-page .form-action-group {
+		width: 100%;
+		justify-content: flex-start;
+	}
+
 	.egresos-page .actions-bar-right,
 	.egresos-page .page-actions {
 		justify-content: flex-start;
+	}
+
+	.egresos-page .page-actions .export-menu {
+		left: 0;
+		right: auto;
 	}
 }
 

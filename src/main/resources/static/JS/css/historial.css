@@ -154,54 +154,68 @@
 .historial-page .table-wrap {
   max-width: none;
   margin-top: 0;
+  margin-bottom: 20px;
   background: #ffffff;
   border: 1px solid #E5E5E5;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   overflow: hidden;
   padding: 0;
+  width: 100%;
+  animation: tableReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tableReveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .historial-page .table-wrap table {
   width: 100%;
   border: none;
   box-shadow: none;
-  border-collapse: separate;
+  border-collapse: collapse;
   border-spacing: 0;
   line-height: 1.25;
 }
 
 .historial-page thead th {
-  background: #f6f6f6;
-  color: #86868B;
-  border-bottom: 1px solid #E5E5E5;
-  font-size: 12px;
-  font-weight: 600;
+  background: #e8eef6;
+  color: #374151;
+  border-bottom: 2px solid #c5d4e8;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   line-height: 1.2;
-  padding: 12px 14px;
+  padding: 14px 14px;
   white-space: nowrap;
   text-align: left;
 }
 
 .historial-page tbody td {
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #f0f1f3;
   font-weight: 400;
-  color: #1D1D1F;
-  font-size: 14px;
-  line-height: 1.25;
-  padding: 12px 14px;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 14px;
   vertical-align: middle;
   text-align: left;
 }
 
 .historial-page tbody tr:nth-child(even) td {
-  background: #f6f6f6;
+  background: #fafafa;
 }
 
 .historial-page tbody tr:hover td {
-  background: #f6f6f6;
+  background: #f0f6ff;
 }
 
 .historial-page tbody tr:last-child td {
