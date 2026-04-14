@@ -1,5 +1,6 @@
 package co.dulcesydulces.provedor_backend.service;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -36,6 +38,17 @@ import co.dulcesydulces.provedor_backend.domain.dto.EgresoPlanoResumen;
 public class EgresoExportService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final float PDF_MARGIN = 36f;
+    private static final float PDF_ROW_HEIGHT = 22f;
+    private static final float PDF_FONT_SIZE = 9f;
+    private static final float PDF_TITLE_SIZE = 14f;
+    private static final Color PDF_COLOR_TITLE = new Color(18, 18, 18);
+    private static final Color PDF_COLOR_HEADER = Color.WHITE;
+    private static final Color PDF_COLOR_HEADER_BORDER = new Color(32, 32, 32);
+    private static final Color PDF_COLOR_LABEL = Color.WHITE;
+    private static final Color PDF_COLOR_BORDER = new Color(110, 110, 110);
+    private static final Color PDF_COLOR_TEXT = new Color(26, 26, 26);
+    private static final Color PDF_COLOR_TOTAL = Color.WHITE;
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat(
             "$ #,##0.00",
             DecimalFormatSymbols.getInstance(new Locale("es", "CO"))
@@ -146,25 +159,25 @@ public class EgresoExportService {
     }
 
     public byte[] generarPdfResumen(List<EgresoPlanoResumen> registros, BigDecimal totalVlrEgreso) {
-        List<String> lineas = new ArrayList<>();
-        lineas.add("REPORTE DE EGRESOS");
-        lineas.add("");
-        lineas.add(formatearLineaResumen("Numero egreso", "Fecha", "Nit proveedor", "Razon social", "Valor"));
-        lineas.add(repetir('-', 95));
-
+        List<String[]> filas = new ArrayList<>();
         for (EgresoPlanoResumen registro : registros) {
-            lineas.add(formatearLineaResumen(
-                    registro.getDoctoEgreso(),
-                    formatearFecha(registro.getFechaEgreso()),
-                    registro.getTercero(),
-                    registro.getRazonSocial(),
-                    formatearMoneda(registro.getVlrEgreso())
-            ));
+            filas.add(new String[] {
+                valorTexto(registro.getDoctoEgreso()),
+                formatearFecha(registro.getFechaEgreso()),
+                valorTexto(registro.getTercero()),
+                valorTexto(registro.getRazonSocial()),
+                formatearMoneda(registro.getVlrEgreso())
+            });
         }
 
-        lineas.add("");
-        lineas.add("TOTAL: " + formatearMoneda(totalVlrEgreso));
-        return renderizarPdf(lineas);
+        return renderizarPdfTabla(
+            "REPORTE DE EGRESOS",
+            List.of(),
+            new String[] {"Numero egreso", "Fecha egreso", "NIT - tercero", "Razon social", "Valor"},
+            new float[] {120f, 90f, 110f, 280f, 110f},
+            filas,
+            List.of(new PdfResumenFila("Total", formatearMoneda(totalVlrEgreso)))
+        );
     }
 
     public byte[] generarPdfDetalle(
@@ -174,29 +187,42 @@ public class EgresoExportService {
             BigDecimal totalDebitos,
             BigDecimal totalCreditosFinal
     ) {
-        List<String> lineas = new ArrayList<>();
-        lineas.add("DETALLE DE EGRESOS");
-        lineas.add("");
-        lineas.add(formatearLineaDetalle("Numero factura", "Nota", "Detalle", "Debitos", "Creditos"));
-        lineas.add(repetir('-', 98));
+        List<String[]> filas = new ArrayList<>();
+        List<PdfResumenFila> cabecera = List.of();
+
+        if (!registros.isEmpty()) {
+            EgresoDetalleView encabezado = registros.get(0);
+            cabecera = List.of(
+                new PdfResumenFila("NIT - tercero", valorTexto(encabezado.getTercero())),
+                new PdfResumenFila("Razon social", valorTexto(encabezado.getRazonSocial())),
+                new PdfResumenFila("Dct egresos", valorTexto(encabezado.getDoctoEgreso()))
+            );
+        }
 
         for (EgresoDetalleView registro : registros) {
             BigDecimal valorAjustado = valorBigDecimal(registro.getVlrEgreso()).add(valorBigDecimal(registro.getProntoPago()));
-            lineas.add(formatearLineaDetalle(
-                    registro.getDoctoSa(),
-                    registro.getDoctoProveedorRelacionado(),
-                    registro.getDoctoCausacion(),
-                    valorAjustado.signum() > 0 ? formatearMoneda(valorAjustado) : "-",
-                    valorAjustado.signum() < 0 ? formatearMoneda(valorAjustado.abs()) : "-"
-            ));
+            filas.add(new String[] {
+                valorTexto(registro.getDoctoSa()),
+                valorTexto(registro.getDoctoProveedorRelacionado()),
+                valorTexto(registro.getDoctoCausacion()),
+                valorAjustado.signum() > 0 ? formatearMoneda(valorAjustado) : "-",
+                valorAjustado.signum() < 0 ? formatearMoneda(valorAjustado.abs()) : "-"
+            });
         }
 
-        lineas.add("");
-        lineas.add("Valor documento: " + formatearMoneda(totalValorDocto));
-        lineas.add("Pronto pago:    " + formatearMoneda(totalProntoPago));
-        lineas.add("Total debitos:  " + formatearMoneda(totalDebitos));
-        lineas.add("Total creditos: " + formatearMoneda(totalCreditosFinal));
-        return renderizarPdf(lineas);
+        return renderizarPdfTabla(
+            "DETALLE DE EGRESOS",
+            cabecera,
+            new String[] {"Numero factura", "Nota relacionada", "Detalle", "Debitos", "Creditos"},
+            new float[] {135f, 135f, 245f, 95f, 95f},
+            filas,
+            List.of(
+                new PdfResumenFila("Valor documento", formatearMoneda(totalValorDocto)),
+                new PdfResumenFila("Pronto pago", formatearMoneda(totalProntoPago)),
+                new PdfResumenFila("Total debitos", formatearMoneda(totalDebitos)),
+                new PdfResumenFila("Total creditos", formatearMoneda(totalCreditosFinal))
+            )
+        );
     }
 
     private int escribirTitulo(XSSFSheet sheet, int rowIndex, String titulo) {
@@ -247,7 +273,14 @@ public class EgresoExportService {
         }
     }
 
-    private byte[] renderizarPdf(List<String> lineas) {
+    private byte[] renderizarPdfTabla(
+            String titulo,
+            List<PdfResumenFila> cabecera,
+            String[] columnas,
+            float[] anchos,
+            List<String[]> filas,
+            List<PdfResumenFila> resumen
+    ) {
         try (PDDocument document = new PDDocument(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.COURIER);
             PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
@@ -255,49 +288,29 @@ public class EgresoExportService {
             PDPage page = new PDPage(crearPaginaHorizontal());
             document.addPage(page);
 
-            float margin = 36f;
-            float y = page.getMediaBox().getHeight() - margin;
-            float leading = 12f;
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                float y = page.getMediaBox().getHeight() - PDF_MARGIN;
+                y = dibujarTitulo(contentStream, bold, titulo, y);
 
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-            contentStream.setLeading(leading);
-            contentStream.beginText();
-            contentStream.setFont(bold, 11);
-            contentStream.newLineAtOffset(margin, y);
-
-            boolean firstLine = true;
-            for (String linea : lineas) {
-                if (y <= margin + leading) {
-                    contentStream.endText();
-                    contentStream.close();
-
-                    page = new PDPage(crearPaginaHorizontal());
-                    document.addPage(page);
-                    y = page.getMediaBox().getHeight() - margin;
-
-                    contentStream = new PDPageContentStream(document, page);
-                    contentStream.setLeading(leading);
-                    contentStream.beginText();
-                    contentStream.setFont(regular, 9);
-                    contentStream.newLineAtOffset(margin, y);
-                    firstLine = false;
+                if (!cabecera.isEmpty()) {
+                    y = dibujarTablaResumen(contentStream, regular, bold, cabecera, y, 540f);
+                    y -= 16f;
                 }
 
-                if (firstLine) {
-                    contentStream.showText(linea);
-                    contentStream.newLine();
-                    contentStream.setFont(regular, 9);
-                    firstLine = false;
-                } else {
-                    contentStream.showText(linea != null ? linea : "");
-                    contentStream.newLine();
-                }
-
-                y -= leading;
+                y = dibujarTablaPrincipal(
+                    document,
+                    page,
+                    contentStream,
+                    regular,
+                    bold,
+                    columnas,
+                    anchos,
+                    filas,
+                    resumen,
+                    y,
+                    titulo
+                );
             }
-
-            contentStream.endText();
-            contentStream.close();
 
             document.save(output);
             return output.toByteArray();
@@ -306,37 +319,205 @@ public class EgresoExportService {
         }
     }
 
-    private String formatearLineaResumen(String doctoEgreso, String fecha, String tercero, String razonSocial, String valor) {
-        return String.format(
-                "%-18s %-12s %-16s %-30s %15s",
-                truncar(doctoEgreso, 18),
-                truncar(fecha, 12),
-                truncar(tercero, 16),
-                truncar(razonSocial, 30),
-                truncar(valor, 15)
-        );
+    private float dibujarTitulo(PDPageContentStream contentStream, PDFont font, String titulo, float y) throws IOException {
+        escribirTexto(contentStream, font, PDF_TITLE_SIZE, PDF_MARGIN, y, titulo, PDF_COLOR_TITLE);
+        dibujarLinea(contentStream, PDF_MARGIN, y - 8f, crearPaginaHorizontal().getWidth() - PDF_MARGIN, y - 8f, PDF_COLOR_HEADER_BORDER, 1.2f);
+        return y - 28f;
     }
 
-    private String formatearLineaDetalle(String factura, String nota, String detalle, String debitos, String creditos) {
-        return String.format(
-                "%-20s %-18s %-20s %16s %16s",
-                truncar(factura, 20),
-                truncar(nota, 18),
-                truncar(detalle, 20),
-                truncar(debitos, 16),
-                truncar(creditos, 16)
-        );
+    private float dibujarTablaResumen(
+            PDPageContentStream contentStream,
+            PDFont regular,
+            PDFont bold,
+            List<PdfResumenFila> filas,
+            float y,
+            float anchoTotal
+    ) throws IOException {
+        float etiquetaWidth = 150f;
+        float valorWidth = anchoTotal - etiquetaWidth;
+        float x = PDF_MARGIN;
+
+        for (PdfResumenFila fila : filas) {
+            dibujarCelda(contentStream, x, y, etiquetaWidth, PDF_ROW_HEIGHT, PDF_COLOR_LABEL, PDF_COLOR_BORDER);
+            dibujarCelda(contentStream, x + etiquetaWidth, y, valorWidth, PDF_ROW_HEIGHT, Color.WHITE);
+            escribirTextoCelda(contentStream, bold, 9f, x, y, etiquetaWidth, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_TEXT);
+            escribirTextoCelda(contentStream, regular, 9f, x + etiquetaWidth, y, valorWidth, PDF_ROW_HEIGHT, fila.valor(), false, PDF_COLOR_TEXT);
+            y -= PDF_ROW_HEIGHT;
+        }
+
+        return y;
     }
 
-    private String truncar(String valor, int limite) {
+    private float dibujarTablaPrincipal(
+            PDDocument document,
+            PDPage initialPage,
+            PDPageContentStream initialContentStream,
+            PDFont regular,
+            PDFont bold,
+            String[] columnas,
+            float[] anchos,
+            List<String[]> filas,
+            List<PdfResumenFila> resumen,
+            float y,
+            String titulo
+    ) throws IOException {
+        PDPage page = initialPage;
+        PDPageContentStream contentStream = initialContentStream;
+        float tableWidth = 0f;
+        for (float ancho : anchos) {
+            tableWidth += ancho;
+        }
+
+        y = dibujarFilaCabecera(contentStream, bold, columnas, anchos, y);
+
+        for (int rowIndex = 0; rowIndex < filas.size(); rowIndex++) {
+            String[] fila = filas.get(rowIndex);
+            if (y - PDF_ROW_HEIGHT < PDF_MARGIN + 90f) {
+                page = new PDPage(crearPaginaHorizontal());
+                document.addPage(page);
+                contentStream.close();
+                contentStream = new PDPageContentStream(document, page);
+                y = page.getMediaBox().getHeight() - PDF_MARGIN;
+                y = dibujarTitulo(contentStream, bold, titulo, y);
+                y = dibujarFilaCabecera(contentStream, bold, columnas, anchos, y);
+            }
+            dibujarFilaDatos(contentStream, regular, fila, anchos, y, rowIndex);
+            y -= PDF_ROW_HEIGHT;
+        }
+
+        y -= 16f;
+        if (!resumen.isEmpty()) {
+            if (y - (resumen.size() * PDF_ROW_HEIGHT) < PDF_MARGIN) {
+                page = new PDPage(crearPaginaHorizontal());
+                document.addPage(page);
+                contentStream.close();
+                contentStream = new PDPageContentStream(document, page);
+                y = page.getMediaBox().getHeight() - PDF_MARGIN;
+                y = dibujarTitulo(contentStream, bold, titulo, y);
+            }
+
+            float resumenX = PDF_MARGIN + Math.max(0f, tableWidth - 280f);
+            for (PdfResumenFila fila : resumen) {
+                dibujarCelda(contentStream, resumenX, y, 150f, PDF_ROW_HEIGHT, PDF_COLOR_TOTAL, PDF_COLOR_HEADER_BORDER);
+                dibujarCelda(contentStream, resumenX + 150f, y, 130f, PDF_ROW_HEIGHT, Color.WHITE, PDF_COLOR_HEADER_BORDER);
+                escribirTextoCelda(contentStream, bold, 9f, resumenX, y, 150f, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_TEXT);
+                escribirTextoCelda(contentStream, regular, 9f, resumenX + 150f, y, 130f, PDF_ROW_HEIGHT, fila.valor(), true, PDF_COLOR_TEXT);
+                dibujarLinea(contentStream, resumenX, y - PDF_ROW_HEIGHT, resumenX + 280f, y - PDF_ROW_HEIGHT, PDF_COLOR_HEADER_BORDER, 0.9f);
+                y -= PDF_ROW_HEIGHT;
+            }
+        }
+
+        contentStream.close();
+        return y;
+    }
+
+    private float dibujarFilaCabecera(PDPageContentStream contentStream, PDFont font, String[] columnas, float[] anchos, float y) throws IOException {
+        float x = PDF_MARGIN;
+        for (int i = 0; i < columnas.length; i++) {
+            dibujarCelda(contentStream, x, y, anchos[i], PDF_ROW_HEIGHT, PDF_COLOR_HEADER, PDF_COLOR_HEADER_BORDER);
+            escribirTextoCelda(contentStream, font, 9f, x, y, anchos[i], PDF_ROW_HEIGHT, columnas[i], false, PDF_COLOR_TITLE);
+            x += anchos[i];
+        }
+        dibujarLinea(contentStream, PDF_MARGIN, y - PDF_ROW_HEIGHT, x, y - PDF_ROW_HEIGHT, PDF_COLOR_HEADER_BORDER, 1.1f);
+        return y - PDF_ROW_HEIGHT;
+    }
+
+    private void dibujarFilaDatos(PDPageContentStream contentStream, PDFont font, String[] fila, float[] anchos, float y, int rowIndex) throws IOException {
+        float x = PDF_MARGIN;
+        Color background = Color.WHITE;
+        for (int i = 0; i < anchos.length; i++) {
+            dibujarCelda(contentStream, x, y, anchos[i], PDF_ROW_HEIGHT, background, PDF_COLOR_BORDER);
+            boolean alineadoDerecha = i >= anchos.length - 2;
+            String valor = i < fila.length ? fila[i] : "";
+            escribirTextoCelda(contentStream, font, PDF_FONT_SIZE, x, y, anchos[i], PDF_ROW_HEIGHT, valor, alineadoDerecha, PDF_COLOR_TEXT);
+            x += anchos[i];
+        }
+    }
+
+    private void dibujarCelda(PDPageContentStream contentStream, float x, float y, float width, float height, Color fillColor) throws IOException {
+        dibujarCelda(contentStream, x, y, width, height, fillColor, PDF_COLOR_BORDER);
+    }
+
+    private void dibujarCelda(PDPageContentStream contentStream, float x, float y, float width, float height, Color fillColor, Color borderColor) throws IOException {
+        contentStream.setNonStrokingColor(fillColor);
+        contentStream.addRect(x, y - height, width, height);
+        contentStream.fill();
+        contentStream.setStrokingColor(borderColor);
+        contentStream.setLineWidth(0.65f);
+        contentStream.addRect(x, y - height, width, height);
+        contentStream.stroke();
+    }
+
+    private void dibujarLinea(
+            PDPageContentStream contentStream,
+            float x1,
+            float y1,
+            float x2,
+            float y2,
+            Color color,
+            float lineWidth
+    ) throws IOException {
+        contentStream.setStrokingColor(color);
+        contentStream.setLineWidth(lineWidth);
+        contentStream.moveTo(x1, y1);
+        contentStream.lineTo(x2, y2);
+        contentStream.stroke();
+    }
+
+    private void escribirTextoCelda(
+            PDPageContentStream contentStream,
+            PDFont font,
+            float fontSize,
+            float x,
+            float y,
+            float width,
+            float height,
+            String texto,
+            boolean alinearDerecha,
+            Color textColor
+    ) throws IOException {
+        float padding = 6f;
+        float usableWidth = width - (padding * 2);
+        String contenido = ajustarTextoPdf(valorTexto(texto), font, fontSize, usableWidth);
+        float textWidth = font.getStringWidth(contenido) / 1000f * fontSize;
+        float textX = alinearDerecha ? x + width - padding - textWidth : x + padding;
+        float textY = y - ((height - fontSize) / 2f) - 2f;
+        escribirTexto(contentStream, font, fontSize, textX, textY, contenido, textColor);
+    }
+
+    private void escribirTexto(
+            PDPageContentStream contentStream,
+            PDFont font,
+            float fontSize,
+            float x,
+            float y,
+            String texto,
+            Color color
+    ) throws IOException {
+        contentStream.beginText();
+        contentStream.setNonStrokingColor(color);
+        contentStream.setFont(font, fontSize);
+        contentStream.newLineAtOffset(x, y);
+        contentStream.showText(texto != null ? texto : "");
+        contentStream.endText();
+    }
+
+    private String ajustarTextoPdf(String valor, PDFont font, float fontSize, float maxWidth) throws IOException {
         String texto = valorTexto(valor);
-        if (texto.length() <= limite) {
+        if (font.getStringWidth(texto) / 1000f * fontSize <= maxWidth) {
             return texto;
         }
-        if (limite <= 3) {
-            return texto.substring(0, limite);
+
+        String sufijo = "...";
+        String base = texto;
+        while (!base.isEmpty()) {
+            base = base.substring(0, base.length() - 1);
+            String candidato = base + sufijo;
+            if (font.getStringWidth(candidato) / 1000f * fontSize <= maxWidth) {
+                return candidato;
+            }
         }
-        return texto.substring(0, limite - 3) + "...";
+        return sufijo;
     }
 
     private String valorTexto(String valor) {
@@ -363,7 +544,6 @@ public class EgresoExportService {
         return new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth());
     }
 
-    private String repetir(char caracter, int veces) {
-        return String.valueOf(caracter).repeat(Math.max(0, veces));
+    private record PdfResumenFila(String etiqueta, String valor) {
     }
 }

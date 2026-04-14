@@ -178,13 +178,25 @@ body.intro-skip .logo-intro {
   cursor: pointer;
   padding: 4px;
   border-radius: 8px;
-  width: auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 0;
+  z-index: 2;
+}
+
+.toggle-pass-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  object-fit: contain;
 }
 
 .toggle-pass:hover {
-  background: #eef4ff;
-  color: #1e3a8a;
+  background: transparent;
+  color: #64748b;
   transform: translateY(-50%);
   box-shadow: none;
 }

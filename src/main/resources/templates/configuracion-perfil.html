@@ -116,20 +116,26 @@
         <label for="claveActual">Contraseña actual <span>*</span></label>
         <div class="input-row">
           <input id="claveActual" type="password" name="claveActual" required autocomplete="current-password" placeholder="Ingresa tu contraseña actual">
-          <button type="button" class="toggle-pass" data-target="claveActual" aria-label="Mostrar contraseña">👁</button>
+          <button type="button" class="toggle-pass" data-target="claveActual" aria-label="Mostrar contraseña" aria-pressed="false">
+            <img class="toggle-pass-icon" th:src="@{/icons/ojo.png}" src="/icons/ojo.png" alt="" aria-hidden="true">
+          </button>
         </div>
 
         <label for="claveNueva">Nueva contraseña <span>*</span></label>
         <div class="input-row">
           <input id="claveNueva" type="password" name="claveNueva" minlength="6" required autocomplete="new-password" placeholder="Ingresa tu nueva contraseña">
-          <button type="button" class="toggle-pass" data-target="claveNueva" aria-label="Mostrar contraseña">👁</button>
+          <button type="button" class="toggle-pass" data-target="claveNueva" aria-label="Mostrar contraseña" aria-pressed="false">
+            <img class="toggle-pass-icon" th:src="@{/icons/ojo.png}" src="/icons/ojo.png" alt="" aria-hidden="true">
+          </button>
         </div>
         <p class="helper">La contraseña debe tener al menos 6 caracteres</p>
 
         <label for="claveNueva2">Confirmar nueva contraseña <span>*</span></label>
         <div class="input-row">
           <input id="claveNueva2" type="password" name="claveNueva2" minlength="6" required autocomplete="new-password" placeholder="Confirma tu nueva contraseña">
-          <button type="button" class="toggle-pass" data-target="claveNueva2" aria-label="Mostrar contraseña">👁</button>
+          <button type="button" class="toggle-pass" data-target="claveNueva2" aria-label="Mostrar contraseña" aria-pressed="false">
+            <img class="toggle-pass-icon" th:src="@{/icons/ojo.png}" src="/icons/ojo.png" alt="" aria-hidden="true">
+          </button>
         </div>
 
         <div class="form-actions">
@@ -799,11 +805,23 @@ document.addEventListener('DOMContentLoaded', function() {
     cursor: pointer;
     padding: 4px;
     border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-pass-icon {
+    width: 14px;
+    height: 14px;
+    display: block;
+    object-fit: contain;
   }
 
   .toggle-pass:hover {
-    background: #eef4ff;
-    color: #1e3a8a;
+    background: transparent;
+    color: #64748b;
   }
 
   .helper {
@@ -920,13 +938,17 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.addEventListener('click', function () {
         var inputId = this.getAttribute('data-target');
         var input = document.getElementById(inputId);
+        var icon = this.querySelector('.toggle-pass-icon');
         if (!input) {
           return;
         }
 
         var show = input.type === 'password';
         input.type = show ? 'text' : 'password';
-        this.textContent = show ? 'Ocultar' : '👁';
+        if (icon) {
+          icon.src = show ? '/icons/ojo2.png' : '/icons/ojo.png';
+        }
+        this.setAttribute('aria-pressed', show ? 'true' : 'false');
         this.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
       });
     });

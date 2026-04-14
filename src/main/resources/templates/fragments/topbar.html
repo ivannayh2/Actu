@@ -10,7 +10,7 @@
         <img th:if="${fotoPerfil != null}" th:src="${'/uploads/perfiles/' + codigo + '/' + fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
         <span th:if="${fotoPerfil == null}" th:text="${(nombreUsuario != null and !#strings.isEmpty(nombreUsuario)) ? #strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
       </div>
-      <span sec:authentication="name">Usuario</span>
+      <span th:text="${nombreUsuario != null and !#strings.isEmpty(nombreUsuario) ? nombreUsuario : codigo}">Usuario</span>
     </div>
 
     <form class="logout-form" th:action="@{/logout}" method="post">
@@ -24,30 +24,6 @@
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var toggle = document.getElementById('sidebarToggle');
-    var overlay = document.getElementById('sidebarOverlay');
-    if (!toggle || !overlay) return;
-
-    function closeSidebar() {
-      document.body.classList.remove('sidebar-open');
-      document.querySelectorAll('#sidebar details[open]').forEach(function (item) {
-        item.open = false;
-      });
-    }
-
-    toggle.addEventListener('click', function () {
-      if (document.body.classList.contains('sidebar-open')) {
-        closeSidebar();
-        return;
-      }
-      document.body.classList.add('sidebar-open');
-    });
-
-    overlay.addEventListener('click', closeSidebar);
-  });
-</script>
+<script src="/JS/sidebar-toggle.js"></script>
 <script src="/JS/topbar-scroll.js"></script>
-</script>
 </th:block>
