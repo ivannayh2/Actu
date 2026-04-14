@@ -242,6 +242,16 @@ public class EgresoService {
             .collect(Collectors.toList());
 }
 
+    public List<EgresoDetalleView> buscarDetalleVistaPorDoctoSa(String doctoSa) {
+    List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoSa(doctoSa);
+
+    MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+
+    return detalles.stream()
+            .map(detalle -> mapearDetalleVista(detalle, mapas))
+            .collect(Collectors.toList());
+}
+
     private MapasNotasRelacionadas construirMapasNotasRelacionadas(List<EgresoPlano> detalles) {
         List<String> doctosSaBase = detalles.stream()
                 .filter(detalle -> debeBuscarNotaRelacionada(detalle.getNotas()))
@@ -344,6 +354,10 @@ public class EgresoService {
     view.setCampoCoincidenciaNota(campoCoincidencia);
     view.setValorCoincidenciaNota(valorCoincidencia);
     view.setNotaMostrada(nota.getNotas());
+
+        // NUEVO
+        view.setNroDocumentoNota(nota.getNroDocumento());
+        view.setValorNetoNota(nota.getValorNeto());
 }
 
     private boolean debeBuscarNotaRelacionada(String notas) {

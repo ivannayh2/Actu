@@ -15,6 +15,10 @@ public class EgresoDetalleView {
     private String valorCoincidenciaNota;
     private String notaMostrada;
 
+    // NUEVOS CAMPOS
+    private String nroDocumentoNota;
+    private BigDecimal valorNetoNota;
+
     public EgresoDetalleView() {
     }
 
@@ -116,4 +120,22 @@ public class EgresoDetalleView {
 public String getDoctoEgreso() {
     return egreso != null ? egreso.getDoctoEgreso() : null;
 }
+
+    // NUEVOS GETTERS / SETTERS
+
+    public String getNroDocumentoNota() {
+        return nroDocumentoNota;
+    }
+
+    public void setNroDocumentoNota(String nroDocumentoNota) {
+        this.nroDocumentoNota = nroDocumentoNota;
+    }
+
+    public BigDecimal getValorNetoNota() {
+        return valorNetoNota;
+    }
+
+    public void setValorNetoNota(BigDecimal valorNetoNota) {
+        this.valorNetoNota = valorNetoNota;
+    }
 }

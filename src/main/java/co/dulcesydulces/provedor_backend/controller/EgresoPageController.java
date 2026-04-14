@@ -88,7 +88,7 @@ public class EgresoPageController {
                     fechaDocumento
             );
 
-                BigDecimal totalVlrEgreso = calcularTotalVlrEgreso(detalle);
+            BigDecimal totalVlrEgreso = calcularTotalVlrEgreso(detalle);
 
             model.addAttribute("detalle", detalle);
             model.addAttribute("totalVlrEgreso", totalVlrEgreso);
@@ -119,30 +119,42 @@ public class EgresoPageController {
     }
 
     @GetMapping("/detallado")
-public String verDetalleEgreso(
-        @RequestParam("doctoEgreso") String doctoEgreso,
-        Model model
-) {
-    List<EgresoPlano> detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
-    List<EgresoDetalleView> detalles = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
+    public String verDetalleEgreso(
+            @RequestParam("doctoEgreso") String doctoEgreso,
+            Model model
+    ) {
+        List<EgresoPlano> detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+        List<EgresoDetalleView> detalles = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
 
-    model.addAttribute("doctoEgreso", doctoEgreso);
-    model.addAttribute("detalles", detalles);
+        model.addAttribute("doctoEgreso", doctoEgreso);
+        model.addAttribute("detalles", detalles);
 
-    cargarTotalesDetalle(model, detallesPlano);
+        cargarTotalesDetalle(model, detallesPlano);
 
-    return "egresosDetallado";
-}
-   @GetMapping("/detalles")
-public String verDetalleFactura(
-        @RequestParam("doctoCausacion") String doctoCausacion,
-        Model model
-) {
-    model.addAttribute("doctoCausacion", doctoCausacion);
-    model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
-    model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoCausacion(doctoCausacion));
-    return "detalleFactura";
-}
+        return "egresosDetallado";
+    }
+
+    @GetMapping("/detalles")
+    public String verDetalleFactura(
+            @RequestParam(required = false) String doctoCausacion,
+            @RequestParam(required = false) String doctoSa,
+            Model model
+    ) {
+        // NUEVO: si llega doctoSa, prioriza el detalle por doctoSa
+        if (doctoSa != null && !doctoSa.trim().isEmpty()) {
+            model.addAttribute("doctoSa", doctoSa);
+            model.addAttribute("doctoCausacion", null);
+            model.addAttribute("facturas", List.of());
+            model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoSa(doctoSa));
+            return "detalleFactura";
+        }
+
+        // comportamiento actual: por doctoCausacion
+        model.addAttribute("doctoCausacion", doctoCausacion);
+        model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
+        model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoCausacion(doctoCausacion));
+        return "detalleFactura";
+    }
 
     @GetMapping("/nota-detalle")
     public String verDetalleNota(
@@ -153,8 +165,8 @@ public String verDetalleFactura(
         return "detalleNotaPlano";
     }
 
-        @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
-        public ResponseEntity<byte[]> exportarPdf(
+    @GetMapping(value = "/export/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> exportarPdf(
             @RequestParam(defaultValue = "detalle") String vista,
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
@@ -162,28 +174,28 @@ public String verDetalleFactura(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
-        ) {
+    ) {
         ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
 
         byte[] archivo = payload.resumen()
-            ? egresoExportService.generarPdfResumen(payload.resumenData(), payload.totalVlrEgreso())
-            : egresoExportService.generarPdfDetalle(
-                payload.detalles(),
-                payload.totales().totalValorDocto(),
-                payload.totales().totalProntoPago(),
-                payload.totales().totalDebitos(),
-                payload.totales().totalCreditosFinal()
-            );
+                ? egresoExportService.generarPdfResumen(payload.resumenData(), payload.totalVlrEgreso())
+                : egresoExportService.generarPdfDetalle(
+                        payload.detalles(),
+                        payload.totales().totalValorDocto(),
+                        payload.totales().totalProntoPago(),
+                        payload.totales().totalDebitos(),
+                        payload.totales().totalCreditosFinal()
+                );
 
         return crearDescarga(
-            archivo,
-            MediaType.APPLICATION_PDF,
-            payload.resumen() ? "egresos-resumen.pdf" : "egresos-detalle.pdf"
+                archivo,
+                MediaType.APPLICATION_PDF,
+                payload.resumen() ? "egresos-resumen.pdf" : "egresos-detalle.pdf"
         );
-        }
+    }
 
-        @GetMapping(value = "/export/excel", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        public ResponseEntity<byte[]> exportarExcel(
+    @GetMapping(value = "/export/excel", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public ResponseEntity<byte[]> exportarExcel(
             @RequestParam(defaultValue = "detalle") String vista,
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
@@ -191,25 +203,25 @@ public String verDetalleFactura(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
-        ) {
+    ) {
         ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
 
         byte[] archivo = payload.resumen()
-            ? egresoExportService.generarExcelResumen(payload.resumenData(), payload.totalVlrEgreso())
-            : egresoExportService.generarExcelDetalle(
-                payload.detalles(),
-                payload.totales().totalValorDocto(),
-                payload.totales().totalProntoPago(),
-                payload.totales().totalDebitos(),
-                payload.totales().totalCreditosFinal()
-            );
+                ? egresoExportService.generarExcelResumen(payload.resumenData(), payload.totalVlrEgreso())
+                : egresoExportService.generarExcelDetalle(
+                        payload.detalles(),
+                        payload.totales().totalValorDocto(),
+                        payload.totales().totalProntoPago(),
+                        payload.totales().totalDebitos(),
+                        payload.totales().totalCreditosFinal()
+                );
 
         return crearDescarga(
-            archivo,
-            MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-            payload.resumen() ? "egresos-resumen.xlsx" : "egresos-detalle.xlsx"
+                archivo,
+                MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+                payload.resumen() ? "egresos-resumen.xlsx" : "egresos-detalle.xlsx"
         );
-        }
+    }
 
     @PostMapping
     public String crear(
@@ -242,94 +254,94 @@ public String verDetalleFactura(
         model.addAttribute("totalValorDocto", totales.totalValorDocto());
     }
 
-        private ExportPayload construirPayloadExportacion(
+    private ExportPayload construirPayloadExportacion(
             String vista,
             Authentication auth,
             String proveedor,
             String numeroEgreso,
             String doctoSa,
             LocalDate fechaDocumento
-        ) {
+    ) {
         boolean esResumen = "resumen".equalsIgnoreCase(vista);
         if (esResumen) {
             List<EgresoPlanoResumen> resumenData = service.buscarPlanoSegunUsuario(
+                    auth,
+                    proveedor,
+                    numeroEgreso,
+                    doctoSa,
+                    fechaDocumento
+            );
+
+            return new ExportPayload(
+                    true,
+                    resumenData,
+                    List.of(),
+                    calcularTotalVlrEgreso(resumenData),
+                    new DetalleTotales(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
+            );
+        }
+
+        List<EgresoPlano> detallesPlano = service.buscarDetalleSegunUsuario(
                 auth,
                 proveedor,
                 numeroEgreso,
                 doctoSa,
                 fechaDocumento
-            );
-
-            return new ExportPayload(
-                true,
-                resumenData,
-                List.of(),
-                calcularTotalVlrEgreso(resumenData),
-                new DetalleTotales(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO)
-            );
-        }
-
-        List<EgresoPlano> detallesPlano = service.buscarDetalleSegunUsuario(
-            auth,
-            proveedor,
-            numeroEgreso,
-            doctoSa,
-            fechaDocumento
         );
 
         return new ExportPayload(
-            false,
-            List.of(),
-            service.buscarDetalleVistaSegunUsuario(auth, proveedor, numeroEgreso, doctoSa, fechaDocumento),
-            BigDecimal.ZERO,
-            calcularTotalesDetalle(detallesPlano)
+                false,
+                List.of(),
+                service.buscarDetalleVistaSegunUsuario(auth, proveedor, numeroEgreso, doctoSa, fechaDocumento),
+                BigDecimal.ZERO,
+                calcularTotalesDetalle(detallesPlano)
         );
-        }
+    }
 
-        private ResponseEntity<byte[]> crearDescarga(byte[] contenido, MediaType mediaType, String nombreArchivo) {
+    private ResponseEntity<byte[]> crearDescarga(byte[] contenido, MediaType mediaType, String nombreArchivo) {
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + normalizarNombreArchivo(nombreArchivo) + "\"")
-            .contentType(mediaType)
-            .contentLength(contenido.length)
-            .body(contenido);
-        }
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + normalizarNombreArchivo(nombreArchivo) + "\"")
+                .contentType(mediaType)
+                .contentLength(contenido.length)
+                .body(contenido);
+    }
 
-        private String normalizarNombreArchivo(String nombreArchivo) {
+    private String normalizarNombreArchivo(String nombreArchivo) {
         return nombreArchivo.toLowerCase(Locale.ROOT).replace(' ', '-');
-        }
+    }
 
-        private BigDecimal calcularTotalVlrEgreso(List<EgresoPlanoResumen> detalle) {
+    private BigDecimal calcularTotalVlrEgreso(List<EgresoPlanoResumen> detalle) {
         return detalle.stream()
-            .map(d -> d.getVlrEgreso() != null ? d.getVlrEgreso() : BigDecimal.ZERO)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
+                .map(d -> d.getVlrEgreso() != null ? d.getVlrEgreso() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-        private DetalleTotales calcularTotalesDetalle(List<EgresoPlano> detalles) {
+    private DetalleTotales calcularTotalesDetalle(List<EgresoPlano> detalles) {
         BigDecimal totalDebitos = detalles.stream()
-            .map(this::valorAjustado)
-            .filter(v -> v.compareTo(BigDecimal.ZERO) > 0)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(this::valorAjustado)
+                .filter(v -> v.compareTo(BigDecimal.ZERO) > 0)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalCreditosBase = detalles.stream()
-            .map(this::valorAjustado)
-            .filter(v -> v.compareTo(BigDecimal.ZERO) < 0)
-            .map(BigDecimal::abs)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(this::valorAjustado)
+                .filter(v -> v.compareTo(BigDecimal.ZERO) < 0)
+                .map(BigDecimal::abs)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalProntoPago = detalles.stream()
-            .map(d -> nvl(d.getProntoPago()))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(d -> nvl(d.getProntoPago()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalValorDocto = detalles.stream()
-            .map(EgresoPlano::getValorDocto)
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(BigDecimal.ZERO);
+                .map(EgresoPlano::getValorDocto)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(BigDecimal.ZERO);
 
         BigDecimal totalCreditosFinal = totalCreditosBase.add(totalProntoPago).add(totalValorDocto);
 
         return new DetalleTotales(totalDebitos, totalCreditosBase, totalProntoPago, totalValorDocto, totalCreditosFinal);
-        }
+    }
 
     private BigDecimal valorAjustado(EgresoPlano d) {
         return nvl(d.getVlrEgreso()).add(nvl(d.getProntoPago()));
