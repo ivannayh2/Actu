@@ -214,45 +214,50 @@
         </div>
       </div>
 
-      <div class="smart-search-actions" th:if="${!#lists.isEmpty(detalles)}">
-        <span id="searchStatus" class="search-status" aria-live="polite"></span>
-      </div>
-
       <div class="filters-actions">
-        <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
-          Filtrar
-        </button>
+        <div class="action-group form-action-group">
+          <button class="btn btn-primary btn-compact" type="submit">
+            Filtrar
+          </button>
 
-        <button id="clearAllBtn" class="btn btn-compact" type="button">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
-          Limpiar
-        </button>
-
-        <div class="actions">
-        <button class="btn" type="button" onclick="history.back()">Volver</button>
-       </div>
-           
+          <button id="clearAllBtn" class="btn btn-compact" type="button">
+            Limpiar
+          </button>
+        </div>
       </div>
       
     </form>
 
-    <div class="actions-bar page-actions-tight">
-      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
-        <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
+    <div class="action-toolbar">
+      <div class="action-toolbar-meta" th:if="${!#lists.isEmpty(detalles)}">
+        <span id="searchStatus" class="search-status" aria-live="polite"></span>
       </div>
 
-      <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
-        <a class="btn btn-export btn-export-pdf"
-           th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
-          <i data-lucide="file-text"></i>
-          Descargar PDF
-        </a>
-        <a class="btn btn-export btn-export-excel"
-           th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}">
-          <i data-lucide="sheet"></i>
-          Descargar Excel
-        </a>
+      <div class="action-toolbar-actions">
+        <button id="openModalBtnTop" class="btn btn-primary" type="button" th:if="${puedeCrearEgreso}">Adjuntar soportes</button>
+
+        <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
+          <div class="export-inline" aria-label="Opciones de exportacion">
+            <div class="export-indicator" aria-hidden="true">
+              <img class="export-indicator-icon" th:src="@{/icons/export.png}" alt="">
+              <span>Exportar</span>
+            </div>
+
+            <a class="btn export-icon-btn export-icon-btn-pdf"
+               th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar PDF"
+               aria-label="Descargar PDF">
+              <img class="export-icon" th:src="@{/icons/archivo-pdf.svg}" alt="PDF">
+            </a>
+
+            <a class="btn export-icon-btn export-icon-btn-excel"
+               th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar Excel"
+               aria-label="Descargar Excel">
+              <img class="export-icon" th:src="@{/icons/archivo-excel.svg}" alt="Excel">
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -675,6 +680,14 @@
         });
       });
     })();
+
+    document.addEventListener('click', function (e) {
+      document.querySelectorAll('details.export-collapse[open]').forEach(function (details) {
+        if (!details.contains(e.target)) {
+          details.removeAttribute('open');
+        }
+      });
+    });
   </script>
 
 </body>

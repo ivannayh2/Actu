@@ -27,14 +27,16 @@
     </div>
 
     <div class="table-wrap">
-      <table>
+      <table class="nota-plano-table">
+        <thead>
+          <tr>
+            <th>Docto proveedor</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
-            <th style="width: 240px; text-align: left;">Docto proveedor</th>
             <td th:text="${nota.doctoProveedor}"></td>
-          </tr>
-          <tr>
-            <th style="text-align: left;">Notas</th>
             <td style="white-space: pre-wrap;" th:text="${nota.notas}"></td>
           </tr>
         </tbody>
@@ -42,7 +44,7 @@
     </div>
 
     <div class="actions">
-      <button class="btn" onclick="history.back()">Volver</button>
+      <button class="btn" type="button" onclick="history.back()">Volver</button>
     </div>
   </main>
 </body>

@@ -10,7 +10,7 @@
         <img th:if="${fotoPerfil != null}" th:src="${'/uploads/perfiles/' + codigo + '/' + fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
         <span th:if="${fotoPerfil == null}" th:text="${(nombreUsuario != null and !#strings.isEmpty(nombreUsuario)) ? #strings.toUpperCase(#strings.substring(nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
       </div>
-      <span th:text="${nombreUsuario != null and !#strings.isEmpty(nombreUsuario) ? nombreUsuario : codigo}">Usuario</span>
+      <span class="topbar-username" th:text="${nombreUsuario != null and !#strings.isEmpty(nombreUsuario) ? nombreUsuario : codigo}">Usuario</span>
     </div>
 
     <form class="logout-form" th:action="@{/logout}" method="post">

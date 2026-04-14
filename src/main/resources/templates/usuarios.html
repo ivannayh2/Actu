@@ -59,9 +59,9 @@
               th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
-                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                <span class="avatar-frame">
+                  <img class="avatar-photo" th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" />
+                  <span class="avatar-fallback" th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}">U</span>
                 </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
@@ -110,7 +110,6 @@
       </div>
     </article>
 
-  
     <article class="role-card role-pub" sec:authorize="hasAuthority('ADMINISTRADOR')">
       <div class="role-title">Publicador <span class="user-count" th:text="|${porRol['PUBLICADOR'].size()} usuarios|">0 usuarios</span></div>
       <div class="role-body">
@@ -119,9 +118,9 @@
               th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
-                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                <span class="avatar-frame">
+                  <img class="avatar-photo" th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" />
+                  <span class="avatar-fallback" th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}">U</span>
                 </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
@@ -182,9 +181,9 @@
               th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-disabled' : ''">
             <div class="user-main">
               <div class="user-avatar-wrap">
-                <span style="overflow:hidden;width:36px;height:36px;border-radius:50%;border:1.5px solid #ccc;display:flex;align-items:center;justify-content:center;background:#fff;">
-                  <img th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
-                  <span th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}" style="font-size:18px;color:#888;">U</span>
+                <span class="avatar-frame">
+                  <img class="avatar-photo" th:if="${u.fotoPerfil != null}" th:src="${'/uploads/perfiles/' + u.codigo + '/' + u.fotoPerfil}" alt="Foto de perfil" />
+                  <span class="avatar-fallback" th:if="${u.fotoPerfil == null}" th:text="${(u.nombreUsuario != null and !#strings.isEmpty(u.nombreUsuario)) ? #strings.toUpperCase(#strings.substring(u.nombreUsuario, 0, 1)) : 'U'}">U</span>
                 </span>
                 <span class="status-dot"
                       th:classappend="${#strings.equalsIgnoreCase(u.estado_u, 'inactivo')} ? ' is-inactive' : ' is-active'"></span>
@@ -353,6 +352,5 @@
 </div>
 
 <script th:src="@{/JS/usuarios.js}"></script>
-</body>
 </body>
 </html>

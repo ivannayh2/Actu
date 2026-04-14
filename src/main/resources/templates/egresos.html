@@ -18,15 +18,16 @@
   <div th:replace="~{fragments/topbar :: topbar('egresos')}"></div>
   <div th:replace="~{fragments/sidebar :: sidebar('egresos')}"></div>
 
-
-  
-  <div th:if="${rol} == 'PROVEEDORES'" class="egresos-header-proveedor">
-    <span class="egresos-header-proveedor-nombre" th:text="${nombreUsuario}"></span>
-  </div>
-
   <main class="container egresos-page">
     <div th:if="${ok}" class="alert alert-ok" th:text="${ok}"></div>
     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1>Comprobante egreso</h1>
+        <p class="subtitle-main">Consulta general de egresos y exportación de resultados</p>
+      </div>
+    </div>
 
 
     <form class="filters filters-with-busqueda" method="get" th:action="@{/egresos}">
@@ -59,34 +60,53 @@
       </div>
 
 
-      <div class="filters-actions" style="display: flex; align-items: flex-end; gap: 8px; margin-top: 0;">
-        <button class="btn btn-primary btn-compact" type="submit">
-          Filtrar
-        </button>
-        <a class="btn btn-compact" th:href="@{/egresos}">
-          Limpiar
-        </a>
+      <div class="filters-actions">
+        <div class="action-group form-action-group">
+          <button class="btn btn-primary btn-compact" type="submit">
+            Filtrar
+          </button>
+          <a class="btn btn-compact" th:href="@{/egresos}">
+            Limpiar
+          </a>
+        </div>
       </div>
     </form>
 
-    <div class="actions-bar page-actions-tight">
-      <div class="actions-bar-left" th:if="${puedeCrearEgreso}">
-        <button class="btn btn-primary" type="button" onclick="openModal()">
-         Adjuntar soportes
-        </button>
+    <div class="action-toolbar">
+      <div class="action-toolbar-meta">
+        <span class="context-badge" th:if="${rol} == 'PROVEEDORES'">
+          <span class="context-badge-label">Proveedor</span>
+          <strong th:text="${nombreUsuario}"></strong>
+        </span>
       </div>
 
-      <div class="page-actions actions-bar-right">
-        <a class="btn btn-export btn-export-pdf"
-           th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
-          <i data-lucide="file-text"></i>
-          Descargar PDF
-        </a>
-        <a class="btn btn-export btn-export-excel"
-           th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}">
-          <i data-lucide="sheet"></i>
-          Descargar Excel
-        </a>
+      <div class="action-toolbar-actions">
+        <button class="btn btn-primary" type="button" onclick="openModal()" th:if="${puedeCrearEgreso}">
+          Adjuntar soportes
+        </button>
+
+        <div class="page-actions actions-bar-right">
+          <div class="export-inline" aria-label="Opciones de exportacion">
+            <div class="export-indicator" aria-hidden="true">
+              <img class="export-indicator-icon" th:src="@{/icons/export.png}" alt="">
+              <span>Exportar</span>
+            </div>
+
+            <a class="btn export-icon-btn export-icon-btn-pdf"
+               th:href="@{/egresos/export/pdf(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar PDF"
+               aria-label="Descargar PDF">
+              <img class="export-icon" th:src="@{/icons/archivo-pdf.svg}" alt="PDF">
+            </a>
+
+            <a class="btn export-icon-btn export-icon-btn-excel"
+               th:href="@{/egresos/export/excel(vista='resumen', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar Excel"
+               aria-label="Descargar Excel">
+              <img class="export-icon" th:src="@{/icons/archivo-excel.svg}" alt="Excel">
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -190,6 +210,14 @@
     if (window.lucide) {
       window.lucide.createIcons();
     }
+
+    document.addEventListener('click', function (e) {
+      document.querySelectorAll('details.export-collapse[open]').forEach(function (details) {
+        if (!details.contains(e.target)) {
+          details.removeAttribute('open');
+        }
+      });
+    });
   </script>
 </body>
 </html>
