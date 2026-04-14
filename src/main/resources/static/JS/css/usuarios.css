@@ -24,6 +24,17 @@
 	75% { transform: translateX(-2px); }
 	100% { transform: translateX(0); }
 }
+
+@keyframes tableReveal {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
 :root {
 --primary: #0051a5;
 --primary-hover: #003d7a;
@@ -228,6 +239,7 @@ padding: 18px;
 	border: 1px solid #e5e5e5;
 	border-radius: 14px;
 	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+	animation: tableReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .role-card {
@@ -245,28 +257,30 @@ transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .role-title {
-padding: 12px 14px;
-font-size: 13px;
-font-weight: 600;
+padding: 14px 14px;
+font-size: 11px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.08em;
 display: flex;
 align-items: center;
 gap: 8px;
-border-bottom: 1px solid #e8eef7;
+border-bottom: 2px solid #c5d4e8;
 }
 
 .role-admin .role-title {
-color: #1e3a8a;
-background: linear-gradient(180deg, #f5f8ff, #f8faff);
+color: #374151;
+background: #e8eef6;
 }
 
 .role-pub .role-title {
-color: #0f4eb1;
-background: linear-gradient(180deg, #f7faff, #fbfdff);
+color: #374151;
+background: #e8eef6;
 }
 
 .role-prov .role-title {
-color: #334155;
-background: linear-gradient(180deg, #f8fafc, #fcfdff);
+color: #374151;
+background: #e8eef6;
 }
 
 .role-body {
@@ -297,9 +311,9 @@ background: #ffffff;
 }
 
 .user-item:hover {
-background: var(--item-soft-strong);
-	border-color: #d5e2f5;
-	box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+background: #f0f6ff;
+	border-color: #c5d4e8;
+	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .user-item.is-disabled {
