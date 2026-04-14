@@ -63,27 +63,27 @@ public class ConsultasDocumentosService {
         String movimientoCondUploads = "";
         if (tipoFiltro != null) {
             switch (tipoFiltro) {
-                case "creo":
+                case "creo" -> {
                     // Solo movimientos de creación de usuario
                     movimientoCondHistorial = " AND h.movimiento LIKE 'Creó el usuario%' ";
                     movimientoCondUploads = " AND 1=0 ";
-                    break;
-                case "elimino":
+                }
+                case "elimino" -> {
                     movimientoCondHistorial = " AND h.movimiento LIKE 'Eliminó el usuario%' ";
                     movimientoCondUploads = " AND 1=0 ";
-                    break;
-                case "inactivo":
+                }
+                case "inactivo" -> {
                     movimientoCondHistorial = " AND h.movimiento LIKE 'inactivó el usuario%' ";
                     movimientoCondUploads = " AND 1=0 ";
-                    break;
-                case "activo":
+                }
+                case "activo" -> {
                     movimientoCondHistorial = " AND h.movimiento LIKE 'activó el usuario%' ";
                     movimientoCondUploads = " AND 1=0 ";
-                    break;
-                case "archivo":
+                }
+                case "archivo" -> {
                     movimientoCondUploads = " AND (nombre_egresos IS NOT NULL OR nombre_facturas IS NOT NULL OR nombre_notas IS NOT NULL) ";
                     movimientoCondHistorial = " AND 1=0 ";
-                    break;
+                }
             }
         }
 
