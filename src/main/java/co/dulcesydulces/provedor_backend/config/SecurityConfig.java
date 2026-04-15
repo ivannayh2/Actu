@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,7 @@ import co.dulcesydulces.provedor_backend.repository.UsuarioRepository;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
   @Bean
@@ -31,12 +33,19 @@ public class SecurityConfig {
       .authorizeHttpRequests(auth -> auth
     .requestMatchers("/css/**", "/js/**", "/JS/**", "/img/**", "/icons/**", "/favicon.ico").permitAll()
     .requestMatchers("/login", "/error").permitAll()
-    .requestMatchers("/usuarios/**", "/api/usuarios/**")
-      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permUsuariosView')"))
-    .requestMatchers("/historial/**", "/api/historial/**")
-      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permHistorialView')"))
+    .requestMatchers("/forgot-password", "/reset-password").permitAll()
+    .requestMatchers("/home", "/uploads/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permImportarArchivosView')"))
+    .requestMatchers("/egresos/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permComprobanteEgresosView')"))
+    .requestMatchers("/configuracion")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permUsuariosView') or hasAuthority('permPerfilView')"))
     .requestMatchers("/configuracion/perfil", "/api/usuarios/*/foto")
-      .access(new WebExpressionAuthorizationManager("hasAuthority('ADMINISTRADOR') or hasAuthority('permPerfilView')"))
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permPerfilView')"))
+    .requestMatchers("/usuarios/**", "/api/usuarios/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permUsuariosView')"))
+    .requestMatchers("/historial/**", "/api/historial/**")
+      .access(new WebExpressionAuthorizationManager("hasAuthority('permHistorialView')"))
     .anyRequest().authenticated()
 )
 
@@ -56,7 +65,6 @@ public class SecurityConfig {
           String codigo = authentication.getName();
           Usuarios user = usuarioRepository.findByCodigo(codigo).orElse(null);
 
-          boolean isAdmin = user != null && "ADMINISTRADOR".equalsIgnoreCase(user.getRol());
           List<String> permisos = (user != null && user.getPermisos() != null) ? user.getPermisos() : List.of();
 
           boolean canImportFiles = permisos.stream()
@@ -65,15 +73,19 @@ public class SecurityConfig {
             .anyMatch(p -> "permComprobanteEgresosView".equalsIgnoreCase(p != null ? p.trim() : ""));
           boolean canHistorial = permisos.stream()
             .anyMatch(p -> "permHistorialView".equalsIgnoreCase(p != null ? p.trim() : ""));
+          boolean canPerfil = permisos.stream()
+            .anyMatch(p -> "permPerfilView".equalsIgnoreCase(p != null ? p.trim() : ""));
 
-          if (isAdmin || canImportFiles) {
+          if (canImportFiles) {
             response.sendRedirect("/home");
           } else if (canComprobanteEgresos) {
             response.sendRedirect("/egresos");
           } else if (canHistorial) {
             response.sendRedirect("/historial");
-          } else {
+          } else if (canPerfil) {
             response.sendRedirect("/configuracion/perfil");
+          } else {
+            response.sendRedirect("/login?sinpermisos");
           }
         })
         .permitAll()
