@@ -1,8 +1,10 @@
 package co.dulcesydulces.provedor_backend.service;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -19,17 +21,23 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+
+import javax.imageio.ImageIO;
 
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoDetalleView;
 import co.dulcesydulces.provedor_backend.domain.dto.EgresoPlanoResumen;
@@ -39,16 +47,16 @@ public class EgresoExportService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final float PDF_MARGIN = 36f;
-    private static final float PDF_ROW_HEIGHT = 22f;
+    private static final float PDF_ROW_HEIGHT = 26f;
     private static final float PDF_FONT_SIZE = 9f;
     private static final float PDF_TITLE_SIZE = 14f;
-    private static final Color PDF_COLOR_TITLE = new Color(18, 18, 18);
-    private static final Color PDF_COLOR_HEADER = Color.WHITE;
-    private static final Color PDF_COLOR_HEADER_BORDER = new Color(32, 32, 32);
-    private static final Color PDF_COLOR_LABEL = Color.WHITE;
-    private static final Color PDF_COLOR_BORDER = new Color(110, 110, 110);
-    private static final Color PDF_COLOR_TEXT = new Color(26, 26, 26);
-    private static final Color PDF_COLOR_TOTAL = Color.WHITE;
+    private static final float PDF_SUBTITLE_SIZE = 8f;
+    private static final Color PDF_COLOR_TITLE = Color.BLACK;
+    private static final Color PDF_COLOR_HEADER = new Color(80, 80, 80);
+    private static final Color PDF_COLOR_HEADER_BORDER = new Color(30, 30, 30);
+    private static final Color PDF_COLOR_BORDER = new Color(210, 210, 210);
+    private static final Color PDF_COLOR_TEXT = Color.BLACK;
+    private static final String PDF_LOGO_RESOURCE = "/static/img/logo.png";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat(
             "$ #,##0.00",
             DecimalFormatSymbols.getInstance(new Locale("es", "CO"))
@@ -57,13 +65,23 @@ public class EgresoExportService {
     public byte[] generarExcelResumen(List<EgresoPlanoResumen> registros, BigDecimal totalVlrEgreso) {
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             XSSFSheet sheet = workbook.createSheet("Egresos resumen");
+            int totalColumnas = 5;
             CellStyle headerStyle = crearHeaderStyle(workbook);
             CellStyle dateStyle = crearDateStyle(workbook);
+            CellStyle dateAltStyle = crearDateBodyStyle(workbook, true);
             CellStyle moneyStyle = crearMoneyStyle(workbook);
+            CellStyle moneyAltStyle = crearMoneyBodyStyle(workbook, true);
+            CellStyle titleStyle = crearTitleStyle(workbook);
+            CellStyle subtitleStyle = crearSubtitleStyle(workbook);
+            CellStyle bodyStyle = crearBodyStyle(workbook, false);
+            CellStyle bodyAltStyle = crearBodyStyle(workbook, true);
+            CellStyle totalLabelStyle = crearTotalLabelStyle(workbook);
+            CellStyle totalMoneyStyle = crearTotalMoneyStyle(workbook);
 
             int rowIndex = 0;
-            rowIndex = escribirTitulo(sheet, rowIndex, "Reporte de egresos");
+            rowIndex = escribirTitulo(sheet, rowIndex, "Reporte de egresos", totalColumnas, titleStyle, subtitleStyle);
 
+            int headerRowIndex = rowIndex;
             Row header = sheet.createRow(rowIndex++);
             String[] columnas = {"Numero egreso", "Fecha egreso", "Nit proveedor", "Razon social", "Valor"};
             for (int i = 0; i < columnas.length; i++) {
@@ -74,28 +92,43 @@ public class EgresoExportService {
 
             for (EgresoPlanoResumen registro : registros) {
                 Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(valorTexto(registro.getDoctoEgreso()));
+                Cell rowCell = row.createCell(0);
+                rowCell.setCellValue(valorTexto(registro.getDoctoEgreso()));
+                rowCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
+
                 var dateCell = row.createCell(1);
                 if (registro.getFechaEgreso() != null) {
                     dateCell.setCellValue(java.sql.Date.valueOf(registro.getFechaEgreso()));
-                    dateCell.setCellStyle(dateStyle);
+                    dateCell.setCellStyle(esFilaPar(rowIndex) ? dateAltStyle : dateStyle);
                 } else {
                     dateCell.setCellValue("");
+                    dateCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
                 }
-                row.createCell(2).setCellValue(valorTexto(registro.getTercero()));
-                row.createCell(3).setCellValue(valorTexto(registro.getRazonSocial()));
+
+                Cell nitCell = row.createCell(2);
+                nitCell.setCellValue(valorTexto(registro.getTercero()));
+                nitCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
+
+                Cell razonCell = row.createCell(3);
+                razonCell.setCellValue(valorTexto(registro.getRazonSocial()));
+                razonCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
+
                 var amountCell = row.createCell(4);
                 amountCell.setCellValue(valorNumerico(registro.getVlrEgreso()));
-                amountCell.setCellStyle(moneyStyle);
+                amountCell.setCellStyle(esFilaPar(rowIndex) ? moneyAltStyle : moneyStyle);
             }
 
             Row totalRow = sheet.createRow(rowIndex);
-            totalRow.createCell(3).setCellValue("Total");
+            Cell totalLabelCell = totalRow.createCell(3);
+            totalLabelCell.setCellValue("Total");
+            totalLabelCell.setCellStyle(totalLabelStyle);
+
             var totalCell = totalRow.createCell(4);
             totalCell.setCellValue(valorNumerico(totalVlrEgreso));
-            totalCell.setCellStyle(moneyStyle);
+            totalCell.setCellStyle(totalMoneyStyle);
 
-            ajustarColumnas(sheet, columnas.length);
+            aplicarAjustesTabla(sheet, headerRowIndex, totalColumnas);
+            ajustarColumnas(sheet, totalColumnas);
 
             workbook.write(output);
             return output.toByteArray();
@@ -113,12 +146,21 @@ public class EgresoExportService {
     ) {
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             XSSFSheet sheet = workbook.createSheet("Egresos detalle");
+            int totalColumnas = 5;
             CellStyle headerStyle = crearHeaderStyle(workbook);
             CellStyle moneyStyle = crearMoneyStyle(workbook);
+            CellStyle moneyAltStyle = crearMoneyBodyStyle(workbook, true);
+            CellStyle titleStyle = crearTitleStyle(workbook);
+            CellStyle subtitleStyle = crearSubtitleStyle(workbook);
+            CellStyle bodyStyle = crearBodyStyle(workbook, false);
+            CellStyle bodyAltStyle = crearBodyStyle(workbook, true);
+            CellStyle totalLabelStyle = crearTotalLabelStyle(workbook);
+            CellStyle totalMoneyStyle = crearTotalMoneyStyle(workbook);
 
             int rowIndex = 0;
-            rowIndex = escribirTitulo(sheet, rowIndex, "Detalle de egresos");
+            rowIndex = escribirTitulo(sheet, rowIndex, "Detalle de egresos", totalColumnas, titleStyle, subtitleStyle);
 
+            int headerRowIndex = rowIndex;
             Row header = sheet.createRow(rowIndex++);
             String[] columnas = {"Numero factura", "Nota relacionada", "Detalle", "Debitos", "Creditos"};
             for (int i = 0; i < columnas.length; i++) {
@@ -129,27 +171,36 @@ public class EgresoExportService {
 
             for (EgresoDetalleView registro : registros) {
                 Row row = sheet.createRow(rowIndex++);
-                row.createCell(0).setCellValue(valorTexto(registro.getDoctoSa()));
-                row.createCell(1).setCellValue(valorTexto(registro.getDoctoProveedorRelacionado()));
-                row.createCell(2).setCellValue(valorTexto(registro.getDoctoCausacion()));
+                Cell facturaCell = row.createCell(0);
+                facturaCell.setCellValue(valorTexto(registro.getDoctoSa()));
+                facturaCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
+
+                Cell notaCell = row.createCell(1);
+                notaCell.setCellValue(valorTexto(registro.getDoctoProveedorRelacionado()));
+                notaCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
+
+                Cell detalleCell = row.createCell(2);
+                detalleCell.setCellValue(valorTexto(registro.getDoctoCausacion()));
+                detalleCell.setCellStyle(esFilaPar(rowIndex) ? bodyAltStyle : bodyStyle);
 
                 BigDecimal valorAjustado = valorBigDecimal(registro.getVlrEgreso()).add(valorBigDecimal(registro.getProntoPago()));
 
                 var debitosCell = row.createCell(3);
                 debitosCell.setCellValue(valorAjustado.signum() > 0 ? valorAjustado.doubleValue() : 0d);
-                debitosCell.setCellStyle(moneyStyle);
+                debitosCell.setCellStyle(esFilaPar(rowIndex) ? moneyAltStyle : moneyStyle);
 
                 var creditosCell = row.createCell(4);
                 creditosCell.setCellValue(valorAjustado.signum() < 0 ? valorAjustado.abs().doubleValue() : 0d);
-                creditosCell.setCellStyle(moneyStyle);
+                creditosCell.setCellStyle(esFilaPar(rowIndex) ? moneyAltStyle : moneyStyle);
             }
 
-            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Valor documento", totalValorDocto, moneyStyle);
-            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Pronto pago", totalProntoPago, moneyStyle);
-            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Total debitos", totalDebitos, moneyStyle);
-            escribirTotalDetalle(sheet, rowIndex, "Total creditos", totalCreditosFinal, moneyStyle);
+            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Valor documento", totalValorDocto, totalLabelStyle, totalMoneyStyle);
+            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Pronto pago", totalProntoPago, totalLabelStyle, totalMoneyStyle);
+            rowIndex = escribirTotalDetalle(sheet, rowIndex, "Total debitos", totalDebitos, totalLabelStyle, totalMoneyStyle);
+            escribirTotalDetalle(sheet, rowIndex, "Total creditos", totalCreditosFinal, totalLabelStyle, totalMoneyStyle);
 
-            ajustarColumnas(sheet, columnas.length);
+            aplicarAjustesTabla(sheet, headerRowIndex, totalColumnas);
+            ajustarColumnas(sheet, totalColumnas);
 
             workbook.write(output);
             return output.toByteArray();
@@ -225,18 +276,56 @@ public class EgresoExportService {
         );
     }
 
-    private int escribirTitulo(XSSFSheet sheet, int rowIndex, String titulo) {
-        Row titleRow = sheet.createRow(rowIndex++);
-        titleRow.createCell(0).setCellValue(titulo);
-        return rowIndex + 1;
+    private int escribirTitulo(
+            XSSFSheet sheet,
+            int rowIndex,
+            String titulo,
+            int totalColumnas,
+            CellStyle titleStyle,
+            CellStyle subtitleStyle
+    ) {
+        Row titleRow = sheet.createRow(rowIndex);
+        titleRow.setHeightInPoints(28f);
+        Cell titleCell = titleRow.createCell(0);
+        titleCell.setCellValue(titulo);
+        titleCell.setCellStyle(titleStyle);
+        sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, totalColumnas - 1));
+        for (int i = 1; i < totalColumnas; i++) {
+            Cell mergedCell = titleRow.createCell(i);
+            mergedCell.setCellStyle(titleStyle);
+        }
+
+        rowIndex++;
+
+        Row subtitleRow = sheet.createRow(rowIndex);
+        Cell subtitleCell = subtitleRow.createCell(0);
+        subtitleCell.setCellValue("Dulces & Dulces  |  Generado: " + DATE_FORMATTER.format(LocalDate.now()));
+        subtitleCell.setCellStyle(subtitleStyle);
+        sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, totalColumnas - 1));
+        for (int i = 1; i < totalColumnas; i++) {
+            Cell mergedCell = subtitleRow.createCell(i);
+            mergedCell.setCellStyle(subtitleStyle);
+        }
+
+        return rowIndex + 2;
     }
 
-    private int escribirTotalDetalle(XSSFSheet sheet, int rowIndex, String label, BigDecimal valor, CellStyle moneyStyle) {
+    private int escribirTotalDetalle(
+            XSSFSheet sheet,
+            int rowIndex,
+            String label,
+            BigDecimal valor,
+            CellStyle totalLabelStyle,
+            CellStyle totalMoneyStyle
+    ) {
         Row row = sheet.createRow(rowIndex++);
-        row.createCell(3).setCellValue(label);
+        Cell labelCell = row.createCell(3);
+        labelCell.setCellValue(label);
+        labelCell.setCellStyle(totalLabelStyle);
+
         var cell = row.createCell(4);
         cell.setCellValue(valorNumerico(valor));
-        cell.setCellStyle(moneyStyle);
+        cell.setCellStyle(totalMoneyStyle);
         return rowIndex;
     }
 
@@ -244,26 +333,106 @@ public class EgresoExportService {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
+        font.setColor(IndexedColors.GREY_80_PERCENT.getIndex());
         style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setBorderBottom(BorderStyle.THIN);
-        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         return style;
     }
 
     private CellStyle crearDateStyle(XSSFWorkbook workbook) {
+        return crearDateBodyStyle(workbook, false);
+    }
+
+    private CellStyle crearDateBodyStyle(XSSFWorkbook workbook, boolean alternada) {
         CellStyle style = workbook.createCellStyle();
         DataFormat dataFormat = workbook.createDataFormat();
         style.setDataFormat(dataFormat.getFormat("dd/mm/yyyy"));
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setAlignment(HorizontalAlignment.LEFT);
         return style;
     }
 
     private CellStyle crearMoneyStyle(XSSFWorkbook workbook) {
+        return crearMoneyBodyStyle(workbook, false);
+    }
+
+    private CellStyle crearMoneyBodyStyle(XSSFWorkbook workbook, boolean alternada) {
         CellStyle style = workbook.createCellStyle();
         DataFormat dataFormat = workbook.createDataFormat();
-        style.setDataFormat(dataFormat.getFormat("$ #,##0.00"));
+        style.setDataFormat(dataFormat.getFormat("$ #,##0.00;[Red]-$ #,##0.00"));
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.THIN);
         return style;
+    }
+
+    private CellStyle crearBodyStyle(XSSFWorkbook workbook, boolean alternada) {
+        CellStyle style = workbook.createCellStyle();
+        DataFormat dataFormat = workbook.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("@"));
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        return style;
+    }
+
+    private CellStyle crearTitleStyle(XSSFWorkbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 14);
+        font.setColor(IndexedColors.BLACK.getIndex());
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.THIN);
+        return style;
+    }
+
+    private CellStyle crearSubtitleStyle(XSSFWorkbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(false);
+        font.setFontHeightInPoints((short) 10);
+        font.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderBottom(BorderStyle.THIN);
+        return style;
+    }
+
+    private CellStyle crearTotalLabelStyle(XSSFWorkbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setColor(IndexedColors.GREY_80_PERCENT.getIndex());
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderBottom(BorderStyle.THIN);
+        return style;
+    }
+
+    private CellStyle crearTotalMoneyStyle(XSSFWorkbook workbook) {
+        CellStyle style = crearTotalLabelStyle(workbook);
+        DataFormat dataFormat = workbook.createDataFormat();
+        style.setDataFormat(dataFormat.getFormat("$ #,##0.00;[Red]-$ #,##0.00"));
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        return style;
+    }
+
+    private boolean esFilaPar(int rowIndex) {
+        return rowIndex % 2 == 0;
+    }
+
+    private void aplicarAjustesTabla(XSSFSheet sheet, int headerRow, int totalColumnas) {
+        sheet.createFreezePane(0, headerRow + 1);
+        sheet.setAutoFilter(new CellRangeAddress(headerRow, headerRow, 0, totalColumnas - 1));
     }
 
     private void ajustarColumnas(XSSFSheet sheet, int totalColumnas) {
@@ -282,15 +451,15 @@ public class EgresoExportService {
             List<PdfResumenFila> resumen
     ) {
         try (PDDocument document = new PDDocument(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.COURIER);
-            PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
+            PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+            PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
 
             PDPage page = new PDPage(crearPaginaHorizontal());
             document.addPage(page);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 float y = page.getMediaBox().getHeight() - PDF_MARGIN;
-                y = dibujarTitulo(contentStream, bold, titulo, y);
+                y = dibujarTitulo(document, contentStream, bold, titulo, y);
 
                 if (!cabecera.isEmpty()) {
                     y = dibujarTablaResumen(contentStream, regular, bold, cabecera, y, 540f);
@@ -319,10 +488,43 @@ public class EgresoExportService {
         }
     }
 
-    private float dibujarTitulo(PDPageContentStream contentStream, PDFont font, String titulo, float y) throws IOException {
-        escribirTexto(contentStream, font, PDF_TITLE_SIZE, PDF_MARGIN, y, titulo, PDF_COLOR_TITLE);
-        dibujarLinea(contentStream, PDF_MARGIN, y - 8f, crearPaginaHorizontal().getWidth() - PDF_MARGIN, y - 8f, PDF_COLOR_HEADER_BORDER, 1.2f);
-        return y - 28f;
+    private float dibujarTitulo(PDDocument document, PDPageContentStream contentStream, PDFont font, String titulo, float y) throws IOException {
+        float logoOffset = dibujarLogoPdf(document, contentStream, y);
+        float titleX = PDF_MARGIN + logoOffset;
+
+        escribirTexto(contentStream, font, PDF_TITLE_SIZE, titleX, y, titulo, PDF_COLOR_TITLE);
+        escribirTexto(
+            contentStream,
+            new PDType1Font(Standard14Fonts.FontName.HELVETICA),
+            PDF_SUBTITLE_SIZE,
+            titleX,
+            y - 14f,
+            "Dulces & Dulces  |  Generado: " + formatearFecha(LocalDate.now()),
+            new Color(130, 130, 130)
+        );
+        dibujarLinea(contentStream, PDF_MARGIN, y - 22f, crearPaginaHorizontal().getWidth() - PDF_MARGIN, y - 22f, new Color(200, 200, 200), 0.5f);
+        return y - 36f;
+    }
+
+    private float dibujarLogoPdf(PDDocument document, PDPageContentStream contentStream, float y) {
+        try (InputStream logoStream = getClass().getResourceAsStream(PDF_LOGO_RESOURCE)) {
+            if (logoStream == null) {
+                return 0f;
+            }
+
+            BufferedImage logo = ImageIO.read(logoStream);
+            if (logo == null) {
+                return 0f;
+            }
+
+            PDImageXObject image = LosslessFactory.createFromImage(document, logo);
+            float logoHeight = 22f;
+            float logoWidth = logoHeight * ((float) logo.getWidth() / (float) logo.getHeight());
+            contentStream.drawImage(image, PDF_MARGIN, y - logoHeight + 4f, logoWidth, logoHeight);
+            return logoWidth + 8f;
+        } catch (IOException ex) {
+            return 0f;
+        }
     }
 
     private float dibujarTablaResumen(
@@ -338,10 +540,9 @@ public class EgresoExportService {
         float x = PDF_MARGIN;
 
         for (PdfResumenFila fila : filas) {
-            dibujarCelda(contentStream, x, y, etiquetaWidth, PDF_ROW_HEIGHT, PDF_COLOR_LABEL, PDF_COLOR_BORDER);
-            dibujarCelda(contentStream, x + etiquetaWidth, y, valorWidth, PDF_ROW_HEIGHT, Color.WHITE);
-            escribirTextoCelda(contentStream, bold, 9f, x, y, etiquetaWidth, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_TEXT);
+            escribirTextoCelda(contentStream, bold, 9f, x, y, etiquetaWidth, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_HEADER);
             escribirTextoCelda(contentStream, regular, 9f, x + etiquetaWidth, y, valorWidth, PDF_ROW_HEIGHT, fila.valor(), false, PDF_COLOR_TEXT);
+            dibujarLinea(contentStream, x, y - PDF_ROW_HEIGHT, x + etiquetaWidth + valorWidth, y - PDF_ROW_HEIGHT, PDF_COLOR_BORDER, 0.4f);
             y -= PDF_ROW_HEIGHT;
         }
 
@@ -378,7 +579,7 @@ public class EgresoExportService {
                 contentStream.close();
                 contentStream = new PDPageContentStream(document, page);
                 y = page.getMediaBox().getHeight() - PDF_MARGIN;
-                y = dibujarTitulo(contentStream, bold, titulo, y);
+                y = dibujarTitulo(document, contentStream, bold, titulo, y);
                 y = dibujarFilaCabecera(contentStream, bold, columnas, anchos, y);
             }
             dibujarFilaDatos(contentStream, regular, fila, anchos, y, rowIndex);
@@ -393,16 +594,15 @@ public class EgresoExportService {
                 contentStream.close();
                 contentStream = new PDPageContentStream(document, page);
                 y = page.getMediaBox().getHeight() - PDF_MARGIN;
-                y = dibujarTitulo(contentStream, bold, titulo, y);
+                y = dibujarTitulo(document, contentStream, bold, titulo, y);
             }
 
             float resumenX = PDF_MARGIN + Math.max(0f, tableWidth - 280f);
+            dibujarLinea(contentStream, resumenX, y + 2f, resumenX + 280f, y + 2f, PDF_COLOR_HEADER_BORDER, 0.8f);
             for (PdfResumenFila fila : resumen) {
-                dibujarCelda(contentStream, resumenX, y, 150f, PDF_ROW_HEIGHT, PDF_COLOR_TOTAL, PDF_COLOR_HEADER_BORDER);
-                dibujarCelda(contentStream, resumenX + 150f, y, 130f, PDF_ROW_HEIGHT, Color.WHITE, PDF_COLOR_HEADER_BORDER);
-                escribirTextoCelda(contentStream, bold, 9f, resumenX, y, 150f, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_TEXT);
+                escribirTextoCelda(contentStream, bold, 9f, resumenX, y, 150f, PDF_ROW_HEIGHT, fila.etiqueta(), false, PDF_COLOR_HEADER);
                 escribirTextoCelda(contentStream, regular, 9f, resumenX + 150f, y, 130f, PDF_ROW_HEIGHT, fila.valor(), true, PDF_COLOR_TEXT);
-                dibujarLinea(contentStream, resumenX, y - PDF_ROW_HEIGHT, resumenX + 280f, y - PDF_ROW_HEIGHT, PDF_COLOR_HEADER_BORDER, 0.9f);
+                dibujarLinea(contentStream, resumenX, y - PDF_ROW_HEIGHT, resumenX + 280f, y - PDF_ROW_HEIGHT, PDF_COLOR_BORDER, 0.4f);
                 y -= PDF_ROW_HEIGHT;
             }
         }
@@ -413,39 +613,30 @@ public class EgresoExportService {
 
     private float dibujarFilaCabecera(PDPageContentStream contentStream, PDFont font, String[] columnas, float[] anchos, float y) throws IOException {
         float x = PDF_MARGIN;
+        float totalWidth = 0f;
+        for (float ancho : anchos) totalWidth += ancho;
         for (int i = 0; i < columnas.length; i++) {
-            dibujarCelda(contentStream, x, y, anchos[i], PDF_ROW_HEIGHT, PDF_COLOR_HEADER, PDF_COLOR_HEADER_BORDER);
-            escribirTextoCelda(contentStream, font, 9f, x, y, anchos[i], PDF_ROW_HEIGHT, columnas[i], false, PDF_COLOR_TITLE);
+            escribirTextoCelda(contentStream, font, 9f, x, y, anchos[i], PDF_ROW_HEIGHT, columnas[i], i >= anchos.length - 2, PDF_COLOR_HEADER);
             x += anchos[i];
         }
-        dibujarLinea(contentStream, PDF_MARGIN, y - PDF_ROW_HEIGHT, x, y - PDF_ROW_HEIGHT, PDF_COLOR_HEADER_BORDER, 1.1f);
+        
+        dibujarLinea(contentStream, PDF_MARGIN, y, PDF_MARGIN + totalWidth, y, PDF_COLOR_BORDER, 0.5f);
+        
+        dibujarLinea(contentStream, PDF_MARGIN, y - PDF_ROW_HEIGHT, PDF_MARGIN + totalWidth, y - PDF_ROW_HEIGHT, PDF_COLOR_HEADER_BORDER, 0.8f);
         return y - PDF_ROW_HEIGHT;
     }
 
     private void dibujarFilaDatos(PDPageContentStream contentStream, PDFont font, String[] fila, float[] anchos, float y, int rowIndex) throws IOException {
         float x = PDF_MARGIN;
-        Color background = Color.WHITE;
+        float totalWidth = 0f;
+        for (float ancho : anchos) totalWidth += ancho;
         for (int i = 0; i < anchos.length; i++) {
-            dibujarCelda(contentStream, x, y, anchos[i], PDF_ROW_HEIGHT, background, PDF_COLOR_BORDER);
             boolean alineadoDerecha = i >= anchos.length - 2;
             String valor = i < fila.length ? fila[i] : "";
             escribirTextoCelda(contentStream, font, PDF_FONT_SIZE, x, y, anchos[i], PDF_ROW_HEIGHT, valor, alineadoDerecha, PDF_COLOR_TEXT);
             x += anchos[i];
         }
-    }
-
-    private void dibujarCelda(PDPageContentStream contentStream, float x, float y, float width, float height, Color fillColor) throws IOException {
-        dibujarCelda(contentStream, x, y, width, height, fillColor, PDF_COLOR_BORDER);
-    }
-
-    private void dibujarCelda(PDPageContentStream contentStream, float x, float y, float width, float height, Color fillColor, Color borderColor) throws IOException {
-        contentStream.setNonStrokingColor(fillColor);
-        contentStream.addRect(x, y - height, width, height);
-        contentStream.fill();
-        contentStream.setStrokingColor(borderColor);
-        contentStream.setLineWidth(0.65f);
-        contentStream.addRect(x, y - height, width, height);
-        contentStream.stroke();
+        dibujarLinea(contentStream, PDF_MARGIN, y - PDF_ROW_HEIGHT, PDF_MARGIN + totalWidth, y - PDF_ROW_HEIGHT, PDF_COLOR_BORDER, 0.4f);
     }
 
     private void dibujarLinea(
@@ -481,7 +672,7 @@ public class EgresoExportService {
         String contenido = ajustarTextoPdf(valorTexto(texto), font, fontSize, usableWidth);
         float textWidth = font.getStringWidth(contenido) / 1000f * fontSize;
         float textX = alinearDerecha ? x + width - padding - textWidth : x + padding;
-        float textY = y - ((height - fontSize) / 2f) - 2f;
+        float textY = y - ((height + fontSize * 0.35f) / 2f);
         escribirTexto(contentStream, font, fontSize, textX, textY, contenido, textColor);
     }
 
