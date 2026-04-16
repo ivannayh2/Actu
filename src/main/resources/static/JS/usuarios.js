@@ -350,10 +350,24 @@ document.addEventListener("click", function(e){
     document
       .querySelectorAll(".kebab-dropdown")
       .forEach(m => {
-        if(m !== menu) m.classList.remove("active");
+        if(m !== menu) {
+          m.classList.remove("active");
+          m.classList.remove("open-up");
+        }
       });
 
+    const willOpen = !menu.classList.contains("active");
     menu.classList.toggle("active");
+
+    if (willOpen) {
+      menu.classList.remove("open-up");
+      const rect = menu.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 8) {
+        menu.classList.add("open-up");
+      }
+    } else {
+      menu.classList.remove("open-up");
+    }
 
     return;
   }
@@ -363,7 +377,10 @@ document.addEventListener("click", function(e){
   if(!e.target.closest(".user-menu")){
     document
       .querySelectorAll(".kebab-dropdown")
-      .forEach(m => m.classList.remove("active"));
+      .forEach(m => {
+        m.classList.remove("active");
+        m.classList.remove("open-up");
+      });
   }
 
   function toggleSidebar(){
