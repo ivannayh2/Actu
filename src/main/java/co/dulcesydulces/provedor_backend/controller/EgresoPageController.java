@@ -1,9 +1,9 @@
 package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -179,7 +179,11 @@ public String verDetalleFactura(
         return crearDescarga(
             archivo,
             MediaType.APPLICATION_PDF,
-            payload.resumen() ? "egresos-resumen.pdf" : "egresos-detalle.pdf"
+            construirNombreArchivoExportacion(
+                payload,
+                "pdf",
+                proveedor
+            )
         );
         }
 
@@ -209,7 +213,11 @@ public String verDetalleFactura(
         return crearDescarga(
             archivo,
             MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-            payload.resumen() ? "egresos-resumen.xlsx" : "egresos-detalle.xlsx"
+            construirNombreArchivoExportacion(
+                payload,
+                "xlsx",
+                proveedor
+            )
         );
         }
 
@@ -310,8 +318,60 @@ public String verDetalleFactura(
             .body(contenido);
         }
 
+        private String construirNombreArchivoExportacion(
+            ExportPayload payload,
+            String extension,
+            String proveedor
+        ) {
+        String razonSocial = obtenerRazonSocialExportacion(payload, proveedor);
+        return "D&D egresos - " + razonSocial + "." + extension;
+        }
+
+        private String obtenerRazonSocialExportacion(ExportPayload payload, String proveedor) {
+        if (payload.resumen()) {
+            String razonResumen = payload.resumenData().stream()
+                .map(EgresoPlanoResumen::getRazonSocial)
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .findFirst()
+                .orElse(null);
+
+            if (razonResumen != null) {
+                return razonResumen;
+            }
+        }
+
+        String razonDetalle = payload.detalles().stream()
+            .map(EgresoDetalleView::getRazonSocial)
+            .filter(Objects::nonNull)
+            .map(String::trim)
+            .filter(s -> !s.isEmpty())
+            .findFirst()
+            .orElse(null);
+
+        if (razonDetalle != null) {
+            return razonDetalle;
+        }
+
+        if (proveedor != null && !proveedor.isBlank()) {
+            return proveedor.trim();
+        }
+
+        return "Proveedor";
+        }
+
         private String normalizarNombreArchivo(String nombreArchivo) {
-        return nombreArchivo.toLowerCase(Locale.ROOT).replace(' ', '-');
+        String sinAcentos = Normalizer
+            .normalize(nombreArchivo, Normalizer.Form.NFD)
+            .replaceAll("\\p{M}+", "");
+
+        String limpio = sinAcentos
+            .replaceAll("[^A-Za-z0-9 ._&()-]+", "")
+            .replaceAll("\\s+", " ")
+            .trim();
+
+        return limpio.isBlank() ? "D&D egresos - Proveedor" : limpio;
         }
 
         private BigDecimal calcularTotalVlrEgreso(List<EgresoPlanoResumen> detalle) {

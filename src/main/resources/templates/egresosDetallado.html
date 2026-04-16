@@ -225,6 +225,13 @@
       height: 10px;
     }
 
+    .egresos-page .page-actions .export-download-all {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
     @media (max-width: 1200px) {
       .egresos-page .filters.filters-with-busqueda {
         grid-template-columns: 1fr 1fr;
@@ -328,19 +335,19 @@
 
         <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
           <div class="export-inline" aria-label="Opciones de exportacion">
-            <div class="export-indicator" aria-hidden="true">
+            <button id="exportAllBtn" class="export-indicator export-download-all" type="button" aria-label="Descargar PDF y Excel">
               <img class="export-indicator-icon" th:src="@{/icons/export.png}" alt="">
               <span>Exportar</span>
-            </div>
+            </button>
 
-            <a class="btn export-icon-btn export-icon-btn-pdf"
+            <a id="exportPdfLink" class="btn export-icon-btn export-icon-btn-pdf"
                th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
                title="Descargar PDF"
                aria-label="Descargar PDF">
               <img class="export-icon" th:src="@{/icons/archivo-pdf.svg}" alt="PDF">
             </a>
 
-            <a class="btn export-icon-btn export-icon-btn-excel"
+            <a id="exportExcelLink" class="btn export-icon-btn export-icon-btn-excel"
                th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
                title="Descargar Excel"
                aria-label="Descargar Excel">
@@ -586,6 +593,9 @@
         const smartSearchInput = document.getElementById('smartSearch');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const searchStatus = document.getElementById('searchStatus');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const exportPdfLink = document.getElementById('exportPdfLink');
+        const exportExcelLink = document.getElementById('exportExcelLink');
 
         const rows = Array.from(document.querySelectorAll('.detalle-row'));
         const totalsRow = document.getElementById('filaTotales');
@@ -638,6 +648,17 @@
           tableWrap.classList.remove('filtering');
         }
 
+        function triggerDownload(url) {
+          if (!url) return;
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = url;
+          document.body.appendChild(iframe);
+          setTimeout(function () {
+            iframe.remove();
+          }, 30000);
+        }
+
         function openModal() {
           if (!modal) return;
           modal.classList.remove('hidden');
@@ -663,8 +684,6 @@
 
         function filterTable() {
           if (!rowData.length) return;
-
-          showLoader();
 
           clearTimeout(filterTimeout);
           filterTimeout = setTimeout(function () {
@@ -700,8 +719,6 @@
 
             updateSearchStatus(filteredRows.length, rowData.length, !!term);
             renderVisibleRows();
-            
-            hideLoader();
           }, 300);
         }
 
@@ -710,6 +727,19 @@
         if (smartSearchInput) {
           smartSearchInput.addEventListener('input', debouncedFilterTable);
           updateSearchStatus(rowData.length, rowData.length, false);
+        }
+
+        if (filtersForm) {
+          filtersForm.addEventListener('submit', function () {
+            showLoader();
+          });
+        }
+
+        if (exportAllBtn) {
+          exportAllBtn.addEventListener('click', function () {
+            triggerDownload(exportPdfLink ? exportPdfLink.href : '');
+            triggerDownload(exportExcelLink ? exportExcelLink.href : '');
+          });
         }
 
         // ========== INICIALIZACIÓN ==========
@@ -727,6 +757,7 @@
             filterTable();
 
             if (window.location.search) {
+              showLoader();
               window.location.href = filtersForm ? filtersForm.getAttribute('action') || '/egresos' : '/egresos';
               return;
             }
