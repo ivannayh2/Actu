@@ -152,6 +152,79 @@
       grid-template-columns: repeat(4, minmax(190px, 1fr));
     }
 
+    .egresos-page .filters.filters-inline-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: nowrap;
+      padding: 8px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .egresos-page .filters.filters-inline-bar .control {
+      width: 100%;
+    }
+
+    .egresos-page .filters.filters-inline-bar input[type="date"],
+    .egresos-page .filters.filters-inline-bar input[type="search"] {
+      height: 38px;
+      border-radius: 8px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor {
+      flex: 1 1 240px;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor input {
+      max-width: none;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-fecha {
+      flex: 0 0 165px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-factura {
+      flex: 1 1 240px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-busqueda {
+      flex: 1 1 300px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions {
+      grid-column: auto;
+      border-top: 0;
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 0;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn {
+      min-height: 38px;
+      padding: 8px 14px;
+      white-space: nowrap;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn-primary .btn-icon {
+      filter: brightness(0) invert(1);
+    }
+
+    .egresos-page .page-actions .export-toggle-arrow {
+      width: 10px;
+      height: 10px;
+    }
+
     @media (max-width: 1200px) {
       .egresos-page .filters.filters-with-busqueda {
         grid-template-columns: 1fr 1fr;
@@ -161,6 +234,22 @@
     @media (max-width: 1080px) {
       .egresos-page .filters.filters-with-busqueda {
         grid-template-columns: 1fr;
+      }
+
+      .egresos-page .filters.filters-inline-bar {
+        flex-wrap: wrap;
+      }
+
+      .egresos-page .filters.filters-inline-bar .field-proveedor,
+      .egresos-page .filters.filters-inline-bar .field-fecha,
+      .egresos-page .filters.filters-inline-bar .field-factura,
+      .egresos-page .filters.filters-inline-bar .field-busqueda {
+        flex: 1 1 240px;
+      }
+
+      .egresos-page .filters.filters-inline-bar .filters-actions {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
   </style>
@@ -180,35 +269,35 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
-      <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+    <form id="filtersForm" class="filters filters-inline-bar" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
+      <div class="field field-proveedor" th:if="${puedeFiltrarProveedor}">
+        <label class="sr-only" for="proveedor">Proveedor</label>
         <div class="control">
-          <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
+          <input id="proveedor" type="search" name="proveedor" placeholder="Proveedor" th:value="${proveedor}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+      <div class="field field-fecha">
+        <label class="sr-only" for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+      <div class="field field-factura">
+        <label class="sr-only" for="doctoSa">Número factura</label>
         <div class="control">
-          <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
+          <input id="doctoSa" type="search" name="doctoSa" placeholder="Número factura" th:value="${doctoSa}">
         </div>
       </div>
 
-      <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+      <div class="field field-busqueda" th:if="${!#lists.isEmpty(detalles)}">
+        <label class="sr-only" for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
             type="search"
-            placeholder="Busca por factura, débito o crédito..."
+            placeholder="Búsqueda inteligente"
             autocomplete="off"
             aria-describedby="searchStatus">
         </div>
@@ -217,6 +306,7 @@
       <div class="filters-actions">
         <div class="action-group form-action-group">
           <button class="btn btn-primary btn-compact" type="submit">
+            <img class="btn-icon" th:src="@{/icons/filtro.svg}" alt="" aria-hidden="true">
             Filtrar
           </button>
 
