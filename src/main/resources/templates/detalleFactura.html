@@ -68,6 +68,8 @@
             <th>Campo coincidencia</th>
             <th>Valor coincidencia</th>
             <th>Nota mostrada</th>
+            <th>Nro documento nota</th>
+            <th>Valor neto nota</th>
           </tr>
         </thead>
         <tbody>
@@ -76,6 +78,8 @@
             <td th:text="${d.campoCoincidenciaNota != null ? d.campoCoincidenciaNota : '-'}"></td>
             <td th:text="${d.valorCoincidenciaNota != null ? d.valorCoincidenciaNota : '-'}"></td>
             <td th:text="${d.notaMostrada != null ? d.notaMostrada : '-'}"></td>
+            <td th:text="${d.nroDocumentoNota != null ? d.nroDocumentoNota : '-'}"></td>
+            <td th:text="${d.valorNetoNota != null ? '$ ' + #numbers.formatDecimal(d.valorNetoNota, 1, 'POINT', 2, 'COMMA') : '-'}"></td>
           </tr>
         </tbody>
       </table>

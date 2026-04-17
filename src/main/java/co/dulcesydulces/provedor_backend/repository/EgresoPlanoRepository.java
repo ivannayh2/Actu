@@ -140,4 +140,13 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
 List<EgresoPlano> buscarDetallePorDoctoCausacion(@Param("doctoCausacion") String doctoCausacion);
 
     boolean existsByDoctoEgreso(String doctoEgreso);
+
+
+    @Query("""
+    SELECT e
+    FROM EgresoPlano e
+    WHERE UPPER(TRIM(e.doctoSa)) = UPPER(TRIM(:doctoSa))
+    ORDER BY e.doctoSa ASC
+""")
+List<EgresoPlano> buscarDetallePorDoctoSa(@Param("doctoSa") String doctoSa);
 }

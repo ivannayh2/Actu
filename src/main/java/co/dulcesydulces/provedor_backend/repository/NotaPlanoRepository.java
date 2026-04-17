@@ -46,4 +46,26 @@ public interface NotaPlanoRepository extends JpaRepository<NotaPlano, Long> {
     List<NotaPlano> buscarPorNdNormalizado(
             @Param("ndNormalizado") String ndNormalizado
     );
+
+    // NUEVOS MÉTODOS
+
+    @Query("""
+        SELECT n
+        FROM NotaPlano n
+        WHERE UPPER(REPLACE(REPLACE(REPLACE(n.doctoProveedor, '-', ''), ' ', ''), '.', '')) = UPPER(:doctoProveedorNormalizado)
+        ORDER BY n.id ASC
+    """)
+    List<NotaPlano> buscarPorDoctoProveedorNormalizado(
+            @Param("doctoProveedorNormalizado") String doctoProveedorNormalizado
+    );
+
+    @Query("""
+        SELECT n
+        FROM NotaPlano n
+        WHERE UPPER(REPLACE(REPLACE(REPLACE(n.nroDocumento, '-', ''), ' ', ''), '.', '')) = UPPER(:nroDocumentoNormalizado)
+        ORDER BY n.id ASC
+    """)
+    List<NotaPlano> buscarPorNroDocumentoNormalizado(
+            @Param("nroDocumentoNormalizado") String nroDocumentoNormalizado
+    );
 }
