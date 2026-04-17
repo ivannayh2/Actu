@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -180,8 +181,8 @@ public class EgresoPageController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
-    ) {
-        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
+        ) {
+        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, doctoEgreso, fechaDocumento);
 
         byte[] archivo = payload.resumen()
                 ? egresoExportService.generarPdfResumen(payload.resumenData(), payload.totalVlrEgreso())
@@ -194,9 +195,13 @@ public class EgresoPageController {
                 );
 
         return crearDescarga(
-                archivo,
-                MediaType.APPLICATION_PDF,
-                payload.resumen() ? "egresos-resumen.pdf" : "egresos-detalle.pdf"
+            archivo,
+            MediaType.APPLICATION_PDF,
+            construirNombreArchivoExportacion(
+                payload,
+                "pdf",
+                proveedor
+            )
         );
     }
 
@@ -210,8 +215,8 @@ public class EgresoPageController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
-    ) {
-        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, fechaDocumento);
+        ) {
+        ExportPayload payload = construirPayloadExportacion(vista, auth, proveedor, numeroEgreso, doctoSa, doctoEgreso, fechaDocumento);
 
         byte[] archivo = payload.resumen()
                 ? egresoExportService.generarExcelResumen(payload.resumenData(), payload.totalVlrEgreso())
@@ -224,9 +229,13 @@ public class EgresoPageController {
                 );
 
         return crearDescarga(
-                archivo,
-                MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-                payload.resumen() ? "egresos-resumen.xlsx" : "egresos-detalle.xlsx"
+            archivo,
+            MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+            construirNombreArchivoExportacion(
+                payload,
+                "xlsx",
+                proveedor
+            )
         );
     }
 
@@ -311,11 +320,11 @@ public class EgresoPageController {
         }
 
         return new ExportPayload(
-                false,
-                List.of(),
-                service.buscarDetalleVistaSegunUsuario(auth, proveedor, numeroEgreso, doctoSa, fechaDocumento),
-                BigDecimal.ZERO,
-                calcularTotalesDetalle(detallesPlano)
+            false,
+            List.of(),
+            detallesVista,
+            BigDecimal.ZERO,
+            calcularTotalesDetalle(detallesPlano)
         );
     }
 
@@ -325,6 +334,22 @@ public class EgresoPageController {
                 .contentType(mediaType)
                 .contentLength(contenido.length)
                 .body(contenido);
+    }
+
+    private String construirNombreArchivoExportacion(ExportPayload payload, String extension, String proveedor) {
+        String tipo = payload.resumen() ? "resumen" : "detalle";
+        String proveedorBase = (proveedor == null || proveedor.isBlank()) ? "todos" : proveedor;
+        String proveedorNormalizado = Normalizer.normalize(proveedorBase, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("(^-+|-+$)", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (proveedorNormalizado.isBlank()) {
+            proveedorNormalizado = "todos";
+        }
+
+        return "egresos-" + tipo + "-" + proveedorNormalizado + "." + extension;
     }
 
     private String normalizarNombreArchivo(String nombreArchivo) {
