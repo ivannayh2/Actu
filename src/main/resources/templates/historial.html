@@ -25,7 +25,7 @@
       <p class="subtitle-main">Registro de todas las actividades del sistema</p>
     </div>
     <div class="page-actions">
-      <button class="logout-btn limpiar-historial-btn" type="button" aria-label="Limpiar historial">
+      <button th:if="${rolUsuario != null && rolUsuario.toUpperCase() == 'ADMINISTRADOR'}" class="logout-btn limpiar-historial-btn" type="button" aria-label="Limpiar historial">
         <span>Limpiar Historial</span>
       </button>
     </div>
@@ -81,10 +81,8 @@
     </table>
   </div>
 
-  <!-- Se eliminó la sección de total de cargas -->
 </main>
 
-<!-- Modal de confirmación para eliminar historial -->
 <div id="modal-confirm-eliminar" class="modal-confirm-eliminar" style="display:none;">
   <div class="modal-content">
     <h2>¿Seguro que deseas borrar todo el historial?</h2>

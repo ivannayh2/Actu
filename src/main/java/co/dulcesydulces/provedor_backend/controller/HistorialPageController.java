@@ -54,6 +54,7 @@ public class HistorialPageController {
         model.addAttribute("fecha", fecha);
         model.addAttribute("tipoMovimiento", tipoMovimiento);
         model.addAttribute("totalCargas", historial.size());
+        model.addAttribute("rolUsuario", rol);
         return "historial";
     }
 }
