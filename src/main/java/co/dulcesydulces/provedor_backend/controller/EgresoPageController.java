@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -333,6 +334,22 @@ public class EgresoPageController {
                 .contentType(mediaType)
                 .contentLength(contenido.length)
                 .body(contenido);
+    }
+
+    private String construirNombreArchivoExportacion(ExportPayload payload, String extension, String proveedor) {
+        String tipo = payload.resumen() ? "resumen" : "detalle";
+        String proveedorBase = (proveedor == null || proveedor.isBlank()) ? "todos" : proveedor;
+        String proveedorNormalizado = Normalizer.normalize(proveedorBase, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("(^-+|-+$)", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (proveedorNormalizado.isBlank()) {
+            proveedorNormalizado = "todos";
+        }
+
+        return "egresos-" + tipo + "-" + proveedorNormalizado + "." + extension;
     }
 
     private String normalizarNombreArchivo(String nombreArchivo) {
