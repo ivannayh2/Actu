@@ -32,6 +32,7 @@ public class HomeController {
                 session.setAttribute("usuario", user.getCodigo());
                 session.setAttribute("rol", user.getRol());
 
+                boolean isAdmin = "ADMINISTRADOR".equalsIgnoreCase(user.getRol());
                 List<String> permisos = user.getPermisos() != null ? user.getPermisos() : List.of();
 
                 boolean canImportFiles = permisos.stream()
@@ -43,7 +44,7 @@ public class HomeController {
                 boolean canPerfil = permisos.stream()
                     .anyMatch(p -> "permPerfilView".equalsIgnoreCase(p != null ? p.trim() : ""));
 
-                if (!canImportFiles) {
+                if (!isAdmin && !canImportFiles) {
                     if (canComprobanteEgresos) {
                         return "redirect:/egresos";
                     }
