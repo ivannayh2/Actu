@@ -1,9 +1,9 @@
 package co.dulcesydulces.provedor_backend.controller;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -176,6 +176,7 @@ public class EgresoPageController {
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
             @RequestParam(required = false) String doctoSa,
+            @RequestParam(required = false) String doctoEgreso,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
@@ -205,6 +206,7 @@ public class EgresoPageController {
             @RequestParam(required = false) String proveedor,
             @RequestParam(required = false) String numeroEgreso,
             @RequestParam(required = false) String doctoSa,
+            @RequestParam(required = false) String doctoEgreso,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDocumento,
             Authentication auth
@@ -265,6 +267,7 @@ public class EgresoPageController {
             String proveedor,
             String numeroEgreso,
             String doctoSa,
+            String doctoEgreso,
             LocalDate fechaDocumento
     ) {
         boolean esResumen = "resumen".equalsIgnoreCase(vista);
@@ -293,6 +296,19 @@ public class EgresoPageController {
                 doctoSa,
                 fechaDocumento
         );
+
+        List<EgresoDetalleView> detallesVista = service.buscarDetalleVistaSegunUsuario(
+            auth,
+            proveedor,
+            numeroEgreso,
+            doctoSa,
+            fechaDocumento
+        );
+
+        if (doctoEgreso != null && !doctoEgreso.isBlank()) {
+            detallesPlano = service.buscarDetallePorDoctoEgreso(doctoEgreso);
+            detallesVista = service.buscarDetalleVistaPorDoctoEgreso(doctoEgreso);
+        }
 
         return new ExportPayload(
                 false,

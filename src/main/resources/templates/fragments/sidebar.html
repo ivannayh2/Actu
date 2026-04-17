@@ -6,20 +6,20 @@
   </div>
 
   <nav class="sidebar-nav">
-      <!-- ADMINISTRADOR ve todo sin restricciones -->
-      <a sec:authorize="hasAuthority('ADMINISTRADOR')"
+      <!-- ADMINISTRADOR ahora respeta permisos asignados -->
+      <a sec:authorize="hasAuthority('ADMINISTRADOR') and hasAuthority('permImportarArchivosView')"
          th:href="@{/home}" th:classappend="${active}=='home' ? 'active' : ''">
          <i class="icon-home"></i> <span>Importar Archivos</span>
       </a>
-      <a sec:authorize="hasAuthority('ADMINISTRADOR')"
+      <a sec:authorize="hasAuthority('ADMINISTRADOR') and hasAuthority('permComprobanteEgresosView')"
          th:href="@{/egresos}" th:classappend="${active}=='egresos' ? 'active' : ''">
          <i class="icon-egresos"></i> <span>Comprobante egreso</span>
       </a>
-      <a sec:authorize="hasAuthority('ADMINISTRADOR')"
+      <a sec:authorize="hasAuthority('ADMINISTRADOR') and hasAuthority('permHistorialView')"
          th:href="@{/historial}" th:classappend="${active}=='historial' ? 'active' : ''">
          <i class="icon-history"></i> <span>Historial</span>
       </a>
-      <details class="nav-group" sec:authorize="hasAuthority('ADMINISTRADOR')">
+      <details class="nav-group" sec:authorize="hasAuthority('ADMINISTRADOR') and (hasAuthority('permUsuariosView') or hasAuthority('permPerfilView'))">
         <summary class="nav-group-toggle"
                  th:classappend="${active == 'configuracion' or active == 'usuarios' or active == 'perfil'} ? 'active' : ''">
           <i class="icon-user"></i>
@@ -27,10 +27,10 @@
           <span class="nav-group-caret" aria-hidden="true">▾</span>
         </summary>
         <nav class="nav-submenu">
-          <a th:href="@{/usuarios}" th:classappend="${active}=='usuarios' ? 'active' : ''">
+          <a sec:authorize="hasAuthority('permUsuariosView')" th:href="@{/usuarios}" th:classappend="${active}=='usuarios' ? 'active' : ''">
             <span>Usuarios</span>
           </a>
-          <a th:href="@{/configuracion/perfil}" th:classappend="${active}=='perfil' ? 'active' : ''">
+          <a sec:authorize="hasAuthority('permPerfilView')" th:href="@{/configuracion/perfil}" th:classappend="${active}=='perfil' ? 'active' : ''">
             <span>Perfil</span>
           </a>
         </nav>

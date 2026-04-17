@@ -62,253 +62,203 @@
       transition: color 0.25s, background 0.25s, box-shadow 0.25s;
     }
 
-    .factura-cell {
-      min-width: 0;
+    /* ========== LOADER/SPINNER ========== */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(2px);
     }
 
-    .detalle-cell {
-      min-width: 0;
-      white-space: nowrap;
+    .loader-overlay.active {
+      display: flex;
     }
 
-    .factura-linea {
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e5e5e5;
+      border-top: 4px solid #0051a5;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      position: absolute;
+      bottom: 20px;
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    /* ========== ANIMACIONES DE TABLA ========== */
+    .table-wrap {
+      transition: opacity 0.3s ease;
+    }
+
+    .table-wrap.filtering {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .detalle-row {
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .detalle-row.table-hidden {
+      animation: fadeOut 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+    }
+
+    .fila-resumen,
+    #filaTotales {
+      animation: fadeIn 0.4s ease-out 0.2s both;
+    }
+
+    .egresos-page .filters.filters-with-busqueda {
+      grid-template-columns: repeat(4, minmax(190px, 1fr));
+    }
+
+    .egresos-page .filters.filters-inline-bar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      line-height: 1.2;
-    }
-
-    .factura-principal {
-      font-family: "Instrument Sans", "Segoe UI", sans-serif;
-      font-weight: 400;
-      font-variant-numeric: tabular-nums;
-      font-feature-settings: "tnum" 1, "lnum" 1;
-      color: #2f3640;
-    }
-
-    .nota-relacionada {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
-      margin-left: 0;
-      line-height: 1;
-      width: fit-content;
-      max-width: 100%;
-      min-width: 0;
-      flex-wrap: nowrap;
-    }
-
-    .nota-relacionada strong {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #d98500;
-      letter-spacing: 0.2px;
-      display: block;
-      width: auto;
-      white-space: nowrap;
-      line-height: 1;
-      text-align: left;
-    }
-
-    .acciones-factura,
-    .acciones-nota {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .acciones-nota {
-      margin-top: 2px;
-      justify-content: flex-start;
-      width: auto;
-    }
-
-    .detalle-row-con-nota td {
-      padding-top: 5px;
-      padding-bottom: 5px;
-    }
-
-    .detalle-row-con-nota .nota-relacionada {
-      line-height: 0.95;
-    }
-
-    .detalle-row-con-nota .acciones-nota .btn.btn-compact {
-      font-size: 0.84rem;
-      line-height: 1;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    .detalle-cell .btn.btn-compact {
-      padding: 0;
-      min-height: auto;
-      font-size: 0.9rem;
-      font-weight: 600;
-      background: transparent;
-      border: 0;
-    }
-
-    .detalle-cell .btn.btn-compact:hover {
-      box-shadow: none;
-      background: transparent;
-    }
-
-    .nota-relacionada .btn.btn-compact,
-    .acciones-factura .btn.btn-compact {
-      color: #0b57d0;
-    }
-
-    .fila-resumen td {
-      background: #fafafa;
-    }
-
-    .fila-resumen td:first-child {
-      box-shadow: inset 3px 0 0 #cfd8e6;
-    }
-
-    .fila-resumen:hover td {
-      background: #f1f5fb;
-    }
-
-    .fila-resumen:hover td:first-child {
-      box-shadow: inset 3px 0 0 #b7c6df;
-    }
-
-    #filaTotales td {
-      background: #f3f6fb;
-    }
-
-    #filaTotales td:first-child {
-      box-shadow: inset 3px 0 0 #8aa2c6;
-    }
-
-    #filaTotales:hover td {
-      background: #e8eff9;
-    }
-
-    #filaTotales:hover td:first-child {
-      box-shadow: inset 3px 0 0 #6f8fb9;
-    }
-
-    .egresos-page .table-wrap table th:first-child,
-    .egresos-page .table-wrap table td:first-child {
-      padding-left: 16px;
-    }
-
-    .egresos-page .table-wrap {
-      border: 1px solid #E5E5E5;
-      border-radius: 12px;
-      width: min(99%, 1240px);
-      max-width: 100%;
-      margin: 0 auto;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .egresos-page .table-wrap table {
-      width: 100%;
-      margin: 0 auto;
-      table-layout: auto;
-    }
-
-    .egresos-page .table-wrap table th,
-    .egresos-page .table-wrap table td {
-      box-sizing: border-box;
-      min-width: 0;
-      overflow: hidden;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-
-    .egresos-page .table-wrap table thead th:nth-child(1),
-    .egresos-page .table-wrap table thead th:nth-child(2),
-    .egresos-page .table-wrap table thead th:nth-child(3),
-    .egresos-page .table-wrap table tbody td:nth-child(1),
-    .egresos-page .table-wrap table tbody td:nth-child(2),
-    .egresos-page .table-wrap table tbody td:nth-child(3) {
-      text-align: left;
-    }
-
-    .egresos-page .table-wrap table thead th:nth-child(4),
-    .egresos-page .table-wrap table thead th:nth-child(5),
-    .egresos-page .table-wrap table tbody td:nth-child(4),
-    .egresos-page .table-wrap table tbody td:nth-child(5) {
-      text-align: right;
-    }
-
-    .egresos-page .table-wrap table thead th:nth-child(5),
-    .egresos-page .table-wrap table tbody td:nth-child(5) {
-      padding-right: 22px;
-    }
-
-    .egresos-page .table-wrap table thead th:nth-child(1),
-    .egresos-page .table-wrap table tbody td:nth-child(1) {
-      padding-right: 10px;
-    }
-
-    .egresos-page .table-wrap table thead th:nth-child(2),
-    .egresos-page .table-wrap table tbody td:nth-child(2) {
-      padding-left: 8px;
-    }
-
-    .egresos-page .table-wrap table col.col-factura {
-      width: 270px;
-    }
-
-    .egresos-page .table-wrap table col.col-nota {
-      width: 220px;
-    }
-
-    .egresos-page .table-wrap table col.col-detalle {
-      width: auto;
-    }
-
-    .egresos-page .table-wrap table col.col-debito,
-    .egresos-page .table-wrap table col.col-credito {
-      width: auto;
-    }
-
-    .nota-cell {
-      min-width: 0;
-    }
-
-    .nota-cell .nota-relacionada,
-    .nota-cell .acciones-nota {
-      width: auto;
-      min-width: 0;
-    }
-
-    .egresos-page #filtersForm.filters {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: flex-end;
       gap: 10px;
-      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding: 8px;
     }
 
-    .egresos-page #filtersForm.filters .field {
-      flex: 0 0 180px;
-      min-width: 160px;
+    .egresos-page .filters.filters-inline-bar .field {
+      min-width: 0;
+      margin: 0;
     }
 
-    .egresos-page #filtersForm.filters .smart-search-actions {
-      flex: 0 0 auto;
-      padding-bottom: 10px;
-      white-space: nowrap;
+    .egresos-page .filters.filters-inline-bar .control {
+      width: 100%;
     }
 
-    .egresos-page #filtersForm.filters .filters-actions {
+    .egresos-page .filters.filters-inline-bar input[type="date"],
+    .egresos-page .filters.filters-inline-bar input[type="search"] {
+      height: 38px;
+      border-radius: 8px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor {
+      flex: 1 1 240px;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor input {
+      max-width: none;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-fecha {
+      flex: 0 0 165px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-factura {
+      flex: 1 1 240px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-busqueda {
+      flex: 1 1 300px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions {
       grid-column: auto;
+      border-top: 0;
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 0;
+      justify-content: flex-end;
       flex: 0 0 auto;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      min-width: max-content;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn {
+      min-height: 38px;
+      padding: 8px 14px;
       white-space: nowrap;
     }
 
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn-primary .btn-icon {
+      filter: brightness(0) invert(1);
+    }
+
+    .egresos-page .page-actions .export-toggle-arrow {
+      width: 10px;
+      height: 10px;
+    }
+
+    .egresos-page .page-actions .export-download-all {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    @media (max-width: 1200px) {
+      .egresos-page .filters.filters-with-busqueda {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 1080px) {
+      .egresos-page .filters.filters-with-busqueda {
+        grid-template-columns: 1fr;
+      }
+
+      .egresos-page .filters.filters-inline-bar {
+        flex-wrap: wrap;
+      }
+
+      .egresos-page .filters.filters-inline-bar .field-proveedor,
+      .egresos-page .filters.filters-inline-bar .field-fecha,
+      .egresos-page .filters.filters-inline-bar .field-factura,
+      .egresos-page .filters.filters-inline-bar .field-busqueda {
+        flex: 1 1 240px;
+      }
+
+      .egresos-page .filters.filters-inline-bar .filters-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
@@ -326,76 +276,98 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" method="get" th:action="@{/egresos}">
-      <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+    <form id="filtersForm" class="filters filters-inline-bar" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
+      <div class="field field-proveedor" th:if="${puedeFiltrarProveedor}">
+        <label class="sr-only" for="proveedor">Proveedor</label>
         <div class="control">
-          <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
+          <input id="proveedor" type="search" name="proveedor" placeholder="Proveedor" th:value="${proveedor}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+      <div class="field field-fecha">
+        <label class="sr-only" for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+      <div class="field field-factura">
+        <label class="sr-only" for="doctoSa">Número factura</label>
         <div class="control">
-          <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
+          <input id="doctoSa" type="search" name="doctoSa" placeholder="Número factura" th:value="${doctoSa}">
         </div>
       </div>
 
-      <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+      <div class="field field-busqueda" th:if="${!#lists.isEmpty(detalles)}">
+        <label class="sr-only" for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
             type="search"
-            placeholder="Busca por factura, débito o crédito..."
+            placeholder="Búsqueda inteligente"
             autocomplete="off"
             aria-describedby="searchStatus">
         </div>
       </div>
 
-      <div class="smart-search-actions" th:if="${!#lists.isEmpty(detalles)}">
-        <span id="searchStatus" class="search-status" aria-live="polite"></span>
-      </div>
-
       <div class="filters-actions">
-        <button class="btn btn-primary btn-compact" type="submit">
-          <img class="btn-icon" th:src="@{/icons/filtrar.svg}" alt="">
-          Filtrar
-        </button>
+        <div class="action-group form-action-group">
+          <button class="btn btn-primary btn-compact" type="submit">
+            <img class="btn-icon" th:src="@{/icons/filtro.svg}" alt="" aria-hidden="true">
+            Filtrar
+          </button>
 
-        <button id="clearAllBtn" class="btn btn-compact" type="button">
-          <img class="btn-icon" th:src="@{/icons/limpiar.svg}" alt="">
-          Limpiar
-        </button>
-
-        <div class="actions">
-        <button class="btn" type="button" onclick="history.back()">Volver</button>
-       </div>
-           
+          <button id="clearAllBtn" class="btn btn-compact" type="button">
+            Limpiar
+          </button>
+        </div>
       </div>
       
     </form>
 
-    <div class="page-actions" th:if="${puedeCrearEgreso}">
-      <button id="openModalBtnTop" class="btn btn-primary" type="button">Adjuntar soportes</button>
+    <div class="action-toolbar">
+      <div class="action-toolbar-meta" th:if="${!#lists.isEmpty(detalles)}">
+        <span id="searchStatus" class="search-status" aria-live="polite"></span>
+      </div>
+
+      <div class="action-toolbar-actions">
+        <button id="openModalBtnTop" class="btn btn-primary" type="button" th:if="${puedeCrearEgreso}">Adjuntar soportes</button>
+
+        <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
+          <div class="export-inline" aria-label="Opciones de exportacion">
+            <button id="exportAllBtn" class="export-indicator export-download-all" type="button" aria-label="Descargar PDF y Excel">
+              <img class="export-indicator-icon" th:src="@{/icons/export.png}" alt="">
+              <span>Exportar</span>
+            </button>
+
+            <a id="exportPdfLink" class="btn export-icon-btn export-icon-btn-pdf"
+               th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar PDF"
+               aria-label="Descargar PDF">
+              <img class="export-icon" th:src="@{/icons/archivo-pdf.svg}" alt="PDF">
+            </a>
+
+            <a id="exportExcelLink" class="btn export-icon-btn export-icon-btn-excel"
+               th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
+               title="Descargar Excel"
+               aria-label="Descargar Excel">
+              <img class="export-icon" th:src="@{/icons/archivo-excel.svg}" alt="Excel">
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <colgroup>
-          <col class="col-factura">
-          <col class="col-nota">
-          <col class="col-detalle">
-          <col class="col-debito">
-          <col class="col-credito">
-        </colgroup>
+
+    <div id="loaderOverlay" class="loader-overlay">
+      <div>
+        <div class="spinner"></div>
+        <div class="loader-text">Filtrando datos...</div>
+      </div>
+    </div>
+
+    <div class="table-wrap" id="tableWrap">
+      <table class="detalle-facturas-table">
         <thead>
           <tr>
             <th>Número factura</th>
@@ -445,7 +417,7 @@
                 <strong th:text="${d.doctoProveedorRelacionado}"></strong>
 
                 <div class="acciones-nota">
-                  <a class="btn btn-compact"
+                  <a class="btn btn-compact btn-ver-nota"
                      th:href="@{/egresos/nota-detalle(doctoProveedor=${d.doctoProveedorRelacionado})}">
                     Ver nota
                   </a>
@@ -604,9 +576,13 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
+        // ========== ELEMENTOS DEL DOM ==========
         const modal = document.getElementById('modal');
         const openModalBtnTop = document.getElementById('openModalBtnTop');
-        const openModalBtnBottom = document.getElementById('openModalBtnBottom');
+        const openModalButtons = [
+          openModalBtnTop,
+          ...Array.from(document.querySelectorAll('.open-modal-btn'))
+        ].filter(Boolean);
         const closeModalBtn = document.getElementById('closeModalBtn');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
 
@@ -617,12 +593,23 @@
         const smartSearchInput = document.getElementById('smartSearch');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const searchStatus = document.getElementById('searchStatus');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const exportPdfLink = document.getElementById('exportPdfLink');
+        const exportExcelLink = document.getElementById('exportExcelLink');
 
         const rows = Array.from(document.querySelectorAll('.detalle-row'));
         const totalsRow = document.getElementById('filaTotales');
         const noResultsRow = document.getElementById('sinCoincidenciasRow');
         const totalDebitosView = document.getElementById('totalDebitosView');
         const totalCreditosView = document.getElementById('totalCreditosView');
+        
+        // ========== LOADER ==========
+        const loaderOverlay = document.getElementById('loaderOverlay');
+        const tableWrap = document.getElementById('tableWrap');
+        let filterTimeout;
+
+        let filteredRows = [];
+        let allTotals = { debitos: 0, creditos: 0 };
 
         const rowData = rows.map(function (row) {
           return {
@@ -632,6 +619,45 @@
             credito: parseFloat(row.dataset.credito || '0')
           };
         });
+
+        function renderVisibleRows() {
+          // Ocultar todas las filas
+          rows.forEach(function (row) {
+            row.classList.add('table-hidden');
+          });
+
+          if (filteredRows.length === 0) {
+            noResultsRow.classList.remove('table-hidden');
+            return;
+          }
+
+          noResultsRow.classList.add('table-hidden');
+
+          filteredRows.forEach(function (row) {
+            row.element.classList.remove('table-hidden');
+          });
+        }
+
+        function showLoader() {
+          loaderOverlay.classList.add('active');
+          tableWrap.classList.add('filtering');
+        }
+
+        function hideLoader() {
+          loaderOverlay.classList.remove('active');
+          tableWrap.classList.remove('filtering');
+        }
+
+        function triggerDownload(url) {
+          if (!url) return;
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = url;
+          document.body.appendChild(iframe);
+          setTimeout(function () {
+            iframe.remove();
+          }, 30000);
+        }
 
         function openModal() {
           if (!modal) return;
@@ -659,40 +685,41 @@
         function filterTable() {
           if (!rowData.length) return;
 
-          const term = normalizeText(smartSearchInput ? smartSearchInput.value : '');
-          let visibleCount = 0;
-          let totalDebitos = 0;
-          let totalCreditos = 0;
+          clearTimeout(filterTimeout);
+          filterTimeout = setTimeout(function () {
+            const term = normalizeText(smartSearchInput ? smartSearchInput.value : '');
+            filteredRows = [];
+            let totalDebitos = 0;
+            let totalCreditos = 0;
 
-          rowData.forEach(function (row) {
-            const matches = !term || row.searchText.includes(term);
+            rowData.forEach(function (row) {
+              const matches = !term || row.searchText.includes(term);
 
-            row.element.classList.toggle('table-hidden', !matches);
+              if (matches) {
+                filteredRows.push(row);
+                totalDebitos += row.debito;
+                totalCreditos += row.credito;
+              }
+            });
 
-            if (matches) {
-              visibleCount++;
-              totalDebitos += row.debito;
-              totalCreditos += row.credito;
+            // Guardar totales de búsqueda
+            allTotals = { debitos: totalDebitos, creditos: totalCreditos };
+
+            if (totalsRow) {
+              totalsRow.classList.toggle('table-hidden', filteredRows.length === 0);
             }
-          });
 
-          if (totalsRow) {
-            totalsRow.classList.toggle('table-hidden', visibleCount === 0);
-          }
+            if (totalDebitosView) {
+              totalDebitosView.textContent = formatMoney(totalDebitos);
+            }
 
-          if (noResultsRow) {
-            noResultsRow.classList.toggle('table-hidden', visibleCount !== 0);
-          }
+            if (totalCreditosView) {
+              totalCreditosView.textContent = formatMoney(totalCreditos);
+            }
 
-          if (totalDebitosView) {
-            totalDebitosView.textContent = formatMoney(totalDebitos);
-          }
-
-          if (totalCreditosView) {
-            totalCreditosView.textContent = formatMoney(totalCreditos);
-          }
-
-          updateSearchStatus(visibleCount, rowData.length, !!term);
+            updateSearchStatus(filteredRows.length, rowData.length, !!term);
+            renderVisibleRows();
+          }, 300);
         }
 
         const debouncedFilterTable = debounce(filterTable, 120);
@@ -701,6 +728,24 @@
           smartSearchInput.addEventListener('input', debouncedFilterTable);
           updateSearchStatus(rowData.length, rowData.length, false);
         }
+
+        if (filtersForm) {
+          filtersForm.addEventListener('submit', function () {
+            showLoader();
+          });
+        }
+
+        if (exportAllBtn) {
+          exportAllBtn.addEventListener('click', function () {
+            triggerDownload(exportPdfLink ? exportPdfLink.href : '');
+            triggerDownload(exportExcelLink ? exportExcelLink.href : '');
+          });
+        }
+
+        // ========== INICIALIZACIÓN ==========
+        // Inicializar con todos los registros
+        filteredRows = rowData.slice();
+        renderVisibleRows();
 
         if (clearAllBtn) {
           clearAllBtn.addEventListener('click', function () {
@@ -712,6 +757,7 @@
             filterTable();
 
             if (window.location.search) {
+              showLoader();
               window.location.href = filtersForm ? filtersForm.getAttribute('action') || '/egresos' : '/egresos';
               return;
             }
@@ -728,13 +774,9 @@
           });
         }
 
-        if (openModalBtnTop) {
-          openModalBtnTop.addEventListener('click', openModal);
-        }
-
-        if (openModalBtnBottom) {
-          openModalBtnBottom.addEventListener('click', openModal);
-        }
+        openModalButtons.forEach(function (button) {
+          button.addEventListener('click', openModal);
+        });
 
         if (closeModalBtn) {
           closeModalBtn.addEventListener('click', closeModal);
@@ -759,6 +801,14 @@
         });
       });
     })();
+
+    document.addEventListener('click', function (e) {
+      document.querySelectorAll('details.export-collapse[open]').forEach(function (details) {
+        if (!details.contains(e.target)) {
+          details.removeAttribute('open');
+        }
+      });
+    });
   </script>
 
 </body>
