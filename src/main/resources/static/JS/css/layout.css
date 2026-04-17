@@ -105,6 +105,10 @@ body.sidebar-open .topbar {
   color: var(--text, #222222);
 }
 
+.topbar .topbar-username {
+  font-weight: 700;
+}
+
 .avatar {
   width: 36px;
   height: 36px;
