@@ -140,21 +140,16 @@ public class EgresoPageController {
             @RequestParam(required = false) String doctoSa,
             Model model
     ) {
+        // NUEVO: si llega doctoSa, prioriza el detalle por doctoSa
         if (doctoSa != null && !doctoSa.trim().isEmpty()) {
-            String doctoCausacionReal = service.buscarDoctoCausacionPorDoctoSa(doctoSa);
-
             model.addAttribute("doctoSa", doctoSa);
-            model.addAttribute("doctoCausacion", doctoCausacionReal);
-            model.addAttribute(
-                    "facturas",
-                    doctoCausacionReal != null
-                            ? service.buscarFacturasPorDoctoCausacion(doctoCausacionReal)
-                            : List.of()
-            );
+            model.addAttribute("doctoCausacion", null);
+            model.addAttribute("facturas", List.of());
             model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoSa(doctoSa));
             return "detalleFactura";
         }
 
+        // comportamiento actual: por doctoCausacion
         model.addAttribute("doctoCausacion", doctoCausacion);
         model.addAttribute("facturas", service.buscarFacturasPorDoctoCausacion(doctoCausacion));
         model.addAttribute("detallesEgreso", service.buscarDetalleVistaPorDoctoCausacion(doctoCausacion));

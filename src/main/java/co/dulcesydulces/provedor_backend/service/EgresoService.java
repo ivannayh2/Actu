@@ -155,12 +155,12 @@ public class EgresoService {
     }
 
     public List<FacturaPlano> buscarFacturasPorDoctoCausacion(String doctoCausacion) {
-        if (doctoCausacion == null || doctoCausacion.trim().isEmpty()) {
-            return List.of();
-        }
-
-        return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion.trim());
+    if (doctoCausacion == null || doctoCausacion.trim().isEmpty()) {
+        return List.of();
     }
+
+    return facturaPlanoRepository.buscarPorDoctoCausacion(doctoCausacion.trim());
+}
 
     public NotaPlano buscarNotaPorDoctoProveedor(String doctoProveedor) {
         return notaPlanoRepository.findFirstByDoctoProveedor(doctoProveedor)
@@ -233,43 +233,24 @@ public class EgresoService {
     }
 
     public List<EgresoDetalleView> buscarDetalleVistaPorDoctoCausacion(String doctoCausacion) {
-        List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoCausacion(doctoCausacion);
+    List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoCausacion(doctoCausacion);
 
-        MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+    MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
 
-        return detalles.stream()
-                .map(detalle -> mapearDetalleVista(detalle, mapas))
-                .collect(Collectors.toList());
-    }
+    return detalles.stream()
+            .map(detalle -> mapearDetalleVista(detalle, mapas))
+            .collect(Collectors.toList());
+}
 
     public List<EgresoDetalleView> buscarDetalleVistaPorDoctoSa(String doctoSa) {
-        List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoSa(doctoSa);
+    List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoSa(doctoSa);
 
-        MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
+    MapasNotasRelacionadas mapas = construirMapasNotasRelacionadas(detalles);
 
-        return detalles.stream()
-                .map(detalle -> mapearDetalleVista(detalle, mapas))
-                .collect(Collectors.toList());
-    }
-
-    // NUEVO
-    public String buscarDoctoCausacionPorDoctoSa(String doctoSa) {
-        if (doctoSa == null || doctoSa.trim().isEmpty()) {
-            return null;
-        }
-
-        List<EgresoPlano> detalles = egresoPlanoRepository.buscarDetallePorDoctoSa(doctoSa.trim());
-
-        if (detalles == null || detalles.isEmpty()) {
-            return null;
-        }
-
-        return detalles.stream()
-                .map(EgresoPlano::getDoctoCausacion)
-                .filter(this::tieneTexto)
-                .findFirst()
-                .orElse(null);
-    }
+    return detalles.stream()
+            .map(detalle -> mapearDetalleVista(detalle, mapas))
+            .collect(Collectors.toList());
+}
 
     private MapasNotasRelacionadas construirMapasNotasRelacionadas(List<EgresoPlano> detalles) {
         List<String> doctosSaBase = detalles.stream()
@@ -321,59 +302,63 @@ public class EgresoService {
     }
 
     private EgresoDetalleView mapearDetalleVista(EgresoPlano egreso, MapasNotasRelacionadas mapas) {
-        EgresoDetalleView view = new EgresoDetalleView(egreso);
+    EgresoDetalleView view = new EgresoDetalleView(egreso);
 
-        view.setNotaMostrada(egreso.getNotas());
+    // fallback por defecto
+    view.setNotaMostrada(egreso.getNotas());
 
-        if (!debeBuscarNotaRelacionada(egreso.getNotas())) {
-            return view;
-        }
-
-        String doctoSaBase = extraerDoctoSaBase(egreso.getDoctoSa());
-        view.setDoctoSaBase(doctoSaBase);
-
-        if (!tieneTexto(doctoSaBase)) {
-            return view;
-        }
-
-        String clave = normalizarTextoComparacion(doctoSaBase);
-
-        NotaPlano notaPorDoctoProveedor = mapas.getPorDoctoProveedor().get(clave);
-        if (notaPorDoctoProveedor != null) {
-            llenarNotaRelacionada(view, notaPorDoctoProveedor, "docto_proveedor", notaPorDoctoProveedor.getDoctoProveedor());
-            return view;
-        }
-
-        NotaPlano notaPorNroDocumento = mapas.getPorNroDocumento().get(clave);
-        if (notaPorNroDocumento != null) {
-            llenarNotaRelacionada(view, notaPorNroDocumento, "nro_documento", notaPorNroDocumento.getNroDocumento());
-            return view;
-        }
-
-        NotaPlano notaPorReferencia1 = mapas.getPorReferencia1().get(clave);
-        if (notaPorReferencia1 != null) {
-            llenarNotaRelacionada(view, notaPorReferencia1, "referencia_1", notaPorReferencia1.getReferencia1());
-            return view;
-        }
-
+    if (!debeBuscarNotaRelacionada(egreso.getNotas())) {
         return view;
     }
+
+    String doctoSaBase = extraerDoctoSaBase(egreso.getDoctoSa());
+    view.setDoctoSaBase(doctoSaBase);
+
+    if (!tieneTexto(doctoSaBase)) {
+        return view;
+    }
+
+    String clave = normalizarTextoComparacion(doctoSaBase);
+
+    NotaPlano notaPorDoctoProveedor = mapas.getPorDoctoProveedor().get(clave);
+    if (notaPorDoctoProveedor != null) {
+        llenarNotaRelacionada(view, notaPorDoctoProveedor, "docto_proveedor", notaPorDoctoProveedor.getDoctoProveedor());
+        return view;
+    }
+
+    NotaPlano notaPorNroDocumento = mapas.getPorNroDocumento().get(clave);
+    if (notaPorNroDocumento != null) {
+        llenarNotaRelacionada(view, notaPorNroDocumento, "nro_documento", notaPorNroDocumento.getNroDocumento());
+        return view;
+    }
+
+    NotaPlano notaPorReferencia1 = mapas.getPorReferencia1().get(clave);
+    if (notaPorReferencia1 != null) {
+        llenarNotaRelacionada(view, notaPorReferencia1, "referencia_1", notaPorReferencia1.getReferencia1());
+        return view;
+    }
+
+    // si no encontró nada, se queda con egresos_plano.notas
+    return view;
+}
 
     private void llenarNotaRelacionada(
         EgresoDetalleView view,
         NotaPlano nota,
         String campoCoincidencia,
         String valorCoincidencia
-    ) {
-        view.setMostrarNotaRelacionada(true);
-        view.setDoctoProveedorRelacionado(nota.getDoctoProveedor());
-        view.setNotaPlanoRelacionada(nota.getNotas());
-        view.setCampoCoincidenciaNota(campoCoincidencia);
-        view.setValorCoincidenciaNota(valorCoincidencia);
-        view.setNotaMostrada(nota.getNotas());
+) {
+    view.setMostrarNotaRelacionada(true);
+    view.setDoctoProveedorRelacionado(nota.getDoctoProveedor());
+    view.setNotaPlanoRelacionada(nota.getNotas());
+    view.setCampoCoincidenciaNota(campoCoincidencia);
+    view.setValorCoincidenciaNota(valorCoincidencia);
+    view.setNotaMostrada(nota.getNotas());
+
+        // NUEVO
         view.setNroDocumentoNota(nota.getNroDocumento());
         view.setValorNetoNota(nota.getValorNeto());
-    }
+}
 
     private boolean debeBuscarNotaRelacionada(String notas) {
         if (notas == null) {

@@ -53,9 +53,6 @@ public class EgresoPlano {
     @Column(name = "valor_docto", precision = 14, scale = 2)
     private BigDecimal valorDocto;
 
-    @Column(name = "neto_causado", precision = 14, scale= 2)
-    private BigDecimal netoCausado;
-
     @Column(name = "pronto_pago", precision = 14, scale = 2)
     private BigDecimal prontoPago;
 
@@ -159,14 +156,6 @@ public class EgresoPlano {
 
     public void setValorDocto(BigDecimal valorDocto) {
         this.valorDocto = valorDocto;
-    }
-
-    public BigDecimal getNetoCausado() {
-        return netoCausado;
-    }
-
-    public void setNetoCausado(BigDecimal netoCausado) {
-        this.netoCausado = netoCausado;
     }
 
     public String getNotas() {

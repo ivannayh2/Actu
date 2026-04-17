@@ -129,8 +129,7 @@ public class PlanosUploadService {
                 BigDecimal vlrEgreso = parseMoney(c[7], "Egresos", lineNo, "vlr_egreso", line);
                 String notas = c[8].trim();
                 BigDecimal valorDocto = parseMoney(c[9], "Egresos", lineNo, "valor_docto", line);
-                BigDecimal netoCausado = parseMoney(c[10], "Egresos", lineNo, "neto_causado", line);
-                BigDecimal prontoPago = parseMoney(c[11], "Egresos", lineNo, "pronto_pago", line);
+                BigDecimal prontoPago = parseMoney(c[10], "Egresos", lineNo, "pronto_pago", line);
 
                 batch.add(new Object[]{
                     uploadId,
@@ -144,7 +143,6 @@ public class PlanosUploadService {
                     vlrEgreso,
                     notas,
                     valorDocto,
-                    netoCausado,
                     prontoPago
                 });
 
@@ -163,8 +161,8 @@ public class PlanosUploadService {
     private void batchInsertEgresos(List<Object[]> batch) {
         jdbc.batchUpdate("""
             INSERT INTO egresos_plano
-            (upload_id, docto_egreso, fecha_egreso, tercero, suc, razon_social, docto_sa, docto_causacion, vlr_egreso, notas, valor_docto, neto_causado, pronto_pago)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (upload_id, docto_egreso, fecha_egreso, tercero, suc, razon_social, docto_sa, docto_causacion, vlr_egreso, notas, valor_docto, pronto_pago)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, batch);
     }
 
