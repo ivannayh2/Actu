@@ -247,7 +247,7 @@ background: #ffffff;
 border: 1px solid #e5e5e5;
 border-radius: 12px;
 box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
-overflow: hidden;
+overflow: visible;
 transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -443,8 +443,8 @@ gap: 6px;
 }
 
 .icon-btn {
-border: 1px solid #e5e5e5;
-background: #ffffff;
+border: none;
+background: transparent;
 padding: 0 12px;
 border-radius: 8px;
 font-size: 12px;
@@ -458,8 +458,8 @@ cursor: pointer;
 }
 
 .icon-btn:hover {
-background: #f6f6f6;
-border-color: #cad7ed;
+background: transparent;
+color: #1e3a8a;
 }
 
 .user-menu {
@@ -467,8 +467,8 @@ position: relative;
 }
 
 .kebab-btn {
-border: 1px solid #e5e5e5;
-background: #ffffff;
+border: none;
+background: transparent;
 border-radius: 8px;
 padding: 0 10px;
 cursor: pointer;
@@ -482,7 +482,8 @@ color: #475569;
 }
 
 .kebab-btn:hover {
-background: #f6f6f6;
+background: transparent;
+color: #1e3a8a;
 }
 
 .kebab-dropdown {
@@ -502,6 +503,10 @@ display: none;
 
 .kebab-dropdown.active {
 display: block;
+}
+
+.kebab-dropdown.open-up {
+inset: auto 0 calc(100% + 4px) auto;
 }
 
 .menu-item {
@@ -738,6 +743,70 @@ margin: 6px 0 10px;
 font-size: 12px;
 font-weight: 400;
 color: #333333;
+}
+
+.permisos-info {
+margin: 0 0 12px;
+padding: 10px 12px;
+border: 1px solid #cddbf6;
+border-radius: 10px;
+background: #f5f9ff;
+color: #1e3a8a;
+font-size: 12px;
+line-height: 1.5;
+}
+
+.perm-info-icon {
+position: relative;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 15px;
+height: 15px;
+margin-left: 4px;
+font-size: 13px;
+font-style: normal;
+color: #1d4ed8;
+cursor: default;
+vertical-align: middle;
+}
+
+.perm-info-icon .perm-tooltip {
+display: none;
+position: absolute;
+bottom: calc(100% + 6px);
+left: 50%;
+transform: translateX(-50%);
+white-space: nowrap;
+background: #f5f9ff;
+color: #1e3a8a;
+font-size: 11px;
+font-weight: 400;
+padding: 7px 11px;
+border-radius: 10px;
+border: 1px solid #cddbf6;
+z-index: 100;
+pointer-events: none;
+box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+}
+
+.perm-info-icon .perm-tooltip::after {
+content: '';
+position: absolute;
+top: 100%;
+left: 50%;
+transform: translateX(-50%);
+border: 5px solid transparent;
+border-top-color: #cddbf6;
+}
+
+.perm-info-icon:hover .perm-tooltip,
+.perm-info-icon:focus .perm-tooltip {
+display: block;
+}
+
+.hidden {
+display: none !important;
 }
 
 .permisos-head,

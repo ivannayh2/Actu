@@ -8,6 +8,15 @@ const inputRol = document.getElementById("rol");
 const inputNombre = document.getElementById("nombre_usuario");
 const inputEmail = document.getElementById("email");
 const inputPasswordHash = document.getElementById("password_hash"); // ✅ id correcto
+const rolePermissionInfo = document.getElementById("rolePermissionInfo");
+
+const rolePermissionLabels = {
+  ADMINISTRADOR: "ADMINISTRADOR",
+  PUBLICADOR: "PUBLICADOR",
+  PROVEEDORES: "PROVEEDOR"
+};
+
+const rolePermissionExtra = {};
 
 const hiddenUiPermissions = [
   "permCrearUsuariosEdit",
@@ -44,6 +53,30 @@ function closeModal() {
   editingCodigo = null;
   preservedHiddenPermisos = [];
   inputCodigo.disabled = false;
+  updateRolePermissionInfo();
+}
+
+function updateRolePermissionInfo() {
+  if (!rolePermissionInfo || !inputRol) {
+    return;
+  }
+
+  const rol = inputRol.value.trim().toUpperCase();
+  const roleLabel = rolePermissionLabels[rol] || rol;
+  const message = roleLabel ? `Editando permisos para el rol ${roleLabel}.` : "";
+
+  const usuariosNote = document.getElementById("permUsuariosRoleNote");
+  if (usuariosNote) {
+    usuariosNote.classList.toggle("hidden", rol !== "PUBLICADOR");
+  }
+
+  const historialNote = document.getElementById("permHistorialRoleNote");
+  if (historialNote) {
+    historialNote.classList.toggle("hidden", rol !== "PUBLICADOR");
+  }
+
+  rolePermissionInfo.textContent = message;
+  rolePermissionInfo.classList.toggle("hidden", !message);
 }
 
 modal.addEventListener("click", (e) => {
@@ -76,6 +109,8 @@ function autoCheckPermisosPorRol() {
   checks.forEach(chk => { chk.checked = false; });
 
   const rol = inputRol.value.trim().toUpperCase();
+  updateRolePermissionInfo();
+
   if (rol === 'ADMINISTRADOR') {
     // Marcar todos los permisos si es ADMINISTRADOR
     checks.forEach(chk => { chk.checked = true; });
@@ -102,12 +137,6 @@ function autoCheckPermisosPorRol() {
     const chk = form.querySelector(`[name="${nombre}"]`);
     if (chk) chk.checked = true;
   });
-
-  // Mostrar/ocultar advertencia para publicador
-  const warning = document.getElementById('publicador-user-warning');
-  if (warning) {
-    warning.style.display = rol === 'PUBLICADOR' ? '' : 'none';
-  }
 }
 
 // Listener para cambio de rol
@@ -235,6 +264,7 @@ document.addEventListener("click", async (e) => {
           checks.forEach(chk => {
             chk.checked = u.permisos.includes(chk.name);
           });
+          updateRolePermissionInfo();
         } else {
           preservedHiddenPermisos = [];
           autoCheckPermisosPorRol();
@@ -320,10 +350,24 @@ document.addEventListener("click", function(e){
     document
       .querySelectorAll(".kebab-dropdown")
       .forEach(m => {
-        if(m !== menu) m.classList.remove("active");
+        if(m !== menu) {
+          m.classList.remove("active");
+          m.classList.remove("open-up");
+        }
       });
 
+    const willOpen = !menu.classList.contains("active");
     menu.classList.toggle("active");
+
+    if (willOpen) {
+      menu.classList.remove("open-up");
+      const rect = menu.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight - 8) {
+        menu.classList.add("open-up");
+      }
+    } else {
+      menu.classList.remove("open-up");
+    }
 
     return;
   }
@@ -333,7 +377,10 @@ document.addEventListener("click", function(e){
   if(!e.target.closest(".user-menu")){
     document
       .querySelectorAll(".kebab-dropdown")
-      .forEach(m => m.classList.remove("active"));
+      .forEach(m => {
+        m.classList.remove("active");
+        m.classList.remove("open-up");
+      });
   }
 
   function toggleSidebar(){

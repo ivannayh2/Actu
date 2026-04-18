@@ -152,6 +152,86 @@
       grid-template-columns: repeat(4, minmax(190px, 1fr));
     }
 
+    .egresos-page .filters.filters-inline-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: nowrap;
+      padding: 8px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .egresos-page .filters.filters-inline-bar .control {
+      width: 100%;
+    }
+
+    .egresos-page .filters.filters-inline-bar input[type="date"],
+    .egresos-page .filters.filters-inline-bar input[type="search"] {
+      height: 38px;
+      border-radius: 8px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor {
+      flex: 1 1 240px;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-proveedor input {
+      max-width: none;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-fecha {
+      flex: 0 0 165px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-factura {
+      flex: 1 1 240px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .field-busqueda {
+      flex: 1 1 300px;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions {
+      grid-column: auto;
+      border-top: 0;
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 0;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn {
+      min-height: 38px;
+      padding: 8px 14px;
+      white-space: nowrap;
+    }
+
+    .egresos-page .filters.filters-inline-bar .filters-actions .btn-primary .btn-icon {
+      filter: brightness(0) invert(1);
+    }
+
+    .egresos-page .page-actions .export-toggle-arrow {
+      width: 10px;
+      height: 10px;
+    }
+
+    .egresos-page .page-actions .export-download-all {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
     @media (max-width: 1200px) {
       .egresos-page .filters.filters-with-busqueda {
         grid-template-columns: 1fr 1fr;
@@ -161,6 +241,22 @@
     @media (max-width: 1080px) {
       .egresos-page .filters.filters-with-busqueda {
         grid-template-columns: 1fr;
+      }
+
+      .egresos-page .filters.filters-inline-bar {
+        flex-wrap: wrap;
+      }
+
+      .egresos-page .filters.filters-inline-bar .field-proveedor,
+      .egresos-page .filters.filters-inline-bar .field-fecha,
+      .egresos-page .filters.filters-inline-bar .field-factura,
+      .egresos-page .filters.filters-inline-bar .field-busqueda {
+        flex: 1 1 240px;
+      }
+
+      .egresos-page .filters.filters-inline-bar .filters-actions {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
   </style>
@@ -180,35 +276,35 @@
       </div>
     </div>
 
-    <form id="filtersForm" class="filters" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
-      <div class="field" th:if="${puedeFiltrarProveedor}">
-        <h1><label for="proveedor">Proveedor</label></h1>
+    <form id="filtersForm" class="filters filters-inline-bar" th:classappend="${!#lists.isEmpty(detalles)} ? ' filters-with-busqueda'" method="get" th:action="@{/egresos}">
+      <div class="field field-proveedor" th:if="${puedeFiltrarProveedor}">
+        <label class="sr-only" for="proveedor">Proveedor</label>
         <div class="control">
-          <input id="proveedor" type="search" name="proveedor" th:value="${proveedor}">
+          <input id="proveedor" type="search" name="proveedor" placeholder="Proveedor" th:value="${proveedor}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="fechaDocumento">Fecha</label></h1>
+      <div class="field field-fecha">
+        <label class="sr-only" for="fechaDocumento">Fecha</label>
         <div class="control">
           <input id="fechaDocumento" type="date" name="fechaDocumento" th:value="${fechaDocumento}">
         </div>
       </div>
 
-      <div class="field">
-        <h1><label for="doctoSa">Número factura</label></h1>
+      <div class="field field-factura">
+        <label class="sr-only" for="doctoSa">Número factura</label>
         <div class="control">
-          <input id="doctoSa" type="search" name="doctoSa" th:value="${doctoSa}">
+          <input id="doctoSa" type="search" name="doctoSa" placeholder="Número factura" th:value="${doctoSa}">
         </div>
       </div>
 
-      <div class="field" th:if="${!#lists.isEmpty(detalles)}">
-        <h1><label for="smartSearch">Búsqueda inteligente</label></h1>
+      <div class="field field-busqueda" th:if="${!#lists.isEmpty(detalles)}">
+        <label class="sr-only" for="smartSearch">Búsqueda inteligente</label>
         <div class="control">
           <input
             id="smartSearch"
             type="search"
-            placeholder="Busca por factura, débito o crédito..."
+            placeholder="Búsqueda inteligente"
             autocomplete="off"
             aria-describedby="searchStatus">
         </div>
@@ -217,6 +313,7 @@
       <div class="filters-actions">
         <div class="action-group form-action-group">
           <button class="btn btn-primary btn-compact" type="submit">
+            <img class="btn-icon" th:src="@{/icons/filtro.svg}" alt="" aria-hidden="true">
             Filtrar
           </button>
 
@@ -238,19 +335,19 @@
 
         <div class="page-actions actions-bar-right" th:if="${!#lists.isEmpty(detalles)}">
           <div class="export-inline" aria-label="Opciones de exportacion">
-            <div class="export-indicator" aria-hidden="true">
+            <button id="exportAllBtn" class="export-indicator export-download-all" type="button" aria-label="Descargar PDF y Excel">
               <img class="export-indicator-icon" th:src="@{/icons/export.png}" alt="">
               <span>Exportar</span>
-            </div>
+            </button>
 
-            <a class="btn export-icon-btn export-icon-btn-pdf"
+            <a id="exportPdfLink" class="btn export-icon-btn export-icon-btn-pdf"
                th:href="@{/egresos/export/pdf(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
                title="Descargar PDF"
                aria-label="Descargar PDF">
               <img class="export-icon" th:src="@{/icons/archivo-pdf.svg}" alt="PDF">
             </a>
 
-            <a class="btn export-icon-btn export-icon-btn-excel"
+            <a id="exportExcelLink" class="btn export-icon-btn export-icon-btn-excel"
                th:href="@{/egresos/export/excel(vista='detalle', proveedor=${proveedor}, numeroEgreso=${numeroEgreso}, doctoSa=${doctoSa}, doctoEgreso=${doctoEgreso}, fechaDocumento=${fechaDocumento})}"
                title="Descargar Excel"
                aria-label="Descargar Excel">
@@ -332,8 +429,8 @@
 
             <td class="detalle-cell">
               <div class="acciones-factura" th:if="${d.doctoCausacion != null}">
-                <a class="btn btn-compact btn-ver-detalle"
-                   th:href="@{/egresos/detalles(doctoCausacion=${d.doctoCausacion})}">
+                <a class="btn btn-compact"
+                   th:href="@{/egresos/detalles(doctoSa=${d.doctoSa})}">
                   Ver detalle
                 </a>
               </div>
@@ -496,6 +593,9 @@
         const smartSearchInput = document.getElementById('smartSearch');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const searchStatus = document.getElementById('searchStatus');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const exportPdfLink = document.getElementById('exportPdfLink');
+        const exportExcelLink = document.getElementById('exportExcelLink');
 
         const rows = Array.from(document.querySelectorAll('.detalle-row'));
         const totalsRow = document.getElementById('filaTotales');
@@ -548,6 +648,17 @@
           tableWrap.classList.remove('filtering');
         }
 
+        function triggerDownload(url) {
+          if (!url) return;
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = url;
+          document.body.appendChild(iframe);
+          setTimeout(function () {
+            iframe.remove();
+          }, 30000);
+        }
+
         function openModal() {
           if (!modal) return;
           modal.classList.remove('hidden');
@@ -573,8 +684,6 @@
 
         function filterTable() {
           if (!rowData.length) return;
-
-          showLoader();
 
           clearTimeout(filterTimeout);
           filterTimeout = setTimeout(function () {
@@ -610,8 +719,6 @@
 
             updateSearchStatus(filteredRows.length, rowData.length, !!term);
             renderVisibleRows();
-            
-            hideLoader();
           }, 300);
         }
 
@@ -620,6 +727,19 @@
         if (smartSearchInput) {
           smartSearchInput.addEventListener('input', debouncedFilterTable);
           updateSearchStatus(rowData.length, rowData.length, false);
+        }
+
+        if (filtersForm) {
+          filtersForm.addEventListener('submit', function () {
+            showLoader();
+          });
+        }
+
+        if (exportAllBtn) {
+          exportAllBtn.addEventListener('click', function () {
+            triggerDownload(exportPdfLink ? exportPdfLink.href : '');
+            triggerDownload(exportExcelLink ? exportExcelLink.href : '');
+          });
         }
 
         // ========== INICIALIZACIÓN ==========
@@ -637,6 +757,7 @@
             filterTable();
 
             if (window.location.search) {
+              showLoader();
               window.location.href = filtersForm ? filtersForm.getAttribute('action') || '/egresos' : '/egresos';
               return;
             }

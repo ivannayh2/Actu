@@ -166,7 +166,6 @@
       </div>
     </article>
 
-    <!-- Mostrar sección PROVEEDORES a todos, pero para PUBLICADOR será la única visible -->
     <article class="role-card role-prov">
       <div class="role-title">
         Proveedor
@@ -288,6 +287,8 @@
         <div class="permisos-shell">
           <h3 class="permisos-title">Permisos</h3>
           <p class="permisos-subtitle">Selecciona las areas que este rol puede ver o editar.</p>
+          <p id="rolePermissionInfo" class="permisos-info hidden" aria-live="polite">
+          </p>
 
           <div class="permisos-head" aria-hidden="true">
             <span class="perm-area">Area</span>
@@ -319,6 +320,7 @@
               <div class="permiso-area">
                 <strong>Historial</strong>
                 <small>Consulta de historial de movimientos</small>
+                <span id="permHistorialRoleNote" class="perm-info-icon hidden" tabindex="0" aria-label="Solo muestra movimientos realizados por usuarios con rol PROVEEDOR.">&#9432;<span class="perm-tooltip">Solo muestra movimientos realizados por usuarios con rol PROVEEDOR.</span></span>
               </div>
               <label class="permiso-check"><input type="checkbox" name="permHistorialView"></label>
             </div>
@@ -335,6 +337,7 @@
               <div class="permiso-area">
                 <strong>Usuarios</strong>
                 <small>Gestión de usuarios</small>
+                <span id="permUsuariosRoleNote" class="perm-info-icon hidden" tabindex="0" aria-label="Permite acceder y gestionar usuarios con rol PROVEEDOR.">ⓘ<span class="perm-tooltip">Permite acceder y gestionar usuarios con rol PROVEEDOR.</span></span>
               </div>
               <label class="permiso-check"><input type="checkbox" name="permUsuariosView"></label>
             </div>
