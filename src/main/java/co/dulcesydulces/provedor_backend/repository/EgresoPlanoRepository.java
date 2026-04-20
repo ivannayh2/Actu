@@ -24,9 +24,7 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
             SUM(e.prontoPago) AS prontoPago,
             MAX(e.valorDocto) AS valorDocto
         FROM EgresoPlano e
-         WHERE (:tercero IS NULL OR :tercero = '' OR
-             LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')) OR
-             LOWER(e.razonSocial) LIKE LOWER(CONCAT('%', :tercero, '%')))
+        WHERE (:tercero IS NULL OR :tercero = '' OR LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')))
           AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
           AND (:doctoSa IS NULL OR :doctoSa = '' OR LOWER(e.doctoSa) LIKE LOWER(CONCAT('%', :doctoSa, '%')))
           AND (:fecha IS NULL OR e.fechaEgreso = :fecha)
@@ -79,9 +77,7 @@ public interface EgresoPlanoRepository extends JpaRepository<EgresoPlano, Long> 
     @Query("""
         SELECT e
         FROM EgresoPlano e
-         WHERE (:tercero IS NULL OR :tercero = '' OR
-             LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')) OR
-             LOWER(e.razonSocial) LIKE LOWER(CONCAT('%', :tercero, '%')))
+        WHERE (:tercero IS NULL OR :tercero = '' OR LOWER(e.tercero) LIKE LOWER(CONCAT('%', :tercero, '%')))
           AND (:numero IS NULL OR :numero = '' OR LOWER(e.doctoEgreso) LIKE LOWER(CONCAT('%', :numero, '%')))
           AND (:doctoSa IS NULL OR :doctoSa = '' OR LOWER(e.doctoSa) LIKE LOWER(CONCAT('%', :doctoSa, '%')))
           AND (:fecha IS NULL OR e.fechaEgreso = :fecha)
